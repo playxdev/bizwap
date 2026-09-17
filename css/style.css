@@ -397,7 +397,7 @@ footer .container{padding-block:36px 52px; font-size:15.5px; color:var(--ink-fai
   @page{margin:14mm}
   html,body{background:#fff}
   body{font-size:11pt; line-height:1.55}
-  nav, footer, .no-print, .pdf-btn, .pdf-cta, .theme-btn, .more-btn, .rm-arrow{display:none !important}
+  nav, footer, .no-print, .pdf-btn, .pdf-cta, .cta-row, .cta-note, .theme-btn, .more-btn, .rm-arrow{display:none !important}
 
   /* modal detail becomes inline appendix so the PDF carries the full plan */
   .more[hidden]{display:block !important; margin-top:12px; padding-top:12px; border-top:1px solid var(--line)}
@@ -527,3 +527,18 @@ footer .container{padding-block:36px 52px; font-size:15.5px; color:var(--ink-fai
 }
 
 .nav-links a.nav-sim{color:var(--orange)}
+
+/* ---------- ปุ่มคู่ท้ายกล่องสรุปนักลงทุน ---------- */
+.cta-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:24px}
+.cta-row .pdf-cta{margin-top:0}
+.sim-cta{
+  display:inline-block; text-decoration:none; text-align:center;
+  background:transparent; color:var(--blue);
+  border:2px solid var(--blue); padding:13px 28px;
+}
+.sim-cta:hover{background:var(--blue-soft); filter:none}
+.cta-note{margin:12px 0 0; font-size:14.5px; color:var(--ink-soft)}
+@media (max-width:620px){
+  .cta-row{flex-direction:column}
+  .cta-row .pdf-cta,.sim-cta{width:100%}
+}
