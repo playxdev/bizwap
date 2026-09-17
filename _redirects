@@ -1,4 +1,6 @@
-# ลิงก์เก่าที่เคยแจกไปตอนยังใช้ชื่อ /v2/
-/v2/         /sim/sim.html   301
-/v2/*        /sim/sim.html   301
-/sim/        /sim/sim.html   301
+# Cloudflare Pages ตัด .html ออกเองด้วย 308 อยู่แล้ว
+# ชี้ตรงไปที่ URL สุดท้ายเลย จะได้เด้งทอดเดียว
+/v2/         /sim/sim   301
+/v2/*        /sim/sim   301
+/sim/        /sim/sim   301
+/sim/sim.html /sim/sim  301
