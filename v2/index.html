@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Marketing Investment Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Google+Sans+Code:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap bar">
+    <div class="brand">BIZ<span>WAP</span></div>
+    <nav class="steps-nav" aria-label="ขั้นตอน">
+      <a href="#step1">01 Investment</a>
+      <a href="#step2">02 Model</a>
+      <a href="#step3">03 Media</a>
+      <a href="#step4">04 Unit Economics</a>
+      <a href="#forecast">05 Forecast</a>
+      <a href="#summary">06 Summary</a>
+    </nav>
+    <div class="bar-actions">
+      <button class="ghost-btn js-print" type="button">⬇ PDF</button>
+      <button class="ghost-btn" id="theme-toggle" type="button"><span id="theme-icon">☾</span> <span id="theme-label">Dark</span></button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">แพลตฟอร์มดูดวง · ไพ่ทาโรต์ · Direct Carrier Billing</p>
+    <h1>Marketing Investment<br>Simulator</h1>
+    <p class="hero-sub">จำลองงบการตลาด จำนวนลูกค้า รายได้ หน่วยเศรษฐศาสตร์ และคาดการณ์ 8 เดือน ก่อนตัดสินใจลงเงิน</p>
+    <a class="cta" href="#step1">Start Simulation</a>
+
+    <div class="hero-kpis" id="hero-kpis"></div>
+    <p class="hero-note">ทุกตัวเลขบนหน้านี้คำนวณสดจากสมมติฐานด้านล่าง ไม่มีค่าใดถูกเขียนตายไว้ · เปลี่ยนสมมติฐานแล้วผลเปลี่ยนทันที</p>
+  </div>
+</section>
+
+<!-- ================= SCENARIO ================= -->
+<div class="scenario-bar">
+  <div class="wrap sb">
+    <span class="sb-label">Scenario</span>
+    <div class="sb-group" role="group" aria-label="เลือกชุดสมมติฐาน">
+      <button class="sc-btn" data-scenario="conservative" type="button">Conservative</button>
+      <button class="sc-btn is-active" data-scenario="base" type="button">Base Case</button>
+      <button class="sc-btn" data-scenario="aggressive" type="button">Aggressive</button>
+    </div>
+    <span class="sb-hint">ไม่มีชุดไหนถูกหรือดีกว่า แต่ละชุดคือสมมติฐานคนละระดับความระมัดระวัง</span>
+    <button class="ghost-btn sb-reset" id="reset-btn" type="button">คืนค่าตั้งต้น</button>
+  </div>
+</div>
+
+<!-- ================= STEP 1 ================= -->
+<section class="step" id="step1">
+  <div class="wrap">
+    <div class="step-head">
+      <span class="step-no">01</span>
+      <div>
+        <h2>Investment Input</h2>
+        <p class="lead">เงินที่ต้องเตรียม แบ่งเป็นก้อนที่จ่ายเท่ากันทุกเดือน กับก้อนที่ปรับได้ตามผล</p>
+      </div>
+    </div>
+
+    <div class="grid-3" id="step1-cards"></div>
+
+    <div class="panel">
+      <div class="controls" id="controls-investment"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STEP 2 ================= -->
+<section class="step" id="step2">
+  <div class="wrap">
+    <div class="step-head">
+      <span class="step-no">02</span>
+      <div>
+        <h2>Business Model</h2>
+        <p class="lead">ลูกค้าจ่ายเท่าไร เก็บได้จริงเท่าไร เหลือถึงเราเท่าไร และอยู่กับเรานานแค่ไหน</p>
+      </div>
+    </div>
+
+    <h3 class="sub">Package Mix</h3>
+    <div class="panel">
+      <div class="controls" id="controls-packages"></div>
+      <p class="mix-check" id="mix-check"></p>
+    </div>
+
+    <h3 class="sub">Deductions &amp; Lifetime</h3>
+    <div class="panel">
+      <div class="controls" id="controls-model"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STEP 3 ================= -->
+<section class="step" id="step3">
+  <div class="wrap">
+    <div class="step-head">
+      <span class="step-no">03</span>
+      <div>
+        <h2>Media Simulation</h2>
+        <p class="lead">เงินโฆษณาหนึ่งเดือนแปลงเป็นลูกค้ากี่คน ผ่านกี่ขั้น</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="controls" id="controls-media"></div>
+    </div>
+
+    <div class="funnel" id="funnel"></div>
+    <div class="metrics" id="media-metrics"></div>
+    <p class="note-inline" id="media-note"></p>
+  </div>
+</section>
+
+<!-- ================= STEP 4 ================= -->
+<section class="step" id="step4">
+  <div class="wrap">
+    <div class="step-head">
+      <span class="step-no">04</span>
+      <div>
+        <h2>Unit Economics</h2>
+        <p class="lead">ต่อลูกค้า 1 คน — แยก Gross ออกจาก Net ให้ชัด ก่อนเอาไปคิดเพดานค่าโฆษณา</p>
+      </div>
+    </div>
+
+    <div class="waterfall" id="waterfall"></div>
+    <div class="metrics" id="unit-metrics"></div>
+
+    <div class="callout warn">
+      <b>ROAS ≠ กำไร</b>
+      <p id="roas-note"></p>
+    </div>
+
+    <div class="callout">
+      <b>Paid CPA ≠ Blended CAC</b>
+      <p><strong>Paid CPA</strong> = ค่าโฆษณา ÷ ลูกค้าที่ได้จากโฆษณา — ใช้ตัดสินว่าจะเพิ่มหรือลดงบชุดไหน<br>
+      <strong>Blended CAC</strong> = (ค่าโฆษณา + ค่าคอนเทนต์) ÷ ลูกค้าทั้งหมดรวม organic — ใช้ตัดสินว่าธุรกิจทั้งก้อนคุ้มหรือไม่<br>
+      ยิ่ง organic โต Blended CAC ยิ่งต่ำกว่า Paid CPA และนั่นคือเหตุผลที่ลงทุนกับคอนเทนต์</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FORECAST ================= -->
+<section class="step" id="forecast">
+  <div class="wrap">
+    <div class="step-head">
+      <span class="step-no">05</span>
+      <div>
+        <h2>8-Month Forecast</h2>
+        <p class="lead">กระแสเงินสดรายเดือน จนถึงจุดที่รายได้สุทธิคลุมต้นทุนทั้งหมด</p>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-legend">
+        <span><i class="sw sw-cost"></i>ต้นทุนรวม</span>
+        <span><i class="sw sw-rev"></i>รายได้สุทธิ</span>
+        <span><i class="sw sw-cum"></i>เงินสดสะสม</span>
+      </div>
+      <div id="chart"></div>
+    </div>
+
+    <div class="table-wrap">
+      <table id="forecast-table"></table>
+    </div>
+    <p class="note-inline">แถวที่ไฮไลต์คือเดือนแรกที่รายได้สุทธิคลุมต้นทุนรวมของเดือนนั้น</p>
+  </div>
+</section>
+
+<!-- ================= SUMMARY ================= -->
+<section class="step" id="summary">
+  <div class="wrap">
+    <div class="investment-summary" id="investment-summary"></div>
+    <button class="cta cta-pdf js-print" type="button">⬇ Export Investment Summary (PDF)</button>
+  </div>
+</section>
+
+<!-- ================= METHODOLOGY ================= -->
+<section class="step methodology no-print" id="methodology">
+  <div class="wrap">
+    <div class="step-head">
+      <span class="step-no">06</span>
+      <div>
+        <h2>Methodology</h2>
+        <p class="lead">สูตรและที่มาของทุกตัวเลข เปิดดูได้ทั้งหมด</p>
+      </div>
+    </div>
+
+    <details>
+      <summary>สูตรที่ใช้ทั้งหมด</summary>
+      <div class="det-body" id="formula-list"></div>
+    </details>
+
+    <details>
+      <summary>ตัวเลขไหนมาจากข้อมูลจริง ตัวเลขไหนเป็นสมมติฐาน</summary>
+      <div class="det-body">
+        <table class="plain">
+          <thead><tr><th>รายการ</th><th>ที่มา</th><th>ความเชื่อมั่น</th></tr></thead>
+          <tbody>
+            <tr><td>ต้นทุนคงที่ 67,000 / เดือน</td><td>งบประมาณจริงของโครงการ</td><td><span class="pill good">ยืนยันแล้ว</span></td></tr>
+            <tr><td>ส่วนแบ่งเครือข่าย · ส่วนแบ่งพาร์ตเนอร์</td><td>โครงสร้างข้อตกลง</td><td><span class="pill good">ยืนยันแล้ว</span></td></tr>
+            <tr><td>ราคาแพ็กเกจ</td><td>แผนผลิตภัณฑ์</td><td><span class="pill warn">ยังปรับได้</span></td></tr>
+            <tr><td>Collection Rate</td><td>ประมาณการจากลักษณะการตัดเงินผ่านบิลมือถือ</td><td><span class="pill warn">ต้องวัดจริง</span></td></tr>
+            <tr><td>CPM · CTR · CVR</td><td>กรอบอ้างอิงตลาด ยังไม่ใช่ข้อมูลจากบัญชีโฆษณาเรา</td><td><span class="pill warn">ต้องวัดจริง</span></td></tr>
+            <tr><td>อายุลูกค้าเฉลี่ย</td><td>ยังไม่มีข้อมูล ตั้งเป็นค่าสมมติ</td><td><span class="pill bad">กระทบผลมากที่สุด</span></td></tr>
+            <tr><td>ลูกค้าจาก Organic</td><td>ประมาณการจากแผนคอนเทนต์</td><td><span class="pill bad">กระทบผลมากที่สุด</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <details>
+      <summary>ข้อจำกัดของแบบจำลองนี้</summary>
+      <div class="det-body">
+        <ul>
+          <li>อายุลูกค้าแปลงเป็นอัตราหลุดต่อเดือนแบบคงที่ (1 ÷ อายุเป็นเดือน) ของจริงคนมักหลุดหนักในเดือนแรกแล้วค่อยนิ่ง</li>
+          <li>รายชื่อที่สะสมก่อนเปิดขายถูกแปลงเป็นลูกค้าครั้งเดียวในเดือนที่เปิดขาย ของจริงจะทยอยเข้ามา</li>
+          <li>ลูกค้าจาก Organic ไต่เป็นเส้นตรง ไม่ได้จำลองการทบต้นของอันดับใน Search</li>
+          <li>ไม่ได้คิดภาษี ค่าธรรมเนียมชำระเงินอื่น และต้นทุนบริการลูกค้า</li>
+          <li>เป็นแบบจำลองระดับเดือน ไม่ใช่ระดับแคมเปญ ใช้ตัดสินกรอบการลงทุน ไม่ใช่ตัดสินรายชุดโฆษณา</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>เอกสารภายใน · ตัวเลขทั้งหมดเป็นผลจากสมมติฐานที่ตั้งไว้ในหน้านี้ ไม่ใช่ผลประกอบการจริง</span>
+  </div>
+</footer>
+
+<dialog class="modal" id="explain">
+  <div class="modal-head">
+    <div>
+      <div class="modal-kicker" id="explain-kicker"></div>
+      <h3 id="explain-title"></h3>
+    </div>
+    <button class="modal-close" id="explain-close" type="button" aria-label="ปิด">✕</button>
+  </div>
+  <div class="modal-body" id="explain-body"></div>
+</dialog>
+
+<script src="js/model.js"></script>
+<script src="js/ui.js" defer></script>
+</body>
+</html>
