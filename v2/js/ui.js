@@ -11,6 +11,88 @@
   var stressMul = { cvr: 100, cpm: 100, lifetimeDays: 100, collectionRate: 100, organicAtEnd: 100 };
   var latest = null;
 
+  /* ============================================================
+     URL STATE — เก็บสมมติฐานทั้งชุดไว้ใน # ของลิงก์
+     เก็บเฉพาะค่าที่ต่างจากค่าตั้งต้น ลิงก์จึงสั้นเมื่อแก้ไม่กี่ตัว
+     ============================================================ */
+  var SHORT = {
+    initialInvestment: "ii", fixedCost: "fc", contentSpend: "cs", adsTest: "at", adsScale: "as",
+    months: "mo", adsStartMonth: "asm", launchMonth: "lm", scaleMonth: "sm",
+    collectionRate: "cr", aisShare: "ns", itShare: "ps", lifetimeDays: "ld",
+    cpm: "cpm", ctr: "ctr", leadRate: "lr", leadToCustomer: "l2c", cvr: "cvr",
+    organicAtEnd: "org"
+  };
+  var LONG = {};
+  Object.keys(SHORT).forEach(function (k) { LONG[SHORT[k]] = k; });
+
+  function encodeState() {
+    var d = M.DEFAULTS, parts = ["sc=" + scenario];
+    Object.keys(SHORT).forEach(function (k) {
+      if (state[k] !== d[k]) parts.push(SHORT[k] + "=" + state[k]);
+    });
+    if (state.itBase !== d.itBase) parts.push("pb=" + state.itBase);
+
+    var pkgChanged = state.packages.some(function (p, i) {
+      return p.price !== d.packages[i].price || p.freq !== d.packages[i].freq || p.share !== d.packages[i].share;
+    });
+    if (pkgChanged) {
+      parts.push("pk=" + state.packages.map(function (p) {
+        return [p.price, p.freq, p.share].join(".");
+      }).join("_"));
+    }
+    var stressed = Object.keys(stressMul).filter(function (k) { return stressMul[k] !== 100; });
+    if (stressed.length) {
+      parts.push("st=" + stressed.map(function (k) { return k + "." + stressMul[k]; }).join("_"));
+    }
+    return parts.join("&");
+  }
+
+  function decodeState(hash) {
+    var raw = (hash || "").replace(/^#/, "");
+    if (!raw) return false;
+    var found = false;
+    raw.split("&").forEach(function (pair) {
+      var i = pair.indexOf("="); if (i < 0) return;
+      var k = pair.slice(0, i), v = pair.slice(i + 1);
+
+      if (k === "sc" && M.SCENARIOS[v]) { state = M.applyScenario(state, v); scenario = v; found = true; return; }
+      if (k === "pb" && (v === "net" || v === "gross")) { state.itBase = v; found = true; return; }
+      if (k === "pk") {
+        v.split("_").forEach(function (chunk, idx) {
+          var n3 = chunk.split(".").map(parseFloat);
+          if (state.packages[idx] && n3.length === 3 && n3.every(isFinite)) {
+            state.packages[idx].price = n3[0];
+            state.packages[idx].freq = n3[1];
+            state.packages[idx].share = n3[2];
+          }
+        });
+        found = true; return;
+      }
+      if (k === "st") {
+        v.split("_").forEach(function (chunk) {
+          var bits = chunk.split(".");
+          if (stressMul[bits[0]] !== undefined && isFinite(parseFloat(bits[1]))) {
+            stressMul[bits[0]] = parseFloat(bits[1]);
+          }
+        });
+        found = true; return;
+      }
+      if (LONG[k] !== undefined) {
+        var num = parseFloat(v);
+        if (isFinite(num)) { state[LONG[k]] = num; found = true; }
+      }
+    });
+    return found;
+  }
+
+  var hashTimer = null;
+  function syncURL() {
+    clearTimeout(hashTimer);
+    hashTimer = setTimeout(function () {
+      try { history.replaceState(null, "", "#" + encodeState()); } catch (e) {}
+    }, 250);
+  }
+
   /* ---------- formatting ---------- */
   function n(v, d) {
     if (!isFinite(v)) return "—";
@@ -752,6 +834,7 @@
      RENDER ALL
      ============================================================ */
   function render() {
+    syncURL();
     var f = M.forecast(state);
     latest = f;
     var risks = M.sensitivity(state);
@@ -869,6 +952,22 @@
         return;
       }
 
+      var copyBtn = e.target.closest("#copy-link");
+      if (copyBtn) {
+        try { history.replaceState(null, "", "#" + encodeState()); } catch (err) {}
+        var url = location.href;
+        var done = function () {
+          copyBtn.textContent = "คัดลอกแล้ว ✓";
+          setTimeout(function () { copyBtn.textContent = "คัดลอกลิงก์"; }, 1800);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url).then(done, function () { window.prompt("คัดลอกลิงก์นี้", url); });
+        } else {
+          window.prompt("คัดลอกลิงก์นี้", url);
+        }
+        return;
+      }
+
       if (e.target.closest(".js-print")) window.print();
     });
 
@@ -925,6 +1024,13 @@
       bar.classList.toggle("is-on", !entries[0].isIntersecting);
     }, { threshold: 0, rootMargin: "-120px 0px 0px 0px" }).observe(hero);
   })();
+
+  var fromURL = decodeState(location.hash);
+  if (fromURL) {
+    document.querySelectorAll("[data-scenario]").forEach(function (b) {
+      b.classList.toggle("is-active", b.dataset.scenario === scenario);
+    });
+  }
 
   buildControls();
   bind();

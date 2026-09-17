@@ -152,6 +152,8 @@ tr.is-target td{border-top:2px solid var(--green)}
 tr.is-target td:first-child b{color:var(--green)}
 .sc-note{display:block; font-size:11.5px; color:var(--ink-faint); font-weight:400; margin-top:2px; white-space:normal; max-width:26ch}
 .sb-reset{margin-left:auto}
+.sb-copy{margin-left:auto}
+.sb-copy + .sb-reset{margin-left:0}
 
 /* ---------- step section ---------- */
 .step{border-bottom:1px solid var(--line)}
@@ -618,7 +620,8 @@ dialog.modal::backdrop{background:rgba(4,9,18,.66)}
   @page{margin:13mm}
   html,body{background:#fff}
   body{font-size:10.5pt; line-height:1.5}
-  .topbar,.scenario-bar,.sticky-summary,.no-print,.ghost-btn,.cta,.why,.ctrl-help,.ctrl-typical,.ctrl-sens,.stress-actions,.fab,footer{display:none !important}
+  .topbar,.scenario-bar,.sticky-summary,.no-print,.ghost-btn,.cta,.why,
+  .ctrl-help,.ctrl-typical,.stress-actions,.fab,footer,.conf-legend{display:none !important}
   input[type=range],select{display:none !important}
   .ctrl-top{margin:0}
   .panel{padding:10pt; break-inside:avoid}
@@ -643,4 +646,59 @@ dialog.modal::backdrop{background:rgba(4,9,18,.66)}
   .investment-summary{border-width:1.5pt; break-before:page}
   .is-cell strong{font-size:18pt}
   .methodology{display:none}
+
+  /* ---- องค์ประกอบที่เพิ่มมาทีหลัง ---- */
+  .fixed-hero{
+    grid-template-columns:1.6fr 1fr; gap:12pt; padding:10pt 12pt;
+    border-width:1pt; border-left-width:3pt; break-inside:avoid;
+  }
+  .fh-main strong{font-size:22pt}
+  .fh-main span{font-size:9pt; margin-bottom:6pt}
+  .fh-bar{height:8pt}
+  .fh-legend{font-size:8.5pt; margin-top:5pt}
+
+  .grid-4{grid-template-columns:repeat(4,1fr); break-inside:avoid}
+  .kpi{padding:8pt 10pt}
+  .kpi small{font-size:7.5pt}
+  .kpi span{font-size:8pt}
+  .metric strong,.kpi strong{font-size:14pt}
+
+  /* ป้ายความเชื่อมั่นต้องอยู่ใน PDF — เป็นสาระ ไม่ใช่ของประดับ */
+  .badge{
+    border:0.5pt solid currentColor; background:none !important;
+    font-size:7pt; padding:1pt 4pt; margin-right:3pt;
+  }
+  .ctrl-badges{margin-bottom:3pt; min-height:0}
+  .ctrl-sens{
+    display:block !important; margin-top:4pt; padding:4pt 6pt;
+    font-size:8pt; border-left-width:1.5pt; background:var(--panel3);
+    break-inside:avoid;
+  }
+
+  /* ตารางความเสี่ยงและผล stress ต้องติดไปด้วย */
+  #risk-table{font-size:8pt}
+  #risk-table td:nth-child(2){min-width:0}
+  #risk-table td:nth-child(3){min-width:0}
+  #stress-result{break-inside:avoid}
+
+  .be-grid{grid-template-columns:repeat(2,1fr); gap:10pt; break-inside:avoid}
+  .be-card{padding:10pt; border-top-width:2pt}
+  .be-card strong{font-size:20pt; margin:4pt 0 6pt}
+  .be-card p{font-size:8.5pt; margin-bottom:4pt}
+
+  .waterfall{grid-template-columns:repeat(5,1fr); gap:6pt}
+  .wf{padding:8pt}
+  .wf small{min-height:0; font-size:8pt}
+  .wf strong{font-size:13pt}
+  .funnel{gap:5pt}
+  .fstep{padding:8pt; min-width:0}
+  .fstep strong{font-size:13pt}
+  .farrow{font-size:11pt}
+
+  .callout{padding:8pt 10pt; break-inside:avoid}
+  .callout b{font-size:10.5pt}
+  .callout p{font-size:9pt}
+  .chart-card{padding:8pt; break-inside:avoid}
+  .sub{font-size:10pt; margin:10pt 0 5pt}
+  .is-foot{font-size:9pt; padding:10pt 12pt}
 }
