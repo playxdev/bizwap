@@ -526,12 +526,7 @@ footer .container{padding-block:36px 52px; font-size:15.5px; color:var(--ink-fai
   tr.total td{border-top:1.2pt solid var(--ink)}
 }
 
-/* ลิงก์ข้ามไปอีกหน้า ทำเป็นปุ่มให้ต่างจากลิงก์ในหน้าเดียวกัน */
-.nav-links a.nav-sim{
-  color:var(--orange); border:1px solid var(--orange-line);
-  border-radius:999px; padding:5px 13px; margin-left:2px;
-}
-.nav-links a.nav-sim:hover{background:var(--orange-soft)}
+.nav-links a.nav-sim{color:var(--orange)}
 
 /* ---------- ปุ่มคู่ท้ายกล่องสรุปนักลงทุน ---------- */
 .cta-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:24px}
