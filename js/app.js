@@ -78,7 +78,7 @@
   };
 
   var PRESETS = {
-    ours: {"f-team":52000, "f-server":14500, "f-dau":2000, "f-dauconv":8}
+    ours: {"f-team":52000, "f-server":15000, "f-dau":2000, "f-dauconv":8}
   };
   var mEl = document.getElementById("metrics");
   var eEl = document.getElementById("econ");
