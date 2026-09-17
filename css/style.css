@@ -525,3 +525,5 @@ footer .container{padding-block:36px 52px; font-size:15.5px; color:var(--ink-fai
   thead{display:table-header-group}
   tr.total td{border-top:1.2pt solid var(--ink)}
 }
+
+.nav-links a.nav-sim{color:var(--orange)}

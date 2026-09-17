@@ -101,7 +101,7 @@
                       { key: "daily", label: "รายวัน", price: 9, freq: 20, share: 35 },
                       { key: "monthly", label: "รายเดือน", price: 99, freq: 1, share: 15 }
                     ] },
-    // ชุดค่าที่ต้องทำให้ได้จริงถึงจะคืนทุน — หาโดยไล่ปรับทีละคาน
+    // ระดับผลลัพธ์ขั้นต่ำที่ธุรกิจต้องบรรลุเพื่อคืนทุน — หาโดยไล่ปรับทีละคาน
     viable:       { months: 24, cpm: 100, ctr: 1.6, cvr: 6, leadRate: 8, leadToCustomer: 12,
                     collectionRate: 88, lifetimeDays: 120, organicAtEnd: 600, adsScale: 40000,
                     packages: [
@@ -116,9 +116,9 @@
   };
   var SCENARIO_NOTE = {
     conservative: "สมมติฐานระมัดระวัง",
-    base: "สมมติฐานตั้งต้นเดิม — ไม่ถึงจุดคืนทุน",
+    base: "สมมติฐานยังไม่ถึงจุดคืนทุน",
     aggressive: "สมมติฐานเชิงบวก",
-    viable: "ค่าตั้งต้นปัจจุบัน — ชุดค่าที่ต้องทำให้ได้จริงถึงจะคืนทุน ไม่ใช่การพยากรณ์"
+    viable: "ค่าตั้งต้น — (จุดคืนทุน)"
   };
 
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
