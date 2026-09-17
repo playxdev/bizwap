@@ -802,6 +802,85 @@
       " ต่อเดือน (margin " + n(r.margin, 1) + " %) · Net LTV " + baht(r.netLTV, 2) + "</p>";
   }
 
+  /* ============================================================
+     ใบสรุปค่าใช้จ่ายรายเดือน — เอกสารหน้าเดียวสำหรับอนุมัติงบ
+     ============================================================ */
+  function budgetPhases(f) {
+    // ยุบเดือนที่ค่าใช้จ่ายเท่ากันให้เป็นช่วงเดียว จะได้อ่านง่าย
+    var out = [];
+    f.rows.forEach(function (r) {
+      var last = out[out.length - 1];
+      if (last && last.ads === r.adSpend && last.content === r.contentSpend && last.fixed === r.fixedCost) {
+        last.to = r.month;
+      } else {
+        out.push({ from: r.month, to: r.month, fixed: r.fixedCost, content: r.contentSpend,
+                   ads: r.adSpend, total: r.cashOut });
+      }
+    });
+    return out;
+  }
+
+  function renderBudget(f) {
+    var box = el("budget-sheet");
+    if (!box) return;
+    var s = f.summary;
+    var itemsMatch = M.fixedItemsTotal() === state.fixedCost;
+    var today = new Date().toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" });
+
+    var fixedRows = itemsMatch
+      ? M.FIXED_ITEMS.map(function (i) {
+          return "<tr><td>" + i.label + "</td><td class='bs-scope'>" + i.scope + "</td><td class='num'>" + n(i.amount) + "</td></tr>";
+        }).join("")
+      : "<tr><td>ต้นทุนคงที่ (ปรับเองในเครื่องคำนวณ)</td><td class='bs-scope'>ไม่ตรงกับรายการตามงบประมาณเดิม " +
+        baht(M.fixedItemsTotal()) + "</td><td class='num'>" + n(state.fixedCost) + "</td></tr>";
+
+    var phases = budgetPhases(f);
+    var phaseRows = phases.map(function (p) {
+      var span = p.from === p.to ? "เดือน " + p.from : "เดือน " + p.from + "–" + p.to;
+      return "<tr><td>" + span + "</td><td class='num'>" + n(p.fixed) + "</td><td class='num'>" + n(p.content) +
+        "</td><td class='num'>" + (p.ads ? n(p.ads) : "—") + "</td><td class='num bs-total'>" + n(p.total) + "</td></tr>";
+    }).join("");
+
+    box.innerHTML =
+      '<div class="bsheet">' +
+        '<div class="bs-head">' +
+          '<div><div class="bs-eyebrow">ใบสรุปค่าใช้จ่ายรายเดือน</div>' +
+          "<h3>แพลตฟอร์มดูดวง · ไพ่ทาโรต์ · Direct Carrier Billing</h3></div>" +
+          '<div class="bs-meta"><span>จัดทำ ' + today + "</span><span>ขอบเขต " + n(state.months) + " เดือน</span></div>" +
+        "</div>" +
+
+        '<div class="bs-sec"><div class="bs-sec-title">ก · ต้นทุนคงที่ — จ่ายเท่ากันทุกเดือน</div>' +
+        '<div class="table-wrap"><table class="bs-table"><thead><tr><th>รายการ</th><th>ขอบเขตงาน</th><th class="num">บาท / เดือน</th></tr></thead><tbody>' +
+        fixedRows +
+        '<tr class="bs-sum"><td>รวมต้นทุนคงที่</td><td></td><td class="num">' + n(state.fixedCost) + "</td></tr>" +
+        "</tbody></table></div></div>" +
+
+        '<div class="bs-sec"><div class="bs-sec-title">ข · ต้นทุนผันแปร — ปรับขึ้นลงได้ตามผล</div>' +
+        '<div class="table-wrap"><table class="bs-table"><thead><tr><th>รายการ</th><th>ช่วงที่ใช้</th><th class="num">บาท / เดือน</th></tr></thead><tbody>' +
+        "<tr><td>คอนเทนต์ · SEO / AEO / GEO</td><td class='bs-scope'>ทุกเดือนตั้งแต่เดือน 1</td><td class='num'>" + n(state.contentSpend) + "</td></tr>" +
+        "<tr><td>โฆษณา · ช่วงทดสอบ</td><td class='bs-scope'>เดือน " + n(state.adsStartMonth) + "–" + n(Math.max(state.adsStartMonth, state.scaleMonth - 1)) + " เก็บรายชื่อและหากลุ่มเป้าหมาย</td><td class='num'>" + n(state.adsTest) + "</td></tr>" +
+        "<tr><td>โฆษณา · ช่วงขยาย</td><td class='bs-scope'>เดือน " + n(state.scaleMonth) + " เป็นต้นไป หลังรู้ต้นทุนต่อลูกค้าจริง</td><td class='num'>" + n(state.adsScale) + "</td></tr>" +
+        "</tbody></table></div></div>" +
+
+        '<div class="bs-sec"><div class="bs-sec-title">ค · รวมที่ต้องเตรียมต่อเดือน</div>' +
+        '<div class="table-wrap"><table class="bs-table"><thead><tr><th>ช่วง</th><th class="num">คงที่</th><th class="num">คอนเทนต์</th><th class="num">โฆษณา</th><th class="num">รวม</th></tr></thead><tbody>' +
+        phaseRows + "</tbody></table></div></div>" +
+
+        '<div class="bs-sec"><div class="bs-sec-title">ง · ยอดรวมตลอด ' + n(state.months) + " เดือน</div>" +
+        '<div class="bs-grid">' +
+          '<div class="bs-cell"><small>ต้นทุนคงที่รวม</small><strong>' + baht(s.totalFixed) + "</strong></div>" +
+          '<div class="bs-cell"><small>คอนเทนต์รวม</small><strong>' + baht(s.totalMarketing - s.totalAds) + "</strong></div>" +
+          '<div class="bs-cell"><small>ค่าโฆษณารวม</small><strong>' + baht(s.totalAds) + "</strong></div>" +
+          '<div class="bs-cell bs-hl"><small>รวมทั้งสิ้น</small><strong>' + baht(s.totalInvestment) + "</strong></div>" +
+          '<div class="bs-cell"><small>เฉลี่ยต่อเดือน</small><strong>' + baht(s.monthlyBurn) + "</strong></div>" +
+          '<div class="bs-cell bs-hl"><small>เงินสดสูงสุดที่ต้องเตรียม</small><strong>' + baht(s.maxCashRequired) + "</strong></div>" +
+        "</div></div>" +
+
+        '<p class="bs-foot">ต้นทุนคงที่เป็นตัวเลขตามงบประมาณที่ตกลงแล้ว ส่วนต้นทุนผันแปรเป็นแผนตั้งต้นที่ปรับได้ทุกเดือน · ' +
+        "เงินสดสูงสุดที่ต้องเตรียมคือจุดต่ำสุดของเงินสดสะสม ซึ่งน้อยกว่ายอดรวมทั้งสิ้นเพราะมีรายได้เข้ามาชดเชยระหว่างทาง</p>" +
+      "</div>";
+  }
+
   /* ---------- floating balloon ---------- */
   var prevContribution = null;
   function renderFab(f) {
@@ -864,6 +943,7 @@
     renderScenarioTable();
     renderConfTable();
     renderFormulaList(f);
+    renderBudget(f);
     renderFab(f);
   }
 
@@ -965,6 +1045,13 @@
         } else {
           window.prompt("คัดลอกลิงก์นี้", url);
         }
+        return;
+      }
+
+      if (e.target.closest("#print-budget")) {
+        document.body.classList.add("print-budget");
+        window.print();
+        setTimeout(function () { document.body.classList.remove("print-budget"); }, 500);
         return;
       }
 

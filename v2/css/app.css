@@ -321,6 +321,36 @@ table.plain tr.tot td{border-top:1px solid var(--line2); font-weight:700}
 .is-foot{margin:0; padding:18px 24px; border-top:1px solid var(--line); font-size:14.5px; color:var(--ink-soft); background:var(--panel3)}
 .cta-pdf{margin-top:22px}
 
+/* ---------- ใบสรุปค่าใช้จ่าย ---------- */
+.bsheet{background:var(--panel); border:2px solid var(--line2); border-radius:var(--radius); overflow:hidden}
+.bs-head{
+  display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap;
+  padding:22px 24px; border-bottom:2px solid var(--ink);
+}
+.bs-eyebrow{font-size:12px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:var(--orange)}
+.bs-head h3{margin:6px 0 0; font-size:18px}
+.bs-meta{display:flex; flex-direction:column; gap:3px; font-size:13px; color:var(--ink-soft); text-align:right}
+.bs-sec{padding:18px 24px 6px}
+.bs-sec-title{font-size:14px; font-weight:700; color:var(--blue); margin-bottom:10px}
+.bs-table{font-size:14.5px}
+.bs-table th,.bs-table td{white-space:normal}
+.bs-table td.num,.bs-table th.num{white-space:nowrap}
+.bs-scope{color:var(--ink-soft); font-size:13px}
+.bs-table tr.bs-sum td{background:var(--orange-soft); font-weight:700; border-top:2px solid var(--orange-line)}
+.bs-table tr.bs-sum td.num{color:var(--orange); font-size:16px}
+.bs-table td.bs-total{font-weight:700}
+.bs-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:12px; overflow:hidden}
+.bs-cell{background:var(--panel); padding:16px 18px}
+.bs-cell small{display:block; font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); font-weight:700}
+.bs-cell strong{display:block; font-family:"Google Sans Code",monospace; font-variant-numeric:tabular-nums; font-size:20px; font-weight:600; margin-top:5px}
+.bs-cell.bs-hl{background:var(--orange-soft)}
+.bs-cell.bs-hl strong{color:var(--orange)}
+.bs-foot{margin:0; padding:16px 24px 20px; font-size:13px; color:var(--ink-soft); line-height:1.6; border-top:1px solid var(--line)}
+.cta-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:20px}
+.budget-print{background:var(--blue)}
+:root[data-theme="dark"] .budget-print{color:#06182E}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .budget-print{color:#06182E}}
+
 /* ---------- methodology ---------- */
 .methodology details{
   background:var(--panel); border:1px solid var(--line); border-radius:12px;
@@ -647,6 +677,27 @@ dialog.modal::backdrop{background:rgba(4,9,18,.66)}
   .investment-summary{border-width:1.5pt; break-before:page}
   .is-cell strong{font-size:18pt}
   .methodology{display:none}
+
+  /* ---- ใบสรุปค่าใช้จ่าย ---- */
+  .bsheet{border-width:1pt; break-inside:avoid}
+  .bs-head{padding:10pt 12pt; border-bottom-width:1.5pt}
+  .bs-head h3{font-size:12pt}
+  .bs-sec{padding:8pt 12pt 2pt}
+  .bs-sec-title{font-size:10pt; margin-bottom:5pt}
+  .bs-table{font-size:9pt}
+  .bs-scope{font-size:8pt}
+  .bs-grid{grid-template-columns:repeat(3,1fr)}
+  .bs-cell{padding:7pt 9pt}
+  .bs-cell strong{font-size:13pt}
+  .bs-foot{padding:8pt 12pt 10pt; font-size:8pt}
+  .cta-row,.budget-print{display:none !important}
+
+  /* พิมพ์เฉพาะใบสรุป: ซ่อนทุกอย่างที่ไม่ใช่หน้านี้ */
+  body.print-budget > *{display:none !important}
+  body.print-budget > #budget{display:block !important}
+  body.print-budget #budget{break-before:auto}
+  body.print-budget #budget .step-head{border-top:none; padding-top:0}
+  body.print-budget .bsheet{break-inside:auto}
 
   /* ---- องค์ประกอบที่เพิ่มมาทีหลัง ---- */
   .fixed-hero{

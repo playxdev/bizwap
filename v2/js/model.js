@@ -43,6 +43,19 @@
     organicAtEnd: 600
   };
 
+  /* ---------- แจกแจงต้นทุนคงที่ ----------
+     รวมกันต้องเท่ากับ DEFAULTS.fixedCost ถ้าผู้ใช้เลื่อน slider
+     จนไม่ตรง ใบสรุปจะบอกว่าเป็นค่าที่ปรับเอง ไม่ใช่ตัวเลขตามสัญญา */
+  var FIXED_ITEMS = [
+    { label: "Project Manager", scope: "ควบคุมระยะเวลา ถ่ายทอดลอจิกงาน และประสานงานเครือข่าย AIS", amount: 26000 },
+    { label: "Senior Developer", scope: "Consultant วาง Architecture, คุมเรื่อง Security และตรวจ Code Review แกนหลัก", amount: 26000 },
+    { label: "Base Infrastructure", scope: "Cloud Server, VPS, FrontEnd, BackEnd, Staging/Production of Content", amount: 5000 },
+    { label: "SEO, Coding Tools", scope: "เครื่องมือ Dev ที่ใช้ในการทำงาน", amount: 10000 }
+  ];
+  function fixedItemsTotal() {
+    return FIXED_ITEMS.reduce(function (s, i) { return s + i.amount; }, 0);
+  }
+
   /* ---------- where each assumption comes from ----------
      confirmed  : มาจากข้อมูลจริงของโครงการ
      estimate   : ประมาณการจากกรอบตลาด ยังไม่ได้วัดเอง
@@ -424,6 +437,8 @@
   global.SimModel = {
     DAYS_PER_MONTH: DAYS_PER_MONTH,
     DEFAULTS: DEFAULTS,
+    FIXED_ITEMS: FIXED_ITEMS,
+    fixedItemsTotal: fixedItemsTotal,
     META: META,
     CONF_LABEL: CONF_LABEL,
     SCENARIOS: SCENARIOS,
