@@ -610,21 +610,31 @@ dialog.modal::backdrop{background:rgba(4,9,18,.66)}
   .fixed-hero{grid-template-columns:1fr}
   .be-grid{grid-template-columns:1fr}
   .grid-3,.is-grid{grid-template-columns:repeat(2,1fr)}
-  .steps-nav{display:none}
+
+  /* จอแคบ: เมนูลงมาเป็นแถวที่สอง เลื่อนแนวนอนได้ แทนที่จะซ่อนทิ้ง */
+  .bar{height:auto; padding-block:10px; flex-wrap:wrap; row-gap:8px}
+  .bar-actions{margin-left:auto}
+  .steps-nav{
+    order:3; width:100%; gap:18px; padding-bottom:2px;
+    margin-inline:-24px; padding-inline:24px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .steps-nav a{font-size:14px}
+  /* แถบสองอันนี้ยึดกับความสูง topbar ที่ตายตัว พอ topbar สูงขึ้นเลยเพี้ยน */
+  .scenario-bar{position:static}
+  .sticky-summary{display:none}
+  .step-head{scroll-margin-top:24px}
 }
 @media (max-width:640px){
   .wrap{padding:0 18px}
-  .bar{height:auto; padding-block:12px; flex-wrap:wrap; row-gap:10px}
-  .bar-actions{margin-left:auto}
+  .steps-nav{margin-inline:-18px; padding-inline:18px; gap:16px}
   .hero{padding:48px 0 40px}
   .step > .wrap{padding-block:40px}
   .hero-kpis,.grid-3,.grid-4,.is-grid{grid-template-columns:1fr}
-  .sticky-summary{display:none}
   .fixed-hero{padding:18px}
   .waterfall{grid-template-columns:1fr}
   .panel{padding:18px}
   .cta{width:100%; text-align:center}
-  .scenario-bar{position:static}
   .sb{gap:10px}
   .sb-group{width:100%; border-radius:16px}
   .sc-btn{flex:1 1 calc(50% - 6px); text-align:center; padding:10px 8px; font-size:13.5px}
