@@ -42,6 +42,7 @@
 
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
+body{overflow-x:clip}
 body{
   margin:0; background:var(--bg); color:var(--ink);
   font-family:"Google Sans","Google Sans Text","Noto Sans Thai","Noto Sans",system-ui,sans-serif;
@@ -132,7 +133,7 @@ a{color:var(--blue)}
 }
 .sb{display:flex; align-items:center; gap:14px; padding-block:12px; flex-wrap:wrap}
 .sb-label{font-size:12px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--ink-faint)}
-.sb-group{display:flex; gap:6px; background:var(--panel); border:1px solid var(--line2); border-radius:999px; padding:4px}
+.sb-group{display:flex; flex-wrap:wrap; gap:6px; max-width:100%; background:var(--panel); border:1px solid var(--line2); border-radius:999px; padding:4px}
 .sc-btn{
   border:none; background:transparent; color:var(--ink-soft); border-radius:999px;
   padding:8px 18px; font:inherit; font-size:14px; font-weight:600; cursor:pointer; white-space:nowrap;
@@ -591,8 +592,11 @@ dialog.modal::backdrop{background:rgba(4,9,18,.66)}
   .panel{padding:18px}
   .cta{width:100%; text-align:center}
   .scenario-bar{position:static}
+  .sb{gap:10px}
+  .sb-group{width:100%; border-radius:16px}
+  .sc-btn{flex:1 1 calc(50% - 6px); text-align:center; padding:10px 8px; font-size:13.5px}
   .sb-hint{display:none}
-  .sb-reset{margin-left:0}
+  .sb-reset{margin-left:0; width:100%}
   .step-head{scroll-margin-top:20px}
   dialog.modal{width:100%; max-width:none; margin:auto auto 0; border-radius:18px 18px 0 0; max-height:88vh}
 }
