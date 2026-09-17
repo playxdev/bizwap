@@ -1,6 +1,6 @@
 /* ============================================================
-   Marketing Investment Simulator — presentation layer
-   Reads from SimModel, writes to the DOM. No business formula lives here.
+   Investment Decision Simulator — presentation layer
+   Reads SimModel, writes the DOM. No business formula lives here.
    ============================================================ */
 (function () {
   "use strict";
@@ -8,6 +8,8 @@
   var M = window.SimModel;
   var state = M.clone(M.DEFAULTS);
   var scenario = "base";
+  var stressMul = { cvr: 100, cpm: 100, lifetimeDays: 100, collectionRate: 100, organicAtEnd: 100 };
+  var latest = null;
 
   /* ---------- formatting ---------- */
   function n(v, d) {
@@ -15,13 +17,26 @@
     return v.toLocaleString("en-US", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 });
   }
   function baht(v, d) { return isFinite(v) ? n(v, d) + " ฿" : "—"; }
+  function signed(v, d) { return (v > 0 ? "+" : "") + n(v, d) + " ฿"; }
   function el(id) { return document.getElementById(id); }
+  function month(v) { return v ? "เดือน " + v : "ยังไม่ถึง"; }
 
-  /* ---------- control definitions ----------
-     every slider is declared once: where it writes, its range, how it reads back  */
+  function confBadge(key) {
+    var m = M.META[key];
+    if (!m) return "";
+    var out = '<span class="badge b-' + m.conf + '">' + M.CONF_LABEL[m.conf] + "</span>";
+    if (m.impact) out += '<span class="badge b-impact">HIGH IMPACT</span>';
+    return out;
+  }
+
+  /* ============================================================
+     CONTROL DEFINITIONS — declared once, drive markup and sync
+     ============================================================ */
   var CONTROLS = {
     investment: [
-      { k: "fixedCost", label: "ต้นทุนคงที่ / เดือน", min: 0, max: 300000, step: 1000, fmt: baht,
+      { k: "initialInvestment", label: "Initial Investment", min: 0, max: 2000000, step: 10000, fmt: baht,
+        help: "เงินก้อนที่ใส่ก่อนเริ่มเดือนที่ 1 ตั้ง 0 ได้ถ้าใช้เงินหมุนรายเดือนอย่างเดียว" },
+      { k: "fixedCost", label: "Fixed Cost / เดือน", min: 0, max: 300000, step: 1000, fmt: baht,
         help: "ทีมและระบบ จ่ายเท่ากันทุกเดือนไม่ว่าจะยิงโฆษณาหรือไม่" },
       { k: "contentSpend", label: "งบคอนเทนต์ / เดือน", min: 0, max: 40000, step: 500, fmt: baht,
         help: "SEO, AEO, GEO และการผลิตคอนเทนต์ นับเป็นต้นทุนการตลาด" },
@@ -29,37 +44,39 @@
         help: "ช่วงที่ยังหาว่ากลุ่มไหนและชิ้นงานไหนได้ผล" },
       { k: "adsScale", label: "งบโฆษณา / เดือน · ช่วงขยาย", min: 0, max: 150000, step: 1000, fmt: baht,
         help: "ช่วงหลังเปิดขาย เมื่อรู้ต้นทุนต่อลูกค้าจริงแล้ว" },
-      { k: "months", label: "ระยะเวลาจำลอง", min: 3, max: 24, step: 1, fmt: function (v) { return n(v) + " เดือน"; },
-        help: "จำนวนเดือนที่แบบจำลองคำนวณไปข้างหน้า" },
+      { k: "months", label: "Investment Period", min: 3, max: 36, step: 1, fmt: function (v) { return n(v) + " เดือน"; },
+        help: "ช่วงเวลาที่แบบจำลองคำนวณไปข้างหน้า" },
       { k: "adsStartMonth", label: "เริ่มยิงโฆษณาเดือนที่", min: 1, max: 12, step: 1, fmt: function (v) { return "เดือน " + n(v); },
         help: "ก่อนเปิดขาย โฆษณาได้รายชื่อ ยังไม่ได้ลูกค้าที่จ่ายเงิน" },
       { k: "launchMonth", label: "เปิดขายเดือนที่", min: 1, max: 24, step: 1, fmt: function (v) { return "เดือน " + n(v); },
-        help: "เดือนแรกที่ระบบตัดเงินได้ รายได้เริ่มนับจากเดือนนี้", impact: true },
+        help: "เดือนแรกที่ระบบตัดเงินได้ รายได้เริ่มนับจากเดือนนี้" },
       { k: "scaleMonth", label: "เริ่มใช้งบระดับขยายเดือนที่", min: 1, max: 24, step: 1, fmt: function (v) { return "เดือน " + n(v); },
         help: "เดือนแรกที่สลับจากงบทดสอบไปเป็นงบขยาย" }
     ],
     model: [
       { k: "collectionRate", label: "Collection Rate", min: 0, max: 100, step: 1, fmt: function (v) { return n(v, 0) + " %"; },
-        help: "เรียกเก็บผ่านบิลมือถือสำเร็จกี่ % บางวันยอดเงินในซิมไม่พอ", impact: true,
+        help: "เรียกเก็บผ่านบิลมือถือสำเร็จกี่ % บางวันยอดเงินในซิมไม่พอ",
         typical: "บริการหักรายวันผ่านบิลมือถือ มักอยู่ราว 70–90 %" },
-      { k: "aisShare", label: "ส่วนแบ่งเครือข่าย (AIS)", min: 0, max: 60, step: 1, fmt: function (v) { return n(v, 0) + " %"; },
+      { k: "aisShare", label: "Revenue Share — เครือข่าย", min: 0, max: 60, step: 1, fmt: function (v) { return n(v, 0) + " %"; },
         help: "ค่าช่องทางตัดเงินผ่านบิลมือถือ" },
-      { k: "itShare", label: "ส่วนแบ่งพาร์ตเนอร์ (IT)", min: 0, max: 60, step: 1, fmt: function (v) { return n(v, 0) + " %"; },
+      { k: "itShare", label: "Partner Share — ฝั่ง IT", min: 0, max: 60, step: 1, fmt: function (v) { return n(v, 0) + " %"; },
         help: "หักจากยอดไหน เลือกได้ในช่องถัดไป" },
-      { k: "lifetimeDays", label: "อายุลูกค้าเฉลี่ย", min: 7, max: 365, step: 1, fmt: function (v) { return n(v) + " วัน"; },
-        help: "อยู่กี่วันก่อนเลิกจ่าย ตัวแปรที่กระทบเพดานค่าโฆษณามากที่สุด", impact: true,
+      { k: "lifetimeDays", label: "Customer Lifetime", min: 7, max: 540, step: 1, fmt: function (v) { return n(v) + " วัน"; },
+        help: "อยู่กี่วันก่อนเลิกจ่าย กำหนดทั้ง LTV และอัตราหลุดต่อเดือน",
         typical: "ยังไม่มีข้อมูลจริงของบริการนี้ — ต้องวัดหลังเปิดขายเป็นอันดับแรก" },
-      { k: "organicAtEnd", label: "ลูกค้า Organic / เดือน ณ เดือนสุดท้าย", min: 0, max: 2000, step: 10, fmt: function (v) { return n(v) + " คน"; },
-        help: "ลูกค้าที่มาเองจาก Search และ AI ไม่ได้จ่ายค่าโฆษณา", impact: true }
+      { k: "organicAtEnd", label: "Organic Customers / เดือน", min: 0, max: 3000, step: 10, fmt: function (v) { return n(v) + " คน"; },
+        help: "ระดับสูงสุดที่คาดว่าจะไต่ถึงภายใน 12 เดือนหลังเปิดขาย ไม่ได้จ่ายค่าโฆษณา" }
     ],
     media: [
       { k: "cpm", label: "CPM", min: 10, max: 400, step: 5, fmt: baht,
-        help: "ค่าโฆษณาต่อการแสดงผล 1,000 ครั้ง", typical: "ตลาดไทย Facebook/IG ปกติ 60–150 ฿" },
+        help: "ค่าโฆษณาต่อการแสดงผล 1,000 ครั้ง",
+        typical: "ตลาดไทย Facebook/IG ปกติ 60–150 ฿" },
       { k: "ctr", label: "CTR", min: 0.1, max: 8, step: 0.1, fmt: function (v) { return n(v, 1) + " %"; },
-        help: "คนเห็นโฆษณา 100 คน กดกี่คน", typical: "ปกติ 0.5–2 % · ชิ้นงานที่เก่งมาก 3–4 % · เพดาน 8 % ตั้งเผื่อไว้แล้ว" },
+        help: "คนเห็นโฆษณา 100 คน กดกี่คน",
+        typical: "ปกติ 0.5–2 % · ชิ้นงานที่เก่งมาก 3–4 % · เพดาน 8 % ตั้งเผื่อไว้แล้ว" },
       { k: "cvr", label: "CVR · คลิก → ลูกค้า", min: 0.1, max: 25, step: 0.1, fmt: function (v) { return n(v, 1) + " %"; },
-        help: "หลังเปิดขาย คนกดเข้าเว็บ 100 คน จ่ายเงินกี่คน", impact: true,
-        typical: "เว็บทั่วไป 1–5 % · ดีมาก 10 % · ตั้งเพดาน 25 % เพราะ DCB กดยืนยันครั้งเดียวจบ ไม่ต้องกรอกบัตร" },
+        help: "หลังเปิดขาย คนกดเข้าเว็บ 100 คน จ่ายเงินกี่คน",
+        typical: "เว็บทั่วไป 1–5 % · ดีมาก 10 % · เพดาน 25 % เพราะ DCB กดยืนยันครั้งเดียวจบ" },
       { k: "leadRate", label: "คลิก → รายชื่อ", min: 0, max: 40, step: 0.5, fmt: function (v) { return n(v, 1) + " %"; },
         help: "ช่วงยังขายไม่ได้ คนกดเข้ามาแล้ว Add LINE หรือทิ้งอีเมลกี่ %",
         typical: "ปกติ 10–25 % สูงกว่าการจ่ายเงินเพราะไม่ต้องควักกระเป๋า" },
@@ -69,10 +86,20 @@
     ]
   };
 
-  /* ---------- formula explanations ---------- */
+  /* ============================================================
+     "WHY THIS NUMBER?" — formula + inputs + confidence
+     ============================================================ */
+  function conf(key) {
+    var m = M.META[key];
+    if (!m) return "";
+    return "<p class='conf-line'><span class='badge b-" + m.conf + "'>" + M.CONF_LABEL[m.conf] + "</span>" +
+      (m.impact ? "<span class='badge b-impact'>HIGH IMPACT</span>" : "") +
+      (m.note ? " " + m.note : "") + "</p>";
+  }
+
   var FORMULAS = {
     grossMonth: {
-      title: "Gross Revenue / ลูกค้า / เดือน",
+      title: "Gross Revenue ต่อลูกค้า ต่อเดือน",
       body: function (r) {
         return "<p>ยอดที่เรียกเก็บต่อลูกค้า 1 คน ต่อเดือน ก่อนหักอะไรทั้งสิ้น</p>" +
           "<pre>Σ ( สัดส่วนผู้ใช้ × ราคา × ความถี่ต่อเดือน )</pre>" +
@@ -82,95 +109,145 @@
               "</td><td class='num'>" + baht(p.share / 100 * p.price * p.freq, 2) + "</td></tr>";
           }).join("") +
           "<tr class='tot'><td>รวม</td><td></td><td class='num'>" + baht(r.grossMonth, 2) + "</td></tr>" +
-          "</tbody></table>";
+          "</tbody></table>" + conf("packagePrice");
       }
     },
     netMonth: {
-      title: "Net Revenue / ลูกค้า / เดือน",
+      title: "Net Revenue ต่อลูกค้า ต่อเดือน",
       body: function (r) {
         return "<p>ยอดที่เหลือถึงเราจริง หลังหักการเก็บเงินไม่ผ่านและส่วนแบ่งทุกฝ่าย</p>" +
-          "<pre>Gross × Collection Rate × (1 − ส่วนแบ่งเครือข่าย) − ส่วนแบ่งพาร์ตเนอร์</pre>" +
+          "<pre>Gross × Collection Rate × (1 − Revenue Share) − Partner Share</pre>" +
           "<table class='plain'><tbody>" +
-          "<tr><td>Gross</td><td></td><td class='num'>" + baht(r.grossMonth, 2) + "</td></tr>" +
-          "<tr><td>เก็บสำเร็จ " + state.collectionRate + " %</td><td></td><td class='num'>" + baht(r.collected, 2) + "</td></tr>" +
-          "<tr><td>หลังหักเครือข่าย " + state.aisShare + " %</td><td></td><td class='num'>" + baht(r.afterNetwork, 2) + "</td></tr>" +
-          "<tr><td>หักพาร์ตเนอร์ " + state.itShare + " % (" + (state.itBase === "gross" ? "ฐาน Gross" : "ฐาน Net") + ")</td><td></td><td class='num'>− " + baht(r.partnerCut, 2) + "</td></tr>" +
-          "<tr class='tot'><td>Net</td><td>margin " + n(r.margin, 1) + " %</td><td class='num'>" + baht(r.netMonth, 2) + "</td></tr>" +
-          "</tbody></table>";
+          "<tr><td>Gross</td><td class='num'>" + baht(r.grossMonth, 2) + "</td></tr>" +
+          "<tr><td>เก็บสำเร็จ " + state.collectionRate + " %</td><td class='num'>" + baht(r.collected, 2) + "</td></tr>" +
+          "<tr><td>หลังหักเครือข่าย " + state.aisShare + " %</td><td class='num'>" + baht(r.afterNetwork, 2) + "</td></tr>" +
+          "<tr><td>หักพาร์ตเนอร์ " + state.itShare + " % (" + (state.itBase === "gross" ? "ฐาน Gross" : "ฐาน Net") + ")</td><td class='num'>− " + baht(r.partnerCut, 2) + "</td></tr>" +
+          "<tr class='tot'><td>Net · margin " + n(r.margin, 1) + " %</td><td class='num'>" + baht(r.netMonth, 2) + "</td></tr>" +
+          "</tbody></table>" + conf("collectionRate");
       }
     },
     grossLTV: {
       title: "Gross LTV",
       body: function (r) {
         return "<p>รายได้รวมตลอดอายุลูกค้า <strong>ก่อน</strong>หักการเก็บเงินไม่ผ่านและส่วนแบ่ง ใช้เทียบราคาขาย ไม่ใช้ตัดสินงบโฆษณา</p>" +
-          "<pre>Gross / เดือน × ( อายุลูกค้า ÷ 30 )</pre>" +
-          "<p>" + baht(r.grossMonth, 2) + " × " + n(r.lifeMonths, 2) + " เดือน = <strong>" + baht(r.grossLTV, 2) + "</strong></p>";
+          "<pre>Gross ต่อเดือน × ( Customer Lifetime ÷ 30 )</pre>" +
+          "<p>" + baht(r.grossMonth, 2) + " × " + n(r.lifeMonths, 2) + " เดือน = <strong>" + baht(r.grossLTV, 2) + "</strong></p>" +
+          conf("lifetimeDays");
       }
     },
     netLTV: {
       title: "Net LTV",
       body: function (r) {
         return "<p>เงินที่ลูกค้า 1 คนทำให้เราจริงตลอดอายุการใช้งาน ตัวนี้เท่านั้นที่ใช้ตั้งเพดานค่าได้ลูกค้า</p>" +
-          "<pre>Net / เดือน × ( อายุลูกค้า ÷ 30 )</pre>" +
+          "<pre>Net ต่อเดือน × ( Customer Lifetime ÷ 30 )</pre>" +
           "<p>" + baht(r.netMonth, 2) + " × " + n(r.lifeMonths, 2) + " เดือน = <strong>" + baht(r.netLTV, 2) + "</strong></p>" +
-          "<p class='muted'>Gross LTV คือ " + baht(r.grossLTV, 2) + " — ต่างกัน " + baht(r.grossLTV - r.netLTV, 2) +
-          " ถ้าคิดงบโฆษณาจาก Gross จะประเมินสูงเกินจริง " + n(r.grossLTV / Math.max(r.netLTV, 0.0001), 1) + " เท่า</p>";
+          "<p class='muted'>Gross LTV คือ " + baht(r.grossLTV, 2) + " ถ้าคิดงบโฆษณาจาก Gross จะประเมินสูงเกินจริง " +
+          n(r.grossLTV / Math.max(r.netLTV, 0.0001), 1) + " เท่า</p>" + conf("lifetimeDays");
       }
     },
     paidCPA: {
       title: "Paid CPA",
       body: function (r, f) {
-        return "<p>ค่าโฆษณาที่จ่ายไป หารด้วยจำนวนลูกค้าที่ได้จากโฆษณาโดยตรง</p>" +
+        var s = f.summary;
+        return "<p>ค่าโฆษณาที่จ่ายไป หารด้วยจำนวนลูกค้าที่ได้จากโฆษณาโดยตรง <strong>ไม่รวม organic</strong></p>" +
           "<pre>ค่าโฆษณาสะสม ÷ ลูกค้าที่มาจากโฆษณา</pre>" +
-          "<p>" + baht(f.summary.totalAds) + " ÷ " + n(f.summary.totalPaidCustomers) + " คน = <strong>" + baht(f.summary.paidCPA, 2) + "</strong></p>" +
+          "<p>" + baht(s.totalAds) + " ÷ " + n(s.totalPaidCustomers) + " คน = <strong>" + baht(s.paidCPA, 2) + "</strong></p>" +
           "<p class='muted'>ใช้ตัดสินใจระดับชุดโฆษณา — เพิ่มงบ คงงบ ลดงบ หรือปิด</p>";
       }
     },
     blendedCAC: {
       title: "Blended CAC",
       body: function (r, f) {
-        return "<p>ต้นทุนการตลาดทั้งหมด หารด้วยลูกค้าใหม่ทั้งหมด รวมคนที่มาเองจาก Organic</p>" +
+        var s = f.summary;
+        return "<p>ต้นทุนการตลาดทั้งหมด หารด้วยลูกค้าใหม่ทั้งหมด <strong>รวม organic</strong></p>" +
           "<pre>( ค่าโฆษณา + ค่าคอนเทนต์ ) ÷ ลูกค้าใหม่ทั้งหมด</pre>" +
-          "<p>" + baht(f.summary.totalMarketing) + " ÷ " + n(f.summary.totalNewCustomers) + " คน = <strong>" + baht(f.summary.blendedCAC, 2) + "</strong></p>" +
-          "<p class='muted'>ต่ำกว่า Paid CPA เมื่อ Organic เริ่มทำงาน — นั่นคือผลตอบแทนของงบคอนเทนต์</p>";
+          "<p>" + baht(s.totalMarketing) + " ÷ " + n(s.totalNewCustomers) + " คน = <strong>" + baht(s.blendedCAC, 2) + "</strong></p>" +
+          "<p class='muted'>Organic คิดเป็น " + n(s.organicShare, 1) + " % ของลูกค้าใหม่ จึงดึง Blended CAC ให้ต่ำกว่า Paid CPA " +
+          baht(s.paidCPA - s.blendedCAC, 2) + " ต่อคน นั่นคือผลตอบแทนของงบคอนเทนต์</p>" + conf("organicAtEnd");
       }
     },
     contribution: {
       title: "Contribution",
       body: function (r, f) {
+        var s = f.summary;
         return "<p>รายได้สุทธิ ลบต้นทุนการตลาดที่ผันแปร — <strong>ยังไม่หักต้นทุนคงที่</strong></p>" +
           "<pre>Net Revenue − ( ค่าโฆษณา + ค่าคอนเทนต์ )</pre>" +
-          "<p>สะสม " + n(state.months) + " เดือน = <strong>" + baht(f.summary.cumulativeContribution) + "</strong></p>" +
-          "<p class='muted'>Contribution บวก แปลว่าการตลาดเลี้ยงตัวเองได้ แต่ยังไม่ได้แปลว่าธุรกิจกำไร ต้องคลุมต้นทุนคงที่ " +
+          "<p>" + baht(s.totalNetRevenue) + " − " + baht(s.totalMarketing) + " = <strong>" + baht(s.cumulativeContribution) + "</strong></p>" +
+          "<p class='muted'>Contribution บวก แปลว่าการตลาดเลี้ยงตัวเองได้ ยังไม่ได้แปลว่าธุรกิจกำไร ต้องคลุมต้นทุนคงที่ " +
           baht(state.fixedCost) + " ต่อเดือนก่อน</p>";
       }
     },
     payback: {
-      title: "Payback Period",
+      title: "Payback Period ต่อลูกค้า",
       body: function (r, f) {
+        var s = f.summary;
         return "<p>เก็บเงินกี่วัน ถึงคืนค่าที่จ่ายไปเพื่อได้ลูกค้า 1 คน</p>" +
           "<pre>Blended CAC ÷ ( Net Revenue ต่อเดือน ÷ 30 )</pre>" +
-          "<p>" + baht(f.summary.blendedCAC, 2) + " ÷ " + baht(r.netMonth / 30, 2) + " ต่อวัน = <strong>" + n(f.summary.paybackDays) + " วัน</strong></p>" +
-          "<p class='muted'>ถ้ายาวกว่าอายุลูกค้าเฉลี่ย (" + n(state.lifetimeDays) + " วัน) แปลว่าลูกค้าเลิกจ่ายก่อนจะคืนทุน</p>";
+          "<p>" + baht(s.blendedCAC, 2) + " ÷ " + baht(r.netMonth / 30, 2) + " ต่อวัน = <strong>" + n(s.paybackDays) + " วัน</strong></p>" +
+          "<p class='muted'>ถ้ายาวกว่า Customer Lifetime (" + n(state.lifetimeDays) + " วัน) แปลว่าลูกค้าเลิกจ่ายก่อนจะคืนทุน</p>";
       }
     },
     roas: {
       title: "ROAS",
       body: function (r, f) {
+        var s = f.summary;
         return "<p>รายได้สุทธิสะสม หารด้วยค่าโฆษณาสะสม</p>" +
           "<pre>Net Revenue ÷ ค่าโฆษณา</pre>" +
-          "<p>" + baht(f.summary.totalNetRevenue) + " ÷ " + baht(f.summary.totalAds) + " = <strong>" + n(f.summary.roas, 2) + "</strong></p>" +
-          "<p class='muted'>ROAS ไม่ใช่กำไร เพราะยังไม่หักค่าคอนเทนต์ " + baht(f.summary.totalMarketing - f.summary.totalAds) +
-          " และต้นทุนคงที่ " + baht(state.fixedCost * state.months) + " ตลอดช่วงจำลอง</p>";
+          "<p>" + baht(s.totalNetRevenue) + " ÷ " + baht(s.totalAds) + " = <strong>" + n(s.roas, 2) + "</strong></p>" +
+          "<p class='muted'>ไม่ใช่กำไร เพราะยังไม่หักค่าคอนเทนต์ " + baht(s.totalMarketing - s.totalAds) +
+          " และต้นทุนคงที่ " + baht(s.totalFixed) + " ตลอดช่วงจำลอง</p>";
       }
     },
-    breakEvenCustomers: {
-      title: "ลูกค้าที่ต้องมีพร้อมกัน",
+    totalInvestment: {
+      title: "Total Investment",
       body: function (r, f) {
-        var last = f.rows[f.rows.length - 1];
-        return "<p>จำนวนลูกค้าที่ยังจ่ายอยู่พร้อมกัน เพื่อให้รายได้สุทธิคลุมต้นทุนทั้งเดือน</p>" +
-          "<pre>ต้นทุนรวมต่อเดือน ÷ Net Revenue ต่อลูกค้าต่อเดือน</pre>" +
-          "<p>" + baht(last.totalCost) + " ÷ " + baht(r.netMonth, 2) + " = <strong>" + n(f.summary.breakEvenCustomers) + " คน</strong></p>";
+        var s = f.summary;
+        return "<p>เงินออกทั้งหมดตลอดช่วงที่จำลอง</p>" +
+          "<pre>Initial Investment + Σ ( ต้นทุนการตลาด + ต้นทุนคงที่ )</pre>" +
+          "<table class='plain'><tbody>" +
+          "<tr><td>Initial Investment</td><td class='num'>" + baht(s.initialInvestment) + "</td></tr>" +
+          "<tr><td>ต้นทุนคงที่ " + n(state.months) + " เดือน</td><td class='num'>" + baht(s.totalFixed) + "</td></tr>" +
+          "<tr><td>ค่าโฆษณา</td><td class='num'>" + baht(s.totalAds) + "</td></tr>" +
+          "<tr><td>ค่าคอนเทนต์</td><td class='num'>" + baht(s.totalMarketing - s.totalAds) + "</td></tr>" +
+          "<tr class='tot'><td>รวม</td><td class='num'>" + baht(s.totalInvestment) + "</td></tr>" +
+          "</tbody></table>" +
+          "<p class='muted'>ต้นทุนคงที่คิดเป็น " + n(100 - s.marketingShareOfBurn, 1) + " % ของเงินออกทั้งหมด</p>" + conf("fixedCost");
+      }
+    },
+    maxCash: {
+      title: "Maximum Cash Exposure",
+      body: function (r, f) {
+        var s = f.summary;
+        var worst = f.rows.reduce(function (a, b) { return b.cumulativeCash < a.cumulativeCash ? b : a; }, f.rows[0]);
+        return "<p>จุดต่ำสุดของเงินสดสะสม คือเงินที่ต้องเตรียมรองรับจริง ไม่ใช่ยอดรวมที่จ่ายทั้งหมด</p>" +
+          "<pre>| ค่าต่ำสุดของ Cumulative Cash Flow |</pre>" +
+          "<p>ต่ำสุดที่เดือน " + worst.month + " = <strong>" + baht(s.maxCashRequired) + "</strong></p>" +
+          "<p class='muted'>ต่างจาก Total Investment (" + baht(s.totalInvestment) + ") เพราะรายได้ที่เข้ามาระหว่างทางช่วยชดเชยเงินออกบางส่วน</p>";
+      }
+    },
+    operatingBE: {
+      title: "Operating Break-even",
+      body: function (r, f) {
+        var s = f.summary;
+        return "<p>เดือนแรกที่ Contribution คลุมต้นทุนคงที่ได้ — ธุรกิจเลี้ยงตัวเองได้ในเดือนนั้น แต่<strong>ยังไม่ได้เงินลงทุนคืน</strong></p>" +
+          "<pre>เดือนแรกที่ Contribution ≥ Fixed Cost</pre>" +
+          "<p>ผลตอนนี้: <strong>" + month(s.operatingBreakEven) + "</strong></p>" +
+          "<p class='muted'>ต้องมีลูกค้าที่ยังจ่ายอยู่พร้อมกันราว " + n(s.breakEvenCustomers) + " คน</p>";
+      }
+    },
+    investmentPayback: {
+      title: "Investment Payback",
+      body: function (r, f) {
+        var s = f.summary;
+        var scan = M.horizonScan(state, 60);
+        return "<p>เดือนแรกที่เงินสดสะสมกลับมาเป็นบวก — ได้เงินที่ลงไปทั้งหมดคืนแล้ว</p>" +
+          "<pre>เดือนแรกที่ Cumulative Cash Flow ≥ 0</pre>" +
+          "<p>ในช่วง " + n(state.months) + " เดือนที่จำลอง: <strong>" + month(s.paybackMonth) + "</strong></p>" +
+          (s.paybackMonth ? "" :
+            "<p class='muted'>ขยายการมองไปถึง 60 เดือนด้วยสมมติฐานชุดเดียวกัน: " +
+            (scan.paybackMonth ? "คืนทุนที่ <strong>เดือน " + scan.paybackMonth + "</strong>" :
+              "<strong>ยังไม่คืนทุนเลย</strong> — สมมติฐานชุดนี้ไม่พาไปถึงจุดคืนทุนไม่ว่าจะรอนานแค่ไหน") + "</p>") +
+          "<p class='muted'>คนละเรื่องกับ Operating Break-even ซึ่งดูแค่ว่าเดือนนั้นเลี้ยงตัวเองได้หรือไม่</p>";
       }
     }
   };
@@ -182,50 +259,53 @@
     var v = state[c.k];
     return '<div class="ctrl">' +
       '<div class="ctrl-top">' +
-        '<label for="c-' + c.k + '">' + c.label +
-          (c.impact ? ' <span class="impact">HIGH IMPACT</span>' : '') + '</label>' +
-        '<output class="ctrl-val" id="v-' + c.k + '">' + c.fmt(v) + '</output>' +
-      '</div>' +
+        '<label for="c-' + c.k + '">' + c.label + "</label>" +
+        '<output class="ctrl-val" id="v-' + c.k + '">' + c.fmt(v) + "</output>" +
+      "</div>" +
+      '<div class="ctrl-badges">' + confBadge(c.k) + "</div>" +
       '<input type="range" id="c-' + c.k + '" data-key="' + c.k + '" min="' + c.min + '" max="' + c.max +
         '" step="' + c.step + '" value="' + v + '">' +
-      '<span class="ctrl-help">' + c.help + '</span>' +
-      (c.typical ? '<span class="ctrl-typical">ช่วงที่พบจริง · ' + c.typical + '</span>' : '') +
-    '</div>';
+      '<span class="ctrl-help">' + c.help + "</span>" +
+      (c.typical ? '<span class="ctrl-typical">ช่วงที่พบจริง · ' + c.typical + "</span>" : "") +
+      (M.META[c.k] && M.META[c.k].impact ? '<span class="ctrl-sens" id="sens-' + c.k + '"></span>' : "") +
+    "</div>";
   }
 
   function packageControlsHTML() {
-    var out = state.packages.map(function (p, i) {
+    return state.packages.map(function (p, i) {
       var rows = [
         { f: "price", label: "ราคา", min: 0, max: 500, step: 1, suffix: " ฿" },
-        { f: "freq", label: p.key === "monthly" ? "ครั้ง / เดือน" : (p.key === "daily" ? "วันที่ใช้ / เดือน" : "ครั้ง / เดือน"),
-          min: 0, max: 60, step: 1, suffix: "" },
+        { f: "freq", label: p.key === "monthly" ? "ครั้ง / เดือน" : (p.key === "daily" ? "วันที่ใช้ / เดือน" : "ครั้ง / เดือน"), min: 0, max: 60, step: 1, suffix: "" },
         { f: "share", label: "สัดส่วนผู้ใช้", min: 0, max: 100, step: 1, suffix: " %" }
       ];
-      return '<div class="pkg">' +
-        '<div class="pkg-name">' + p.label + '</div>' +
+      return '<div class="pkg"><div class="pkg-name">' + p.label + '<span class="badge b-estimate">ESTIMATE</span></div>' +
         rows.map(function (r) {
-          return '<div class="ctrl compact">' +
-            '<div class="ctrl-top"><label for="p-' + i + '-' + r.f + '">' + r.label + '</label>' +
-            '<output class="ctrl-val" id="pv-' + i + '-' + r.f + '">' + n(p[r.f], 0) + r.suffix + '</output></div>' +
-            '<input type="range" id="p-' + i + '-' + r.f + '" data-pkg="' + i + '" data-field="' + r.f +
-            '" data-suffix="' + r.suffix + '" min="' + r.min + '" max="' + r.max + '" step="' + r.step + '" value="' + p[r.f] + '">' +
-          '</div>';
-        }).join("") +
-      '</div>';
+          return '<div class="ctrl compact"><div class="ctrl-top">' +
+            '<label for="p-' + i + "-" + r.f + '">' + r.label + "</label>" +
+            '<output class="ctrl-val" id="pv-' + i + "-" + r.f + '">' + n(p[r.f], 0) + r.suffix + "</output></div>" +
+            '<input type="range" id="p-' + i + "-" + r.f + '" data-pkg="' + i + '" data-field="' + r.f +
+            '" data-suffix="' + r.suffix + '" min="' + r.min + '" max="' + r.max + '" step="' + r.step + '" value="' + p[r.f] + '"></div>';
+        }).join("") + "</div>";
     }).join("");
-
-    return out;
   }
 
   function itBaseHTML() {
-    return '<div class="ctrl">' +
-      '<div class="ctrl-top"><label for="c-itBase">ฐานที่หักส่วนแบ่งพาร์ตเนอร์</label></div>' +
+    return '<div class="ctrl"><div class="ctrl-top"><label for="c-itBase">Partner Share หักจากยอดไหน</label></div>' +
+      '<div class="ctrl-badges"><span class="badge b-confirmed">CONFIRMED</span></div>' +
       '<select id="c-itBase">' +
-        '<option value="net"' + (state.itBase === "net" ? " selected" : "") + '>Net Revenue — หักหลังแบ่งเครือข่ายแล้ว</option>' +
-        '<option value="gross"' + (state.itBase === "gross" ? " selected" : "") + '>Gross Revenue — หักจากยอดเก็บได้เต็ม</option>' +
-      '</select>' +
-      '<span class="ctrl-help">สัญญาส่วนใหญ่ใช้ Net · เปลี่ยนแล้วรายได้สุทธิเปลี่ยนทันที</span>' +
-    '</div>';
+      '<option value="net"' + (state.itBase === "net" ? " selected" : "") + ">Net Revenue — หักหลังแบ่งเครือข่ายแล้ว</option>" +
+      '<option value="gross"' + (state.itBase === "gross" ? " selected" : "") + ">Gross Revenue — หักจากยอดเก็บได้เต็ม</option>" +
+      "</select><span class='ctrl-help'>สัญญาส่วนใหญ่ใช้ Net · เปลี่ยนแล้วรายได้สุทธิเปลี่ยนทันที</span></div>";
+  }
+
+  function stressControlsHTML() {
+    return M.STRESS_KEYS.map(function (k) {
+      return '<div class="ctrl"><div class="ctrl-top">' +
+        '<label for="s-' + k.key + '">' + k.label + "</label>" +
+        '<output class="ctrl-val" id="sv-' + k.key + '">' + n(stressMul[k.key]) + " %</output></div>" +
+        '<input type="range" id="s-' + k.key + '" data-stress="' + k.key + '" min="40" max="160" step="5" value="' + stressMul[k.key] + '">' +
+        '<span class="ctrl-help">' + (k.dir === "up" ? "เลื่อนขึ้น = ต้นทุนแพงขึ้น" : "เลื่อนลง = แย่ลงกว่าที่ตั้งไว้") + "</span></div>";
+    }).join("");
   }
 
   function buildControls() {
@@ -233,95 +313,159 @@
     el("controls-model").innerHTML = CONTROLS.model.map(sliderHTML).join("") + itBaseHTML();
     el("controls-media").innerHTML = CONTROLS.media.map(sliderHTML).join("");
     el("controls-packages").innerHTML = packageControlsHTML();
+    el("controls-stress").innerHTML = stressControlsHTML();
   }
 
-  function syncControlValues() {
+  function syncControls() {
     ["investment", "model", "media"].forEach(function (g) {
       CONTROLS[g].forEach(function (c) {
-        var input = el("c-" + c.k), out = el("v-" + c.k);
-        if (input) input.value = state[c.k];
-        if (out) out.textContent = c.fmt(state[c.k]);
+        var i = el("c-" + c.k), o = el("v-" + c.k);
+        if (i) i.value = state[c.k];
+        if (o) o.textContent = c.fmt(state[c.k]);
       });
     });
     state.packages.forEach(function (p, i) {
       ["price", "freq", "share"].forEach(function (f) {
-        var input = el("p-" + i + "-" + f), out = el("pv-" + i + "-" + f);
-        if (input) input.value = p[f];
-        if (out) out.textContent = n(p[f], 0) + (input ? input.dataset.suffix : "");
+        var inp = el("p-" + i + "-" + f), out = el("pv-" + i + "-" + f);
+        if (inp) inp.value = p[f];
+        if (out) out.textContent = n(p[f], 0) + (inp ? inp.dataset.suffix : "");
       });
     });
-    var sel = el("c-itBase");
-    if (sel) sel.value = state.itBase;
+    M.STRESS_KEYS.forEach(function (k) {
+      var i = el("s-" + k.key), o = el("sv-" + k.key);
+      if (i) i.value = stressMul[k.key];
+      if (o) o.textContent = n(stressMul[k.key]) + " %";
+    });
+    if (el("c-itBase")) el("c-itBase").value = state.itBase;
   }
 
   /* ============================================================
      OUTPUT RENDERING
      ============================================================ */
   function kpi(label, value, sub, mod, key) {
-    return '<div class="kpi' + (mod ? " " + mod : "") + '">' +
-      '<small>' + label + '</small>' +
-      '<strong>' + value + '</strong>' +
-      '<span>' + (sub || "") + '</span>' +
-      (key ? '<button class="why" data-explain="' + key + '" type="button" aria-label="วิธีคำนวณ">?</button>' : '') +
-    '</div>';
+    return '<div class="kpi' + (mod ? " " + mod : "") + '"><small>' + label + "</small>" +
+      "<strong>" + value + "</strong><span>" + (sub || "") + "</span>" +
+      (key ? '<button class="why" data-explain="' + key + '" type="button" aria-label="ทำไมเป็นตัวเลขนี้">?</button>' : "") +
+      "</div>";
   }
 
   function renderHero(f) {
     var s = f.summary;
     el("hero-kpis").innerHTML =
-      kpi("Required Investment", baht(s.totalInvestment), n(state.months) + " เดือน รวมต้นทุนคงที่") +
-      kpi("Max Cash Exposure", baht(s.maxCashExposure), "เงินสดติดลบสูงสุดระหว่างทาง") +
-      kpi("Projected Customers", n(s.totalNewCustomers), "ลูกค้าใหม่สะสม") +
-      kpi("Break-even", s.breakEvenMonth ? "เดือน " + s.breakEvenMonth : "ยังไม่ถึง",
-          s.breakEvenMonth ? "รายได้สุทธิคลุมต้นทุนรวม" : "ภายใน " + n(state.months) + " เดือนนี้");
+      kpi("Total Investment", baht(s.totalInvestment), n(state.months) + " เดือน", "", "totalInvestment") +
+      kpi("Max Cash Exposure", baht(s.maxCashRequired), "เงินสดต่ำสุดที่ต้องรองรับ", "hl", "maxCash") +
+      kpi("Projected Customers", n(s.totalNewCustomers), "paid " + n(s.totalPaidCustomers) + " · organic " + n(s.totalOrganicCustomers)) +
+      kpi("Projected Net Revenue", baht(s.totalNetRevenue), "หลังหักส่วนแบ่งทั้งหมด") +
+      kpi("Operating Break-even", month(s.operatingBreakEven), "Payback " + month(s.paybackMonth),
+          s.operatingBreakEven ? "pos" : "neg", "operatingBE");
   }
 
-  function renderStep1(f) {
+  function renderSticky(f) {
     var s = f.summary;
-    var fixedTotal = state.fixedCost * state.months;
-    el("step1-cards").innerHTML =
-      '<div class="card"><div class="card-num">' + baht(state.fixedCost) + '</div>' +
-        '<h3>ต้นทุนคงที่ / เดือน</h3><p>จ่ายเท่ากันทุกเดือนไม่ว่าจะยิงโฆษณาหรือไม่ รวม ' + n(state.months) +
-        ' เดือนเป็น ' + baht(fixedTotal) + '</p></div>' +
-      '<div class="card"><div class="card-num orange">' + baht(s.totalMarketing) + '</div>' +
-        '<h3>ต้นทุนการตลาดรวม</h3><p>ค่าโฆษณา ' + baht(s.totalAds) + ' + คอนเทนต์ ' +
-        baht(s.totalMarketing - s.totalAds) + ' ปรับขึ้นลงได้ทุกเดือน</p></div>' +
-      '<div class="card"><div class="card-num blue">' + baht(s.totalInvestment) + '</div>' +
-        '<h3>เงินที่ต้องเตรียมทั้งหมด</h3><p>คงที่ + การตลาด ตลอด ' + n(state.months) +
-        ' เดือน · เงินสดติดลบสูงสุด ' + baht(s.maxCashExposure) + '</p></div>';
+    var items = [
+      ["Investment", baht(s.totalInvestment), ""],
+      ["Max Cash", baht(s.maxCashRequired), ""],
+      ["Customers", n(s.totalNewCustomers), ""],
+      ["Net Revenue", baht(s.totalNetRevenue), ""],
+      ["Contribution", baht(s.cumulativeContribution), s.cumulativeContribution >= 0 ? "pos" : "neg"],
+      ["Op. BE", month(s.operatingBreakEven), s.operatingBreakEven ? "pos" : "neg"],
+      ["Payback", month(s.paybackMonth), s.paybackMonth ? "pos" : "neg"]
+    ];
+    el("ss-items").innerHTML = items.map(function (it) {
+      return '<span class="ss-item"><small>' + it[0] + '</small><b class="' + it[2] + '">' + it[1] + "</b></span>";
+    }).join("");
+  }
+
+  function renderInvestment(f) {
+    var s = f.summary;
+    el("fixed-hero").innerHTML =
+      '<div class="fh-main"><small>Fixed Cost — ตัวขับต้นทุนหลักของธุรกิจนี้</small>' +
+      "<strong>" + baht(state.fixedCost) + " <em>/ เดือน</em></strong>" +
+      "<span>คิดเป็น " + n(100 - s.marketingShareOfBurn, 1) + " % ของเงินออกทั้งหมด และ " +
+      baht(s.totalFixed) + " ตลอด " + n(state.months) + " เดือน · จ่ายเท่ากันทุกเดือนไม่ว่าจะขายได้หรือไม่</span>" +
+      '<span class="badge b-confirmed">CONFIRMED</span></div>' +
+      '<div class="fh-side"><div class="fh-bar"><i style="width:' + Math.min(100, 100 - s.marketingShareOfBurn) + '%"></i></div>' +
+      '<div class="fh-legend"><span><i class="sw sw-fixed"></i>Fixed ' + n(100 - s.marketingShareOfBurn, 0) + " %</span>" +
+      '<span><i class="sw sw-mkt"></i>Marketing ' + n(s.marketingShareOfBurn, 0) + " %</span></div></div>";
+
+    el("invest-cards").innerHTML =
+      kpi("Total Investment", baht(s.totalInvestment), "Initial " + baht(s.initialInvestment) + " + รายเดือน", "", "totalInvestment") +
+      kpi("Monthly Burn", baht(s.monthlyBurn), "เฉลี่ยต่อเดือน") +
+      kpi("Maximum Cash Required", baht(s.maxCashRequired), "จุดต่ำสุดของเงินสดสะสม", "hl", "maxCash") +
+      kpi("Marketing % of Burn", n(s.marketingShareOfBurn, 1) + " %", "ที่เหลือคือต้นทุนคงที่");
+  }
+
+  function renderSensitivityInline(list) {
+    list.forEach(function (x) {
+      var node = el("sens-" + x.key);
+      if (!node) return;
+      node.innerHTML = "ถ้า" + x.desc + " (" + n(x.from) + " → " + n(x.to) + ") · Contribution " +
+        '<b class="' + (x.deltaContribution < 0 ? "neg" : "pos") + '">' + signed(x.deltaContribution) + "</b>" +
+        " · เงินสดที่ต้องเตรียม <b class='" + (x.deltaMaxCash > 0 ? "neg" : "pos") + "'>" + signed(x.deltaMaxCash) + "</b>";
+    });
+  }
+
+  function renderRisks(list) {
+    var html = "<thead><tr><th>#</th><th>สมมติฐาน</th><th>ช็อกที่ทดสอบ</th><th class='num'>Δ Contribution</th>" +
+      "<th class='num'>Δ เงินสดที่ต้องเตรียม</th><th class='num'>Δ ลูกค้า</th><th>Operating BE</th></tr></thead><tbody>";
+    list.forEach(function (x, i) {
+      html += '<tr data-shock="' + x.key + '"><td>' + (i + 1) + "</td>" +
+        "<td>" + x.label + " " + confBadge(x.key) + "</td>" +
+        "<td>" + x.desc + " · " + n(x.from) + " → " + n(x.to) + "</td>" +
+        '<td class="num ' + (x.deltaContribution < 0 ? "neg" : "pos") + '">' + signed(x.deltaContribution) + "</td>" +
+        '<td class="num ' + (x.deltaMaxCash > 0 ? "neg" : "pos") + '">' + signed(x.deltaMaxCash) + "</td>" +
+        '<td class="num">' + n(x.deltaCustomers) + "</td>" +
+        "<td>" + month(x.baseOperatingBreakEven) + " → " + month(x.operatingBreakEven) + "</td></tr>";
+    });
+    el("risk-table").innerHTML = html + "</tbody>";
+  }
+
+  function renderStress() {
+    var res = M.stress(state, stressMul);
+    var d = res.delta;
+    el("stress-result").innerHTML =
+      kpi("Contribution", baht(res.stressed.cumulativeContribution), "เดิม " + baht(res.base.cumulativeContribution) + " · " + signed(d.contribution),
+          d.contribution < 0 ? "neg" : "pos") +
+      kpi("Max Cash Required", baht(res.stressed.maxCashRequired), "เดิม " + baht(res.base.maxCashRequired) + " · " + signed(d.maxCashRequired),
+          d.maxCashRequired > 0 ? "neg" : "pos") +
+      kpi("Customers", n(res.stressed.totalNewCustomers), "เดิม " + n(res.base.totalNewCustomers) + " · " + n(d.customers),
+          d.customers < 0 ? "neg" : "pos") +
+      kpi("Operating Break-even", month(res.stressed.operatingBreakEven), "เดิม " + month(res.base.operatingBreakEven),
+          res.stressed.operatingBreakEven ? "pos" : "neg") +
+      kpi("Investment Payback", month(res.stressed.paybackMonth), "เดิม " + month(res.base.paybackMonth),
+          res.stressed.paybackMonth ? "pos" : "neg");
   }
 
   function renderFunnel(f) {
-    var rows = f.rows.filter(function (r) { return r.adSpend > 0; });
-    var ref = rows.length ? rows[rows.length - 1] : f.rows[f.rows.length - 1];
+    var withAds = f.rows.filter(function (r) { return r.adSpend > 0; });
+    var ref = withAds.length ? withAds[withAds.length - 1] : f.rows[f.rows.length - 1];
     var steps = [
       { label: "Ad Spend", value: baht(ref.adSpend), sub: "เดือน " + ref.month },
       { label: "Impressions", value: n(ref.impressions), sub: "CPM " + baht(state.cpm) },
       { label: "Clicks", value: n(ref.clicks), sub: "CTR " + n(state.ctr, 1) + " %" },
-      { label: ref.selling ? "New Customers" : "Leads",
-        value: n(ref.selling ? ref.newPaid : ref.leads),
+      { label: ref.selling ? "New Customers" : "Leads", value: n(ref.selling ? ref.newPaid : ref.leads),
         sub: ref.selling ? "CVR " + n(state.cvr, 1) + " %" : "คลิก → รายชื่อ " + n(state.leadRate, 1) + " %" },
       { label: ref.selling ? "Paid CPA" : "CPL",
         value: baht(ref.selling ? ref.paidCPA : (ref.leads > 0 ? ref.adSpend / ref.leads : NaN), 2),
         sub: ref.selling ? "ต่อลูกค้า 1 คน" : "ต่อรายชื่อ 1 คน" }
     ];
     el("funnel").innerHTML = steps.map(function (s, i) {
-      return '<div class="fstep"><small>' + s.label + '</small><strong>' + s.value + '</strong><span>' + s.sub + '</span></div>' +
+      return '<div class="fstep"><small>' + s.label + "</small><strong>" + s.value + "</strong><span>" + s.sub + "</span></div>" +
         (i < steps.length - 1 ? '<div class="farrow" aria-hidden="true">→</div>' : "");
     }).join("");
-
     el("media-note").textContent = ref.selling
       ? "ตัวเลขนี้คือเดือน " + ref.month + " ซึ่งขายได้แล้ว โฆษณาจึงวัดเป็นลูกค้าและ Paid CPA"
       : "เดือน " + ref.month + " ระบบยังเก็บเงินไม่ได้ โฆษณาจึงวัดเป็นรายชื่อและ CPL — อย่าเอาไปเทียบเพดานค่าได้ลูกค้า";
   }
 
-  function renderMediaMetrics(f) {
+  function renderAcquisition(f) {
     var s = f.summary;
-    el("media-metrics").innerHTML =
-      kpi("Paid CPA", baht(s.paidCPA, 2), "เฉลี่ยตลอดช่วง", "", "paidCPA") +
-      kpi("Blended CAC", baht(s.blendedCAC, 2), "รวม organic แล้ว", "", "blendedCAC") +
-      kpi("ลูกค้าจากโฆษณา", n(s.totalPaidCustomers), "รวมที่แปลงจากรายชื่อ") +
-      kpi("ลูกค้าทั้งหมด", n(s.totalNewCustomers), "รวม organic");
+    el("acq-split").innerHTML =
+      kpi("Paid Customers", n(s.totalPaidCustomers), "มาจากค่าโฆษณา") +
+      kpi("Organic Customers", n(s.totalOrganicCustomers), n(s.organicShare, 1) + " % ของลูกค้าใหม่") +
+      kpi("Total Customers", n(s.totalNewCustomers), "รวมทั้งสองทาง") +
+      kpi("Paid CPA", baht(s.paidCPA, 2), "ค่าโฆษณา ÷ ลูกค้าจากโฆษณา", "", "paidCPA") +
+      kpi("Blended CAC", baht(s.blendedCAC, 2), "ต้นทุนการตลาด ÷ ลูกค้าทั้งหมด", "hl", "blendedCAC");
   }
 
   function renderWaterfall(f) {
@@ -330,20 +474,17 @@
       { label: "Gross Revenue", value: baht(r.grossMonth, 2), note: "ยอดเรียกเก็บ / เดือน", key: "grossMonth" },
       { label: "เก็บสำเร็จ " + n(state.collectionRate) + " %", value: baht(r.collected, 2), note: "หลัง Collection Rate" },
       { label: "หลังแบ่งเครือข่าย " + n(state.aisShare) + " %", value: baht(r.afterNetwork, 2), note: "" },
-      { label: "หักพาร์ตเนอร์ " + n(state.itShare) + " %", value: "− " + baht(r.partnerCut, 2), note: state.itBase === "gross" ? "ฐาน Gross" : "ฐาน Net", neg: true },
+      { label: "หัก Partner Share " + n(state.itShare) + " %", value: "− " + baht(r.partnerCut, 2), note: state.itBase === "gross" ? "ฐาน Gross" : "ฐาน Net", neg: true },
       { label: "Net Revenue", value: baht(r.netMonth, 2), note: "margin " + n(r.margin, 1) + " %", key: "netMonth", final: true }
     ];
     el("waterfall").innerHTML = items.map(function (it) {
       return '<div class="wf' + (it.final ? " wf-final" : "") + (it.neg ? " wf-neg" : "") + '">' +
-        '<small>' + it.label + '</small>' +
-        '<strong>' + it.value + '</strong>' +
-        '<span>' + it.note + '</span>' +
-        (it.key ? '<button class="why" data-explain="' + it.key + '" type="button" aria-label="วิธีคำนวณ">?</button>' : '') +
-      '</div>';
+        "<small>" + it.label + "</small><strong>" + it.value + "</strong><span>" + it.note + "</span>" +
+        (it.key ? '<button class="why" data-explain="' + it.key + '" type="button" aria-label="ทำไมเป็นตัวเลขนี้">?</button>' : "") + "</div>";
     }).join("");
   }
 
-  function renderUnitMetrics(f) {
+  function renderUnit(f) {
     var r = f.revenue, s = f.summary;
     var healthy = isFinite(s.ltvCacRatio) && s.ltvCacRatio >= 3;
     el("unit-metrics").innerHTML =
@@ -352,17 +493,20 @@
       kpi("Contribution สะสม", baht(s.cumulativeContribution),
           s.cumulativeContribution >= 0 ? "การตลาดเลี้ยงตัวเองได้" : "ยังไม่คุ้มค่าการตลาด",
           s.cumulativeContribution >= 0 ? "pos" : "neg", "contribution") +
-      kpi("Net LTV : Blended CAC", n(s.ltvCacRatio, 2) + " : 1", "ต้องได้ 3.00 ขึ้นไป",
-          healthy ? "pos" : "neg") +
-      kpi("Payback", n(s.paybackDays) + " วัน", "อายุลูกค้า " + n(state.lifetimeDays) + " วัน",
+      kpi("Net LTV : Blended CAC", n(s.ltvCacRatio, 2) + " : 1", "ต้องได้ 3.00 ขึ้นไป", healthy ? "pos" : "neg") +
+      kpi("Payback ต่อลูกค้า", n(s.paybackDays) + " วัน", "Lifetime " + n(state.lifetimeDays) + " วัน",
           isFinite(s.paybackDays) && s.paybackDays <= state.lifetimeDays ? "pos" : "neg", "payback") +
-      kpi("ลูกค้าที่ต้องมีพร้อมกัน", n(s.breakEvenCustomers), "เพื่อคลุมต้นทุนต่อเดือน", "", "breakEvenCustomers");
+      kpi("ROAS", n(s.roas, 2), "ไม่ใช่กำไร", "", "roas");
 
     el("roas-note").innerHTML =
-      "ROAS ของช่วงจำลองนี้คือ <strong>" + n(f.summary.roas, 2) + "</strong> — คิดจากรายได้สุทธิหารค่าโฆษณาเท่านั้น " +
-      "ยังไม่หักค่าคอนเทนต์ " + baht(s.totalMarketing - s.totalAds) + " และต้นทุนคงที่ " + baht(state.fixedCost * state.months) +
-      " ตัวเลขที่บอกว่าธุรกิจอยู่ได้หรือไม่คือ Contribution และเงินสดสะสม ไม่ใช่ ROAS " +
-      '<button class="why inline" data-explain="roas" type="button">ดูวิธีคำนวณ</button>';
+      "ROAS ของช่วงนี้คือ <strong>" + n(s.roas, 2) + "</strong> คิดจากรายได้สุทธิหารค่าโฆษณาเท่านั้น " +
+      "ยังไม่หักค่าคอนเทนต์ " + baht(s.totalMarketing - s.totalAds) + " และต้นทุนคงที่ " + baht(s.totalFixed) +
+      " ตัวที่บอกว่าธุรกิจอยู่ได้หรือไม่คือ Contribution และเงินสดสะสม ไม่ใช่ ROAS";
+
+    el("cac-note").innerHTML =
+      "<strong>Paid CPA " + baht(s.paidCPA, 2) + "</strong> = ค่าโฆษณา ÷ ลูกค้าจากโฆษณา ใช้ตัดสินว่าจะเพิ่มหรือลดงบชุดไหน<br>" +
+      "<strong>Blended CAC " + baht(s.blendedCAC, 2) + "</strong> = (ค่าโฆษณา + ค่าคอนเทนต์) ÷ ลูกค้าทั้งหมดรวม organic ใช้ตัดสินว่าธุรกิจทั้งก้อนคุ้มหรือไม่<br>" +
+      "ต่างกัน " + baht(Math.abs(s.paidCPA - s.blendedCAC), 2) + " ต่อคน เพราะ organic คิดเป็น " + n(s.organicShare, 1) + " % ของลูกค้าใหม่";
   }
 
   function renderForecast(f) {
@@ -370,93 +514,218 @@
       ["เดือน", function (r) { return r.month; }, ""],
       ["Marketing", function (r) { return n(r.marketingSpend); }, "num"],
       ["Fixed", function (r) { return n(r.fixedCost); }, "num"],
-      ["Total Cost", function (r) { return n(r.totalCost); }, "num"],
+      ["Cash Out", function (r) { return n(r.cashOut); }, "num strong-col"],
       ["New Cust.", function (r) { return r.selling ? n(r.newCustomers) : "—"; }, "num"],
       ["Active", function (r) { return r.selling ? n(r.activeCustomers) : "—"; }, "num"],
       ["Gross Rev.", function (r) { return n(r.grossRevenue); }, "num"],
-      ["Net Rev.", function (r) { return n(r.netRevenue); }, "num"],
+      ["Cash In", function (r) { return n(r.cashIn); }, "num strong-col"],
       ["Contribution", function (r) { return n(r.contribution); }, "num"],
-      ["Cumulative Cash", function (r) { return n(r.cumulativeCash); }, "num"]
+      ["Net Cash Flow", function (r) { return n(r.netCashFlow); }, "num"],
+      ["Cumulative", function (r) { return n(r.cumulativeCash); }, "num strong-col"]
     ];
-    var be = f.summary.breakEvenMonth;
-    var html = "<thead><tr>" + cols.map(function (c) {
-      return '<th class="' + c[2] + '">' + c[0] + "</th>";
-    }).join("") + "</tr></thead><tbody>";
+    var s = f.summary;
+    var html = "<thead><tr>" + cols.map(function (c) { return '<th class="' + c[2] + '">' + c[0] + "</th>"; }).join("") + "</tr></thead><tbody>";
     f.rows.forEach(function (r) {
-      html += '<tr class="' + (r.month === be ? "is-be" : "") + '">' + cols.map(function (c) {
-        var v = c[1](r);
-        var cls = c[2];
-        if (c[0] === "Contribution" || c[0] === "Cumulative Cash") {
-          var raw = c[0] === "Contribution" ? r.contribution : r.cumulativeCash;
-          cls += raw < 0 ? " neg" : " pos";
-        }
-        return '<td class="' + cls + '">' + v + "</td>";
+      var cls = r.month === s.operatingBreakEven ? "is-be" : (r.month === s.paybackMonth ? "is-pb" : "");
+      html += '<tr class="' + cls + '">' + cols.map(function (c) {
+        var v = c[1](r), cc = c[2];
+        if (c[0] === "Contribution") cc += r.contribution < 0 ? " neg" : " pos";
+        if (c[0] === "Net Cash Flow") cc += r.netCashFlow < 0 ? " neg" : " pos";
+        if (c[0] === "Cumulative") cc += r.cumulativeCash < 0 ? " neg" : " pos";
+        return '<td class="' + cc + '">' + v + "</td>";
       }).join("") + "</tr>";
     });
-    html += "</tbody>";
-    el("forecast-table").innerHTML = html;
+    el("forecast-table").innerHTML = html + "</tbody>";
+    el("forecast-note").innerHTML =
+      "แถบเขียว = Operating Break-even (" + month(s.operatingBreakEven) + ") · แถบฟ้า = Investment Payback (" + month(s.paybackMonth) + ") · " +
+      "จุดต่ำสุดของ Cumulative คือ " + baht(-s.maxCashRequired) + " ซึ่งคือเงินที่ต้องเตรียมจริง";
     drawChart(f);
   }
 
-  /* ---------- chart: bars = cost vs net revenue, line = cumulative cash ---------- */
   function drawChart(f) {
     var rows = f.rows;
-    var W = 760, H = 300, padL = 56, padR = 16, padT = 16, padB = 36;
+    var W = 780, H = 300, padL = 60, padR = 16, padT = 16, padB = 36;
     var plotW = W - padL - padR, plotH = H - padT - padB;
-    var maxBar = Math.max.apply(null, rows.map(function (r) { return Math.max(r.totalCost, r.netRevenue); })).valueOf() || 1;
-    var cums = rows.map(function (r) { return r.cumulativeCash; });
-    var cumMin = Math.min.apply(null, cums.concat([0]));
-    var cumMax = Math.max.apply(null, cums.concat([0]));
+    var maxBar = Math.max.apply(null, rows.map(function (r) { return Math.max(r.cashOut, r.cashIn); })) || 1;
+    var cums = rows.map(function (r) { return r.cumulativeCash; }).concat([0]);
+    var cumMin = Math.min.apply(null, cums), cumMax = Math.max.apply(null, cums);
     var cumSpan = (cumMax - cumMin) || 1;
-
-    var gw = plotW / rows.length;
-    var bw = Math.min(18, gw / 3);
+    var gw = plotW / rows.length, bw = Math.min(16, gw / 3);
 
     function barY(v) { return padT + plotH - (v / maxBar) * plotH; }
     function barH(v) { return (v / maxBar) * plotH; }
     function cumY(v) { return padT + plotH - ((v - cumMin) / cumSpan) * plotH; }
 
-    var parts = [];
-    // grid + y labels for the bar scale
+    var p = [];
     [0, 0.25, 0.5, 0.75, 1].forEach(function (t) {
       var y = padT + plotH - t * plotH;
-      parts.push('<line class="g" x1="' + padL + '" y1="' + y.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + y.toFixed(1) + '"></line>');
-      parts.push('<text class="ax" x="' + (padL - 8) + '" y="' + (y + 4).toFixed(1) + '" text-anchor="end">' + n(maxBar * t / 1000) + 'K</text>');
+      p.push('<line class="g" x1="' + padL + '" y1="' + y.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + y.toFixed(1) + '"></line>');
+      p.push('<text class="ax" x="' + (padL - 8) + '" y="' + (y + 4).toFixed(1) + '" text-anchor="end">' + n(maxBar * t / 1000) + "K</text>");
     });
-    // zero line for cumulative
-    var zeroY = cumY(0);
-    parts.push('<line class="zero" x1="' + padL + '" y1="' + zeroY.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + zeroY.toFixed(1) + '"></line>');
+    p.push('<line class="zero" x1="' + padL + '" y1="' + cumY(0).toFixed(1) + '" x2="' + (W - padR) + '" y2="' + cumY(0).toFixed(1) + '"></line>');
 
     rows.forEach(function (r, i) {
       var cx = padL + i * gw + gw / 2;
-      parts.push('<rect class="b-cost" x="' + (cx - bw - 2).toFixed(1) + '" y="' + barY(r.totalCost).toFixed(1) +
-        '" width="' + bw.toFixed(1) + '" height="' + barH(r.totalCost).toFixed(1) + '" rx="2"></rect>');
-      parts.push('<rect class="b-rev" x="' + (cx + 2).toFixed(1) + '" y="' + barY(r.netRevenue).toFixed(1) +
-        '" width="' + bw.toFixed(1) + '" height="' + barH(r.netRevenue).toFixed(1) + '" rx="2"></rect>');
-      parts.push('<text class="ax" x="' + cx.toFixed(1) + '" y="' + (H - 12) + '" text-anchor="middle">' + r.month + '</text>');
+      p.push('<rect class="b-cost" x="' + (cx - bw - 2).toFixed(1) + '" y="' + barY(r.cashOut).toFixed(1) +
+        '" width="' + bw.toFixed(1) + '" height="' + barH(r.cashOut).toFixed(1) + '" rx="2"></rect>');
+      p.push('<rect class="b-rev" x="' + (cx + 2).toFixed(1) + '" y="' + barY(r.cashIn).toFixed(1) +
+        '" width="' + bw.toFixed(1) + '" height="' + barH(r.cashIn).toFixed(1) + '" rx="2"></rect>');
+      if (rows.length <= 18 || r.month % 2 === 0) {
+        p.push('<text class="ax" x="' + cx.toFixed(1) + '" y="' + (H - 12) + '" text-anchor="middle">' + r.month + "</text>");
+      }
     });
 
-    var pts = rows.map(function (r, i) {
+    p.push('<polyline class="cum" points="' + rows.map(function (r, i) {
       return (padL + i * gw + gw / 2).toFixed(1) + "," + cumY(r.cumulativeCash).toFixed(1);
-    }).join(" ");
-    parts.push('<polyline class="cum" points="' + pts + '"></polyline>');
+    }).join(" ") + '"></polyline>');
     rows.forEach(function (r, i) {
-      parts.push('<circle class="cum-dot" cx="' + (padL + i * gw + gw / 2).toFixed(1) +
-        '" cy="' + cumY(r.cumulativeCash).toFixed(1) + '" r="3"></circle>');
+      p.push('<circle class="cum-dot" cx="' + (padL + i * gw + gw / 2).toFixed(1) + '" cy="' + cumY(r.cumulativeCash).toFixed(1) + '" r="2.6"></circle>');
     });
 
-    el("chart").innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="กราฟต้นทุนรวม รายได้สุทธิ และเงินสดสะสมรายเดือน">' +
-      parts.join("") + "</svg>";
+    el("chart").innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="กราฟเงินเข้า เงินออก และเงินสดสะสมรายเดือน">' + p.join("") + "</svg>";
   }
 
-  /* ---------- floating contribution balloon ---------- */
-  var prevContribution = null;
+  function renderBreakEven(f) {
+    var s = f.summary;
+    var scan = M.horizonScan(state, 60);
+    el("be-grid").innerHTML =
+      '<div class="be-card' + (s.operatingBreakEven ? " ok" : " miss") + '">' +
+        '<div class="be-tag">Monthly Operating Break-even</div>' +
+        "<strong>" + month(s.operatingBreakEven) + "</strong>" +
+        "<p>เดือนแรกที่ Contribution คลุมต้นทุนคงที่ได้ ธุรกิจเลี้ยงตัวเองได้ในเดือนนั้น แต่ยังไม่ได้เงินลงทุนคืน</p>" +
+        "<p class='be-sub'>ต้องมีลูกค้าที่ยังจ่ายอยู่พร้อมกันราว <b>" + n(s.breakEvenCustomers) + " คน</b>" +
+        (s.operatingBreakEven ? "" : (scan.operatingBreakEven ? " · ถ้าเดินต่อจะถึงที่เดือน " + scan.operatingBreakEven : " · ยังไม่ถึงแม้มองไป 60 เดือน")) + "</p>" +
+        '<button class="why inline" data-explain="operatingBE" type="button">ทำไมเป็นตัวเลขนี้</button></div>' +
+      '<div class="be-card' + (s.paybackMonth ? " ok" : " miss") + '">' +
+        '<div class="be-tag">Investment Payback</div>' +
+        "<strong>" + month(s.paybackMonth) + "</strong>" +
+        "<p>เดือนแรกที่เงินสดสะสมกลับมาเป็นบวก ได้เงินที่ลงไปทั้งหมดคืนแล้ว</p>" +
+        "<p class='be-sub'>เงินสดสะสมตอนจบช่วง <b class='" + (s.cumulativeCash >= 0 ? "pos" : "neg") + "'>" + baht(s.cumulativeCash) + "</b>" +
+        (s.paybackMonth ? "" : (scan.paybackMonth ? " · ถ้าเดินต่อจะคืนทุนที่เดือน " + scan.paybackMonth : " · ยังไม่คืนทุนแม้มองไป 60 เดือน")) + "</p>" +
+        '<button class="why inline" data-explain="investmentPayback" type="button">ทำไมเป็นตัวเลขนี้</button></div>';
+  }
 
+  function isCell(label, value, sub, mod) {
+    return '<div class="is-cell' + (mod === "hl" ? " is-hl" : "") + '"><small>' + label + "</small>" +
+      '<strong class="' + (mod === "pos" || mod === "neg" ? mod : "") + '">' + value + "</strong><span>" + sub + "</span></div>";
+  }
+
+  function verdict(f, risks) {
+    var s = f.summary;
+    var top = risks[0];
+    var head;
+    if (!s.operatingBreakEven) {
+      head = "ภายใน " + n(state.months) + " เดือนนี้ Contribution ยังไม่คลุมต้นทุนคงที่สักเดือน ต้องเตรียมเงินสดรองรับ " +
+        baht(s.maxCashRequired) + " และยังไม่มีเดือนที่ได้เงินลงทุนคืน";
+    } else if (!s.paybackMonth) {
+      head = "เลี้ยงตัวเองได้ตั้งแต่เดือน " + s.operatingBreakEven + " แต่เงินสดสะสมยังติดลบ " + baht(-s.cumulativeCash) +
+        " ตอนจบช่วง ยังไม่ถึงจุดคืนทุน";
+    } else {
+      head = "เลี้ยงตัวเองได้เดือน " + s.operatingBreakEven + " และคืนทุนเดือน " + s.paybackMonth +
+        " เงินสดติดลบสูงสุดระหว่างทาง " + baht(s.maxCashRequired);
+    }
+    return head + " · ตัวแปรที่ขยับผลมากที่สุดคือ <strong>" + top.label + "</strong> — " + top.desc +
+      " ทำให้ Contribution เปลี่ยน " + signed(top.deltaContribution);
+  }
+
+  function renderSummary(f, risks) {
+    var s = f.summary;
+    el("investment-summary").innerHTML =
+      '<div class="is-head"><span class="is-eyebrow">Investment Summary</span>' +
+      '<span class="is-scenario">' + M.SCENARIO_LABEL[scenario] + " · " + n(state.months) + " เดือน</span></div>" +
+      '<div class="is-grid">' +
+        isCell("Total Investment", baht(s.totalInvestment), "Initial + ต้นทุนคงที่ + การตลาด") +
+        isCell("Maximum Cash Exposure", baht(s.maxCashRequired), "เงินสดต่ำสุดที่ต้องรองรับ", "hl") +
+        isCell("Projected Customers", n(s.totalNewCustomers), "paid " + n(s.totalPaidCustomers) + " · organic " + n(s.totalOrganicCustomers)) +
+        isCell("Projected Net Revenue", baht(s.totalNetRevenue), "หลังหักส่วนแบ่งทั้งหมด") +
+        isCell("Projected Contribution", baht(s.cumulativeContribution), "Net Revenue − ต้นทุนการตลาด", s.cumulativeContribution >= 0 ? "pos" : "neg") +
+        isCell("Cumulative Cash Flow", baht(s.cumulativeCash), "ตอนจบช่วงที่จำลอง", s.cumulativeCash >= 0 ? "pos" : "neg") +
+        isCell("Operating Break-even", month(s.operatingBreakEven), "Contribution ≥ Fixed Cost", s.operatingBreakEven ? "pos" : "neg") +
+        isCell("Investment Payback", month(s.paybackMonth), "Cumulative Cash Flow ≥ 0", s.paybackMonth ? "pos" : "neg") +
+      "</div>" +
+      '<p class="is-foot">' + verdict(f, risks) + "</p>";
+  }
+
+  function renderChangeTable(risks) {
+    var html = "<thead><tr><th>สมมติฐาน</th><th>ที่มา</th><th>ถ้าแย่ลง</th><th class='num'>Δ Contribution</th><th class='num'>Δ เงินสดที่ต้องเตรียม</th></tr></thead><tbody>";
+    risks.forEach(function (x) {
+      html += "<tr><td>" + x.label + "</td><td>" + confBadge(x.key) + "</td><td>" + x.desc + "</td>" +
+        '<td class="num ' + (x.deltaContribution < 0 ? "neg" : "pos") + '">' + signed(x.deltaContribution) + "</td>" +
+        '<td class="num ' + (x.deltaMaxCash > 0 ? "neg" : "pos") + '">' + signed(x.deltaMaxCash) + "</td></tr>";
+    });
+    el("change-table").innerHTML = html + "</tbody>";
+  }
+
+  function renderScenarioTable() {
+    var list = M.compareScenarios(state);
+    var html = "<thead><tr><th>Scenario</th><th class='num'>Investment</th><th class='num'>Customers</th>" +
+      "<th class='num'>Net Revenue</th><th class='num'>Contribution</th><th class='num'>Max Cash</th>" +
+      "<th>Operating BE</th><th>Payback</th></tr></thead><tbody>";
+    list.forEach(function (x) {
+      var s = x.summary;
+      html += '<tr class="' + (x.key === scenario ? "is-current" : "") + '" data-scenario-row="' + x.key + '">' +
+        "<td><b>" + x.label + "</b></td>" +
+        '<td class="num">' + n(s.totalInvestment) + "</td>" +
+        '<td class="num">' + n(s.totalNewCustomers) + "</td>" +
+        '<td class="num">' + n(s.totalNetRevenue) + "</td>" +
+        '<td class="num ' + (s.cumulativeContribution < 0 ? "neg" : "pos") + '">' + n(s.cumulativeContribution) + "</td>" +
+        '<td class="num">' + n(s.maxCashRequired) + "</td>" +
+        "<td>" + month(s.operatingBreakEven) + "</td><td>" + month(s.paybackMonth) + "</td></tr>";
+    });
+    el("scenario-table").innerHTML = html + "</tbody>";
+  }
+
+  function renderConfTable() {
+    var rows = [
+      ["Fixed Cost", "fixedCost"], ["Revenue Share — เครือข่าย", "aisShare"], ["Partner Share", "itShare"],
+      ["ราคาแพ็กเกจ", "packagePrice"], ["Collection Rate", "collectionRate"], ["CPM", "cpm"], ["CTR", "ctr"],
+      ["Conversion Rate", "cvr"], ["Customer Lifetime", "lifetimeDays"], ["Organic Customers", "organicAtEnd"],
+      ["เปิดขายเดือนที่", "launchMonth"]
+    ];
+    var html = "<thead><tr><th>สมมติฐาน</th><th>ความเชื่อมั่น</th><th>ที่มา</th></tr></thead><tbody>";
+    rows.forEach(function (r) {
+      var m = M.META[r[1]] || {};
+      html += "<tr><td>" + r[0] + "</td><td>" + confBadge(r[1]) + "</td><td>" + (m.note || "—") + "</td></tr>";
+    });
+    el("conf-table").innerHTML = html + "</tbody>";
+  }
+
+  function renderFormulaList(f) {
+    var r = f.revenue;
+    el("formula-list").innerHTML = "<pre>" +
+      "Gross Revenue / เดือน   = Σ ( สัดส่วน × ราคา × ความถี่ )\n" +
+      "Collected               = Gross × Collection Rate\n" +
+      "After Network Share     = Collected × ( 1 − Revenue Share )\n" +
+      "Partner Cut             = " + (state.itBase === "gross" ? "Collected" : "After Network Share") + " × Partner Share\n" +
+      "Net Revenue / เดือน     = After Network Share − Partner Cut\n\n" +
+      "Gross LTV               = Gross / เดือน × ( Lifetime ÷ 30 )\n" +
+      "Net LTV                 = Net / เดือน × ( Lifetime ÷ 30 )\n\n" +
+      "Impressions             = ค่าโฆษณา ÷ CPM × 1,000\n" +
+      "Clicks                  = Impressions × CTR\n" +
+      "New Paid Customers      = Clicks × CVR\n" +
+      "Leads (ก่อนเปิดขาย)      = Clicks × คลิก→รายชื่อ\n\n" +
+      "Paid CPA                = ค่าโฆษณา ÷ ลูกค้าจากโฆษณา\n" +
+      "Blended CAC             = ( ค่าโฆษณา + ค่าคอนเทนต์ ) ÷ ลูกค้าใหม่ทั้งหมด\n" +
+      "Monthly Churn           = 1 ÷ ( Lifetime ÷ 30 )\n" +
+      "Active Customers        = Active ก่อนหน้า × ( 1 − Churn ) + ลูกค้าใหม่\n\n" +
+      "Cash Out                = ต้นทุนการตลาด + ต้นทุนคงที่\n" +
+      "Cash In                 = Active Customers × Net Revenue / เดือน\n" +
+      "Contribution            = Cash In − ต้นทุนการตลาด\n" +
+      "Net Cash Flow           = Cash In − Cash Out\n" +
+      "Cumulative Cash Flow    = สะสม Net Cash Flow เริ่มจาก −Initial Investment\n\n" +
+      "Operating Break-even    = เดือนแรกที่ Contribution ≥ Fixed Cost\n" +
+      "Investment Payback      = เดือนแรกที่ Cumulative Cash Flow ≥ 0\n" +
+      "Maximum Cash Exposure   = | ค่าต่ำสุดของ Cumulative Cash Flow |" +
+      "</pre><p class='muted'>ค่าปัจจุบัน: Gross " + baht(r.grossMonth, 2) + " → Net " + baht(r.netMonth, 2) +
+      " ต่อเดือน (margin " + n(r.margin, 1) + " %) · Net LTV " + baht(r.netLTV, 2) + "</p>";
+  }
+
+  /* ---------- floating balloon ---------- */
+  var prevContribution = null;
   function renderFab(f) {
     var box = el("fab");
     if (!box) return;
-    var v = f.summary.cumulativeContribution;
-
+    var s = f.summary, v = s.cumulativeContribution;
     el("fab-value").textContent = baht(v);
     box.classList.toggle("is-pos", v >= 0);
     box.classList.toggle("is-neg", v < 0);
@@ -466,94 +735,26 @@
       var diff = v - prevContribution;
       d.textContent = (diff > 0 ? "▲ +" : "▼ ") + n(diff) + " ฿";
       d.className = "fab-delta show " + (diff > 0 ? "up" : "down");
-      box.classList.remove("bump");
-      void box.offsetWidth;          // restart the animation
-      box.classList.add("bump");
+      box.classList.remove("bump"); void box.offsetWidth; box.classList.add("bump");
     } else if (prevContribution === null) {
-      d.textContent = "";
-      d.className = "fab-delta";
+      d.textContent = ""; d.className = "fab-delta";
     }
     prevContribution = v;
 
-    var be = f.summary.breakEvenMonth;
-    var beEl = el("fab-be");
-    beEl.textContent = be ? "เดือน " + be : "ยังไม่ถึง";
-    beEl.className = "fab-row-value " + (be ? "reached" : "missed");
-    beEl.title = be
-      ? "เดือนแรกที่รายได้สุทธิคลุมต้นทุนรวมของเดือนนั้น"
-      : "ภายใน " + n(state.months) + " เดือนที่จำลอง ยังไม่มีเดือนไหนที่รายได้สุทธิคลุมต้นทุนรวม";
-  }
-
-  function renderSummary(f) {
-    var s = f.summary;
-    var be = s.breakEvenMonth;
-    el("investment-summary").innerHTML =
-      '<div class="is-head"><span class="is-eyebrow">Investment Summary</span>' +
-      '<span class="is-scenario">' + ({ conservative: "Conservative", base: "Base Case", aggressive: "Aggressive" }[scenario]) +
-      ' · ' + n(state.months) + ' เดือน</span></div>' +
-      '<div class="is-grid">' +
-        '<div class="is-cell"><small>Required Investment</small><strong>' + baht(s.totalInvestment) + '</strong><span>ต้นทุนคงที่ + การตลาด ตลอดช่วง</span></div>' +
-        '<div class="is-cell"><small>Maximum Cash Exposure</small><strong>' + baht(s.maxCashExposure) + '</strong><span>เงินสดติดลบสูงสุดที่ต้องรองรับ</span></div>' +
-        '<div class="is-cell"><small>Projected Customers</small><strong>' + n(s.totalNewCustomers) + '</strong><span>ลูกค้าใหม่สะสม</span></div>' +
-        '<div class="is-cell"><small>Projected Net Revenue</small><strong>' + baht(s.totalNetRevenue) + '</strong><span>หลังหักการเก็บเงินและส่วนแบ่ง</span></div>' +
-        '<div class="is-cell"><small>Projected Contribution</small><strong class="' + (s.cumulativeContribution >= 0 ? "pos" : "neg") + '">' +
-          baht(s.cumulativeContribution) + '</strong><span>รายได้สุทธิ ลบต้นทุนการตลาด</span></div>' +
-        '<div class="is-cell is-be"><small>Break-even</small><strong>' + (be ? "เดือน " + be : "ยังไม่ถึง") + '</strong>' +
-          '<span>' + (be ? "รายได้สุทธิคลุมต้นทุนรวมของเดือนนั้น" : "ภายใน " + n(state.months) + " เดือนที่จำลอง") + '</span></div>' +
-      '</div>' +
-      '<p class="is-foot">' + summaryVerdict(f) + '</p>';
-  }
-
-  function summaryVerdict(f) {
-    var s = f.summary;
-    if (!s.breakEvenMonth) {
-      return "ภายใน " + n(state.months) + " เดือนนี้ รายได้สุทธิยังไม่คลุมต้นทุนรวมสักเดือน " +
-        "ตัวแปรที่ขยับผลได้มากที่สุดคืออายุลูกค้า สัดส่วนแพ็กเกจ และจำนวนลูกค้าจาก organic — ลองเลื่อนดูได้ที่ขั้นตอน 02";
-    }
-    if (s.cumulativeContribution < 0) {
-      return "ถึงจุดที่รายได้สุทธิคลุมต้นทุนได้ในเดือน " + s.breakEvenMonth +
-        " แต่ Contribution สะสมยังติดลบ แปลว่ายังต้องเติมเงินอยู่ เงินสดติดลบสูงสุดที่ต้องรองรับคือ " + baht(s.maxCashExposure);
-    }
-    return "ถึงจุดคุ้มทุนในเดือน " + s.breakEvenMonth + " และ Contribution สะสมเป็นบวก " +
-      baht(s.cumulativeContribution) + " เงินสดติดลบสูงสุดระหว่างทาง " + baht(s.maxCashExposure);
-  }
-
-  function renderFormulaList(f) {
-    var r = f.revenue;
-    el("formula-list").innerHTML =
-      "<pre>" +
-      "Gross Revenue / เดือน   = Σ ( สัดส่วน × ราคา × ความถี่ )\n" +
-      "Collected               = Gross × Collection Rate\n" +
-      "After Network Share     = Collected × ( 1 − ส่วนแบ่งเครือข่าย )\n" +
-      "Partner Cut             = " + (state.itBase === "gross" ? "Collected" : "After Network Share") + " × ส่วนแบ่งพาร์ตเนอร์\n" +
-      "Net Revenue / เดือน     = After Network Share − Partner Cut\n\n" +
-      "Gross LTV               = Gross / เดือน × ( อายุลูกค้า ÷ 30 )\n" +
-      "Net LTV                 = Net / เดือน × ( อายุลูกค้า ÷ 30 )\n\n" +
-      "Impressions             = ค่าโฆษณา ÷ CPM × 1,000\n" +
-      "Clicks                  = Impressions × CTR\n" +
-      "New Paid Customers      = Clicks × CVR\n" +
-      "Leads (ก่อนเปิดขาย)      = Clicks × คลิก→รายชื่อ\n\n" +
-      "Paid CPA                = ค่าโฆษณา ÷ ลูกค้าจากโฆษณา\n" +
-      "Blended CAC             = ( ค่าโฆษณา + ค่าคอนเทนต์ ) ÷ ลูกค้าใหม่ทั้งหมด\n" +
-      "Monthly Churn           = 1 ÷ ( อายุลูกค้า ÷ 30 )\n" +
-      "Active Customers        = Active ก่อนหน้า × ( 1 − Churn ) + ลูกค้าใหม่\n\n" +
-      "Contribution            = Net Revenue − ต้นทุนการตลาด\n" +
-      "Cash Flow               = Net Revenue − ( ต้นทุนการตลาด + ต้นทุนคงที่ )\n" +
-      "Break-even Month        = เดือนแรกที่ Net Revenue ≥ Total Cost\n" +
-      "Max Cash Exposure       = ค่าติดลบสูงสุดของเงินสดสะสม" +
-      "</pre>" +
-      "<p class='muted'>ค่าปัจจุบัน: Gross " + baht(r.grossMonth, 2) + " / เดือน → Net " + baht(r.netMonth, 2) +
-      " / เดือน (margin " + n(r.margin, 1) + " %) · Net LTV " + baht(r.netLTV, 2) + "</p>";
+    var be = el("fab-be"), pb = el("fab-pb");
+    be.textContent = month(s.operatingBreakEven);
+    be.className = "fab-row-value " + (s.operatingBreakEven ? "reached" : "missed");
+    pb.textContent = month(s.paybackMonth);
+    pb.className = "fab-row-value " + (s.paybackMonth ? "reached" : "missed");
   }
 
   /* ============================================================
      RENDER ALL
      ============================================================ */
-  var latest = null;
-
   function render() {
     var f = M.forecast(state);
     latest = f;
+    var risks = M.sensitivity(state);
 
     var sum = f.revenue.mixShareTotal;
     var mix = el("mix-check");
@@ -561,20 +762,34 @@
     mix.className = "mix-check " + (Math.round(sum) === 100 ? "ok" : "bad");
 
     renderHero(f);
-    renderStep1(f);
+    renderSticky(f);
+    renderInvestment(f);
+    renderSensitivityInline(risks);
+    renderRisks(risks);
+    renderStress();
     renderFunnel(f);
-    renderMediaMetrics(f);
+    renderAcquisition(f);
     renderWaterfall(f);
-    renderUnitMetrics(f);
+    renderUnit(f);
     renderForecast(f);
-    renderSummary(f);
-    renderFab(f);
+    renderBreakEven(f);
+    renderSummary(f, risks);
+    renderChangeTable(risks);
+    renderScenarioTable();
+    renderConfTable();
     renderFormulaList(f);
+    renderFab(f);
   }
 
   /* ============================================================
      EVENTS
      ============================================================ */
+  var STRESS_PRESETS = {
+    mild:   { cvr: 85, cpm: 115, lifetimeDays: 85, collectionRate: 92, organicAtEnd: 75 },
+    severe: { cvr: 60, cpm: 145, lifetimeDays: 55, collectionRate: 80, organicAtEnd: 40 },
+    reset:  { cvr: 100, cpm: 100, lifetimeDays: 100, collectionRate: 100, organicAtEnd: 100 }
+  };
+
   function bind() {
     document.addEventListener("input", function (e) {
       var t = e.target;
@@ -589,6 +804,10 @@
         state.packages[i][fld] = parseFloat(t.value);
         el("pv-" + i + "-" + fld).textContent = n(state.packages[i][fld], 0) + t.dataset.suffix;
         render();
+      } else if (t.dataset && t.dataset.stress) {
+        stressMul[t.dataset.stress] = parseFloat(t.value);
+        el("sv-" + t.dataset.stress).textContent = n(stressMul[t.dataset.stress]) + " %";
+        renderStress();
       }
     });
 
@@ -597,40 +816,52 @@
     });
 
     document.addEventListener("click", function (e) {
-      var sc = e.target.closest("[data-scenario]");
+      var sc = e.target.closest("[data-scenario]") || e.target.closest("[data-scenario-row]");
       if (sc) {
-        scenario = sc.dataset.scenario;
+        scenario = sc.dataset.scenario || sc.dataset.scenarioRow;
         var preset = M.SCENARIOS[scenario];
         Object.keys(preset).forEach(function (k) { state[k] = preset[k]; });
         document.querySelectorAll("[data-scenario]").forEach(function (b) {
-          b.classList.toggle("is-active", b === sc);
+          b.classList.toggle("is-active", b.dataset.scenario === scenario);
         });
-        syncControlValues();
-        render();
+        syncControls(); render();
+        return;
+      }
+
+      var sp = e.target.closest("[data-stress-preset]");
+      if (sp) {
+        stressMul = M.clone(STRESS_PRESETS[sp.dataset.stressPreset]);
+        syncControls(); renderStress();
+        return;
+      }
+
+      var shockRow = e.target.closest("[data-shock]");
+      if (shockRow) {
+        var key = shockRow.dataset.shock;
+        var def = M.SHOCKS.filter(function (x) { return x.key === key; })[0];
+        if (def) { state[key] = def.apply(state[key]); syncControls(); render(); }
         return;
       }
 
       if (e.target.closest("#reset-btn")) {
         state = M.clone(M.DEFAULTS);
+        stressMul = M.clone(STRESS_PRESETS.reset);
         scenario = "base";
         document.querySelectorAll("[data-scenario]").forEach(function (b) {
           b.classList.toggle("is-active", b.dataset.scenario === "base");
         });
-        buildControls();
-        render();
+        buildControls(); render();
         return;
       }
 
       var why = e.target.closest("[data-explain]");
       if (why) { openExplain(why.dataset.explain); return; }
 
-      if (e.target.closest("#fab")) {
+      if (e.target.closest("#fab") || e.target.closest("#ss-jump")) {
         var card = el("investment-summary");
         card.scrollIntoView({ behavior: "smooth", block: "center" });
         card.focus({ preventScroll: true });
-        card.classList.remove("is-focus");
-        void card.offsetWidth;
-        card.classList.add("is-focus");
+        card.classList.remove("is-focus"); void card.offsetWidth; card.classList.add("is-focus");
         setTimeout(function () { card.classList.remove("is-focus"); }, 1600);
         return;
       }
@@ -639,15 +870,13 @@
     });
 
     el("explain-close").addEventListener("click", function () { el("explain").close(); });
-    el("explain").addEventListener("click", function (e) {
-      if (e.target === el("explain")) el("explain").close();
-    });
+    el("explain").addEventListener("click", function (e) { if (e.target === el("explain")) el("explain").close(); });
   }
 
   function openExplain(key) {
     var spec = FORMULAS[key];
     if (!spec || !latest) return;
-    el("explain-kicker").textContent = "วิธีคำนวณ";
+    el("explain-kicker").textContent = "ทำไมเป็นตัวเลขนี้";
     el("explain-title").textContent = spec.title;
     el("explain-body").innerHTML = spec.body(latest.revenue, latest);
     el("explain").showModal();
@@ -676,13 +905,22 @@
     });
   })();
 
-  /* the balloon steps aside once the card it points to is visible */
+  /* ---------- balloon steps aside when the summary is on screen ---------- */
   (function watchSummary() {
     var card = el("investment-summary"), box = el("fab");
     if (!card || !box || !("IntersectionObserver" in window)) return;
     new IntersectionObserver(function (entries) {
       box.classList.toggle("is-hidden", entries[0].isIntersecting);
-    }, { threshold: 0.35 }).observe(card);
+    }, { threshold: 0.3 }).observe(card);
+  })();
+
+  /* ---------- sticky summary appears once the hero is scrolled past ---------- */
+  (function watchHero() {
+    var hero = document.querySelector(".hero"), bar = el("sticky-summary");
+    if (!hero || !bar || !("IntersectionObserver" in window)) return;
+    new IntersectionObserver(function (entries) {
+      bar.classList.toggle("is-on", !entries[0].isIntersecting);
+    }, { threshold: 0, rootMargin: "-120px 0px 0px 0px" }).observe(hero);
   })();
 
   buildControls();

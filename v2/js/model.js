@@ -1,6 +1,6 @@
 /* ============================================================
-   Marketing Investment Simulator — calculation model
-   Pure functions. No DOM. Change a formula here, the whole UI follows.
+   Investment Decision Simulator — calculation model
+   Pure functions. No DOM. Every formula the product uses lives here.
    ============================================================ */
 (function (global) {
   "use strict";
@@ -10,14 +10,15 @@
   /* ---------- default assumptions (Base Case) ---------- */
   var DEFAULTS = {
     // --- investment ---
+    initialInvestment: 0,      // เงินก้อนที่ใส่ก่อนเริ่มเดือนที่ 1
     fixedCost: 67000,          // ทีม + ระบบ ต่อเดือน
     contentSpend: 4000,        // คอนเทนต์ / SEO ต่อเดือน
     adsTest: 3500,             // งบโฆษณาต่อเดือน ช่วงทดสอบ
     adsScale: 12000,           // งบโฆษณาต่อเดือน ช่วงขยาย
     months: 8,
-    adsStartMonth: 4,          // เดือนแรกที่เริ่มยิงโฆษณา
+    adsStartMonth: 4,
     launchMonth: 7,            // เดือนแรกที่ระบบเก็บเงินได้
-    scaleMonth: 7,             // เดือนแรกที่ใช้งบระดับขยาย
+    scaleMonth: 7,
 
     // --- business model ---
     packages: [
@@ -25,21 +26,54 @@
       { key: "daily", label: "รายวัน", price: 9, freq: 20, share: 35 },
       { key: "monthly", label: "รายเดือน", price: 99, freq: 1, share: 15 }
     ],
-    collectionRate: 82,        // % เรียกเก็บผ่าน
-    aisShare: 30,              // % ส่วนแบ่งผู้ให้บริการเครือข่าย
-    itShare: 35,               // % ส่วนแบ่งพาร์ตเนอร์
-    itBase: "net",             // "net" = หักหลัง AIS · "gross" = หักจากยอดเก็บได้
-    lifetimeDays: 60,          // อายุลูกค้าเฉลี่ย
+    collectionRate: 82,
+    aisShare: 30,
+    itShare: 35,
+    itBase: "net",
+    lifetimeDays: 60,
 
     // --- media ---
-    cpm: 100,                  // บาท ต่อการแสดงผล 1,000 ครั้ง
-    ctr: 1.2,                  // % คลิกต่อการแสดงผล
-    leadRate: 8,               // % คลิก -> รายชื่อ (ช่วงยังขายไม่ได้)
-    leadToCustomer: 12,        // % รายชื่อสะสม -> ลูกค้า ตอนเปิดขาย
-    cvr: 4,                    // % คลิก -> ลูกค้า (หลังเปิดขาย)
+    cpm: 100,
+    ctr: 1.2,
+    leadRate: 8,
+    leadToCustomer: 12,
+    cvr: 4,
 
     // --- organic ---
-    organicAtEnd: 150          // ลูกค้าจาก organic ต่อเดือน ณ เดือนสุดท้าย
+    organicAtEnd: 150
+  };
+
+  /* ---------- where each assumption comes from ----------
+     confirmed  : มาจากข้อมูลจริงของโครงการ
+     estimate   : ประมาณการจากกรอบตลาด ยังไม่ได้วัดเอง
+     validate   : ยังไม่มีข้อมูล ต้องวัดหลังเปิดบริการ           */
+  var META = {
+    initialInvestment: { conf: "confirmed" },
+    fixedCost:      { conf: "confirmed", note: "งบประมาณจริงของโครงการ" },
+    contentSpend:   { conf: "confirmed" },
+    adsTest:        { conf: "confirmed" },
+    adsScale:       { conf: "confirmed" },
+    months:         { conf: "confirmed" },
+    adsStartMonth:  { conf: "confirmed" },
+    launchMonth:    { conf: "estimate", impact: true, note: "ขึ้นกับความคืบหน้าของทีมพัฒนา" },
+    scaleMonth:     { conf: "confirmed" },
+    collectionRate: { conf: "validate", impact: true, note: "ต้องวัดจากรายงานการเรียกเก็บจริง" },
+    aisShare:       { conf: "confirmed", note: "โครงสร้างข้อตกลง" },
+    itShare:        { conf: "confirmed", note: "โครงสร้างข้อตกลง" },
+    lifetimeDays:   { conf: "validate", impact: true, note: "ยังไม่มีข้อมูล ต้องวัดหลังเปิดขาย" },
+    organicAtEnd:   { conf: "validate", impact: true, note: "ประมาณการจากแผนคอนเทนต์" },
+    cpm:            { conf: "estimate", note: "กรอบตลาดไทย ไม่ใช่บัญชีเรา" },
+    ctr:            { conf: "estimate", note: "กรอบตลาดไทย ไม่ใช่บัญชีเรา" },
+    cvr:            { conf: "validate", impact: true, note: "ต้องวัดจากหน้า Landing จริง" },
+    leadRate:       { conf: "estimate" },
+    leadToCustomer: { conf: "estimate" },
+    packagePrice:   { conf: "estimate", note: "แผนผลิตภัณฑ์ ยังปรับได้" }
+  };
+
+  var CONF_LABEL = {
+    confirmed: "CONFIRMED",
+    estimate: "ESTIMATE",
+    validate: "REQUIRES VALIDATION"
   };
 
   /* ---------- scenarios ---------- */
@@ -51,6 +85,7 @@
     aggressive:   { cpm: 80,  ctr: 1.8, cvr: 6, leadRate: 11, leadToCustomer: 18,
                     collectionRate: 88, lifetimeDays: 90, organicAtEnd: 300 }
   };
+  var SCENARIO_LABEL = { conservative: "Conservative", base: "Base Case", aggressive: "Aggressive" };
 
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
   function pct(x) { return x / 100; }
@@ -65,14 +100,13 @@
       return sum + pct(p.share) * p.price * p.freq;
     }, 0);
 
-    var grossMonth = mix;                                   // ยอดเรียกเก็บต่อเดือน
-    var collected = grossMonth * pct(a.collectionRate);     // เก็บผ่านจริง
+    var grossMonth = mix;
+    var collected = grossMonth * pct(a.collectionRate);
     var afterNetwork = collected * (1 - pct(a.aisShare));
     var partnerCut = a.itBase === "gross"
       ? collected * pct(a.itShare)
       : afterNetwork * pct(a.itShare);
     var netMonth = Math.max(0, afterNetwork - partnerCut);
-
     var lifeMonths = a.lifetimeDays / DAYS_PER_MONTH;
 
     return {
@@ -90,9 +124,7 @@
     };
   }
 
-  /* ============================================================
-     MEDIA FUNNEL for one month of ad spend
-     ============================================================ */
+  /* ---------- media funnel for one month of ad spend ---------- */
   function funnel(spend, a) {
     var impressions = a.cpm > 0 ? (spend / a.cpm) * 1000 : 0;
     var clicks = impressions * pct(a.ctr);
@@ -106,13 +138,16 @@
   }
 
   /* ============================================================
-     MONTH-BY-MONTH FORECAST
+     MONTH-BY-MONTH CASH FLOW
+     cash out = marketing + fixed · cash in = net revenue
+     cumulative starts at −initialInvestment
      ============================================================ */
   function forecast(a) {
     var rev = revenuePerCustomer(a);
     var rows = [];
-    var active = 0, leadPool = 0, cumulative = 0, cumContribution = 0;
-    var organicPeak = a.organicAtEnd;
+    var active = 0, leadPool = 0;
+    var cumulative = -a.initialInvestment;
+    var cumContribution = 0;
 
     for (var m = 1; m <= a.months; m++) {
       var selling = m >= a.launchMonth;
@@ -120,34 +155,33 @@
       var adSpend = !adsOn ? 0 : (m >= a.scaleMonth ? a.adsScale : a.adsTest);
       var contentSpend = a.contentSpend;
       var marketingSpend = adSpend + contentSpend;
-      var totalCost = marketingSpend + a.fixedCost;
+      var cashOut = marketingSpend + a.fixedCost;
 
       var f = funnel(adSpend, a);
 
-      // ก่อนเปิดขาย โฆษณาได้รายชื่อ ไม่ได้ลูกค้า
       var newPaid = 0, newFromLeads = 0, newOrganic = 0;
       if (!selling) {
         leadPool += f.leads;
       } else {
         newPaid = f.customers;
-        if (leadPool > 0) {                    // รายชื่อที่สะสมไว้แปลงครั้งเดียวตอนเปิดขาย
+        if (leadPool > 0) {
           newFromLeads = leadPool * pct(a.leadToCustomer);
           leadPool = 0;
         }
-        // organic ไต่เป็นเส้นตรงจากเดือนที่เปิดขายถึงเดือนสุดท้าย
-        var span = Math.max(1, a.months - a.launchMonth);
-        var step = Math.min(1, (m - a.launchMonth) / span);
-        newOrganic = organicPeak * (0.35 + 0.65 * step);
+        // organic ไต่ถึงระดับสูงสุดภายใน 12 เดือนหลังเปิดขาย
+        // ผูกกับเวลา ไม่ผูกกับความยาวของช่วงที่จำลอง ผลจึงไม่เพี้ยนเมื่อเปลี่ยน months
+        var step = Math.min(1, (m - a.launchMonth) / 12);
+        newOrganic = a.organicAtEnd * (0.35 + 0.65 * step);
       }
 
       var newCustomers = newPaid + newFromLeads + newOrganic;
       active = active * (1 - rev.monthlyChurn) + newCustomers;
 
       var grossRevenue = active * rev.grossMonth;
-      var netRevenue = active * rev.netMonth;
-      var contribution = netRevenue - marketingSpend;   // ยังไม่หักต้นทุนคงที่
-      var cashFlow = netRevenue - totalCost;
-      cumulative += cashFlow;
+      var cashIn = active * rev.netMonth;
+      var contribution = cashIn - marketingSpend;   // ยังไม่หักต้นทุนคงที่
+      var netCashFlow = cashIn - cashOut;
+      cumulative += netCashFlow;
       cumContribution += contribution;
 
       rows.push({
@@ -157,81 +191,214 @@
         contentSpend: contentSpend,
         marketingSpend: marketingSpend,
         fixedCost: a.fixedCost,
-        totalCost: totalCost,
+        cashOut: cashOut,
         impressions: f.impressions,
         clicks: f.clicks,
         leads: selling ? 0 : f.leads,
-        newPaid: newPaid,
-        newFromLeads: newFromLeads,
+        newPaid: newPaid + newFromLeads,
         newOrganic: newOrganic,
         newCustomers: newCustomers,
         activeCustomers: active,
         grossRevenue: grossRevenue,
-        netRevenue: netRevenue,
+        cashIn: cashIn,
+        netRevenue: cashIn,
         contribution: contribution,
-        cashFlow: cashFlow,
+        netCashFlow: netCashFlow,
         cumulativeCash: cumulative,
-        paidCPA: safeDiv(adSpend, newPaid),
+        paidCPA: safeDiv(adSpend, newPaid + newFromLeads),
         blendedCAC: safeDiv(marketingSpend, newCustomers)
       });
     }
 
-    /* ---------- summary ---------- */
-    var totalInvestment = rows.reduce(function (s, r) { return s + r.totalCost; }, 0);
-    var totalMarketing = rows.reduce(function (s, r) { return s + r.marketingSpend; }, 0);
-    var totalAds = rows.reduce(function (s, r) { return s + r.adSpend; }, 0);
-    var totalNewCustomers = rows.reduce(function (s, r) { return s + r.newCustomers; }, 0);
-    var totalPaidCustomers = rows.reduce(function (s, r) { return s + r.newPaid + r.newFromLeads; }, 0);
-    var totalNetRevenue = rows.reduce(function (s, r) { return s + r.netRevenue; }, 0);
-    var totalGrossRevenue = rows.reduce(function (s, r) { return s + r.grossRevenue; }, 0);
+    /* ---------- roll-ups ---------- */
+    function sum(field) { return rows.reduce(function (s, r) { return s + r[field]; }, 0); }
 
-    var maxExposure = rows.reduce(function (worst, r) {
+    var totalCashOut = sum("cashOut");
+    var totalInvestment = a.initialInvestment + totalCashOut;
+    var totalMarketing = sum("marketingSpend");
+    var totalAds = sum("adSpend");
+    var totalFixed = sum("fixedCost");
+    var totalNewCustomers = sum("newCustomers");
+    var totalPaidCustomers = sum("newPaid");
+    var totalOrganicCustomers = sum("newOrganic");
+    var totalNetRevenue = sum("cashIn");
+    var totalGrossRevenue = sum("grossRevenue");
+
+    var lowestCash = rows.reduce(function (worst, r) {
       return Math.min(worst, r.cumulativeCash);
-    }, 0);
+    }, -a.initialInvestment);
 
-    var beMonth = null, beCumMonth = null;
+    // จุดคุ้มทุนสองแบบ คนละความหมาย
+    var operatingBreakEven = null;   // เดือนที่ contribution คลุมต้นทุนคงที่
+    var paybackMonth = null;         // เดือนที่เงินสดสะสมกลับมาเป็นบวก
     for (var i = 0; i < rows.length; i++) {
-      if (beMonth === null && rows[i].netRevenue >= rows[i].totalCost) beMonth = rows[i].month;
-      if (beCumMonth === null && rows[i].cumulativeCash >= 0) beCumMonth = rows[i].month;
+      if (operatingBreakEven === null && rows[i].contribution >= rows[i].fixedCost) {
+        operatingBreakEven = rows[i].month;
+      }
+      if (paybackMonth === null && rows[i].cumulativeCash >= 0) paybackMonth = rows[i].month;
     }
 
-    // จำนวนลูกค้าที่ต้องมีพร้อมกัน เพื่อให้รายได้สุทธิคลุมต้นทุนต่อเดือน
-    var lastRow = rows[rows.length - 1];
-    var breakEvenCustomers = safeDiv(lastRow ? lastRow.totalCost : a.fixedCost, rev.netMonth);
+    var last = rows[rows.length - 1] || { cashOut: a.fixedCost };
+    var blendedCAC = safeDiv(totalMarketing, totalNewCustomers);
 
     return {
       assumptions: a,
       revenue: rev,
       rows: rows,
       summary: {
+        initialInvestment: a.initialInvestment,
+        totalCashOut: totalCashOut,
         totalInvestment: totalInvestment,
+        monthlyBurn: safeDiv(totalCashOut, a.months),
+        marketingShareOfBurn: safeDiv(totalMarketing, totalCashOut) * 100,
         totalMarketing: totalMarketing,
         totalAds: totalAds,
+        totalFixed: totalFixed,
         totalNewCustomers: totalNewCustomers,
         totalPaidCustomers: totalPaidCustomers,
+        totalOrganicCustomers: totalOrganicCustomers,
+        organicShare: safeDiv(totalOrganicCustomers, totalNewCustomers) * 100,
         totalGrossRevenue: totalGrossRevenue,
         totalNetRevenue: totalNetRevenue,
         cumulativeContribution: cumContribution,
         cumulativeCash: cumulative,
-        maxCashExposure: Math.abs(Math.min(0, maxExposure)),
-        breakEvenMonth: beMonth,
-        breakEvenCumulativeMonth: beCumMonth,
-        breakEvenCustomers: breakEvenCustomers,
-        blendedCAC: safeDiv(totalMarketing, totalNewCustomers),
+        maxCashRequired: Math.abs(Math.min(0, lowestCash)),
+        operatingBreakEven: operatingBreakEven,
+        paybackMonth: paybackMonth,
+        breakEvenCustomers: safeDiv(last.cashOut, rev.netMonth),
+        blendedCAC: blendedCAC,
         paidCPA: safeDiv(totalAds, totalPaidCustomers),
         roas: safeDiv(totalNetRevenue, totalAds),
-        ltvCacRatio: safeDiv(rev.netLTV, safeDiv(totalMarketing, totalNewCustomers)),
-        paybackDays: safeDiv(safeDiv(totalMarketing, totalNewCustomers), rev.netMonth / DAYS_PER_MONTH)
+        ltvCacRatio: safeDiv(rev.netLTV, blendedCAC),
+        paybackDays: safeDiv(blendedCAC, rev.netMonth / DAYS_PER_MONTH)
+      }
+    };
+  }
+
+  /* ============================================================
+     HORIZON SCAN — ถ้าสมมติฐานชุดนี้เดินต่อไปเรื่อย ๆ
+     จะถึงจุดคุ้มทุนและคืนทุนเมื่อไร (ไม่แตะ months ที่ผู้ใช้ตั้งไว้)
+     ============================================================ */
+  function horizonScan(a, maxMonths) {
+    var probe = clone(a);
+    probe.months = maxMonths || 60;
+    var s = forecast(probe).summary;
+    return {
+      horizon: probe.months,
+      operatingBreakEven: s.operatingBreakEven,
+      paybackMonth: s.paybackMonth
+    };
+  }
+
+  /* ============================================================
+     SENSITIVITY — ช็อกสมมติฐานทีละตัว วัดผลเป็นเงิน
+     จัดอันดับด้วยผลกระทบจริง ไม่ใช่ความเห็น
+     ============================================================ */
+  var SHOCKS = [
+    { key: "lifetimeDays",   label: "Customer Lifetime",  desc: "สั้นลง 25 %",      apply: function (v) { return Math.round(v * 0.75); } },
+    { key: "cvr",            label: "Conversion Rate",    desc: "ต่ำลง 25 %",       apply: function (v) { return +(v * 0.75).toFixed(2); } },
+    { key: "collectionRate", label: "Collection Rate",    desc: "ต่ำลง 10 จุด",     apply: function (v) { return Math.max(0, v - 10); } },
+    { key: "cpm",            label: "Paid CPA (ผ่าน CPM)", desc: "แพงขึ้น 25 %",     apply: function (v) { return Math.round(v * 1.25); } },
+    { key: "organicAtEnd",   label: "Organic Customers",  desc: "เหลือครึ่งเดียว",  apply: function (v) { return Math.round(v * 0.5); } }
+  ];
+
+  function sensitivity(a) {
+    var base = forecast(a);
+    return SHOCKS.map(function (s) {
+      var shocked = clone(a);
+      shocked[s.key] = s.apply(shocked[s.key]);
+      var f = forecast(shocked);
+      return {
+        key: s.key,
+        label: s.label,
+        desc: s.desc,
+        from: a[s.key],
+        to: shocked[s.key],
+        contribution: f.summary.cumulativeContribution,
+        deltaContribution: f.summary.cumulativeContribution - base.summary.cumulativeContribution,
+        maxCashRequired: f.summary.maxCashRequired,
+        deltaMaxCash: f.summary.maxCashRequired - base.summary.maxCashRequired,
+        operatingBreakEven: f.summary.operatingBreakEven,
+        baseOperatingBreakEven: base.summary.operatingBreakEven,
+        paybackMonth: f.summary.paybackMonth,
+        basePaybackMonth: base.summary.paybackMonth,
+        customers: f.summary.totalNewCustomers,
+        deltaCustomers: f.summary.totalNewCustomers - base.summary.totalNewCustomers
+      };
+    }).sort(function (x, y) {
+      return Math.abs(y.deltaContribution) - Math.abs(x.deltaContribution);
+    });
+  }
+
+  /* ============================================================
+     SCENARIO COMPARISON — คำนวณทั้งสามชุดพร้อมกันบนค่าตั้งอื่นชุดเดียวกัน
+     ============================================================ */
+  function compareScenarios(a) {
+    return Object.keys(SCENARIOS).map(function (key) {
+      var s = clone(a);
+      Object.keys(SCENARIOS[key]).forEach(function (k) { s[k] = SCENARIOS[key][k]; });
+      var f = forecast(s);
+      return { key: key, label: SCENARIO_LABEL[key], summary: f.summary };
+    });
+  }
+
+  /* ============================================================
+     STRESS TEST — คูณตัวแปรเสี่ยงพร้อมกันหลายตัว
+     multipliers เป็น % เทียบกับค่าปัจจุบัน (100 = ไม่เปลี่ยน)
+     ============================================================ */
+  var STRESS_KEYS = [
+    { key: "cvr",            label: "Conversion Rate",   dir: "down" },
+    { key: "cpm",            label: "CPM (ต้นทุนสื่อ)",   dir: "up" },
+    { key: "lifetimeDays",   label: "Customer Lifetime", dir: "down" },
+    { key: "collectionRate", label: "Collection Rate",   dir: "down", cap: 100 },
+    { key: "organicAtEnd",   label: "Organic Growth",    dir: "down" }
+  ];
+
+  function applyStress(a, multipliers) {
+    var s = clone(a);
+    STRESS_KEYS.forEach(function (k) {
+      var m = multipliers[k.key];
+      if (m === undefined || m === 100) return;
+      var v = s[k.key] * (m / 100);
+      if (k.cap) v = Math.min(k.cap, v);
+      s[k.key] = k.key === "lifetimeDays" || k.key === "organicAtEnd" || k.key === "cpm"
+        ? Math.round(v) : +v.toFixed(2);
+    });
+    return s;
+  }
+
+  function stress(a, multipliers) {
+    var base = forecast(a);
+    var f = forecast(applyStress(a, multipliers));
+    return {
+      base: base.summary,
+      stressed: f.summary,
+      delta: {
+        contribution: f.summary.cumulativeContribution - base.summary.cumulativeContribution,
+        maxCashRequired: f.summary.maxCashRequired - base.summary.maxCashRequired,
+        customers: f.summary.totalNewCustomers - base.summary.totalNewCustomers,
+        netRevenue: f.summary.totalNetRevenue - base.summary.totalNetRevenue
       }
     };
   }
 
   global.SimModel = {
+    DAYS_PER_MONTH: DAYS_PER_MONTH,
     DEFAULTS: DEFAULTS,
+    META: META,
+    CONF_LABEL: CONF_LABEL,
     SCENARIOS: SCENARIOS,
+    SCENARIO_LABEL: SCENARIO_LABEL,
+    SHOCKS: SHOCKS,
+    STRESS_KEYS: STRESS_KEYS,
     clone: clone,
     revenuePerCustomer: revenuePerCustomer,
     funnel: funnel,
-    forecast: forecast
+    forecast: forecast,
+    horizonScan: horizonScan,
+    sensitivity: sensitivity,
+    compareScenarios: compareScenarios,
+    applyStress: applyStress,
+    stress: stress
   };
 })(window);

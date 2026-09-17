@@ -16,11 +16,13 @@
     <div class="brand">BIZ<span>WAP</span></div>
     <nav class="steps-nav" aria-label="ขั้นตอน">
       <a href="#step1">01 Investment</a>
-      <a href="#step2">02 Model</a>
-      <a href="#step3">03 Media</a>
-      <a href="#step4">04 Unit Economics</a>
-      <a href="#forecast">05 Forecast</a>
-      <a href="#summary">06 Summary</a>
+      <a href="#step2">02 Assumptions</a>
+      <a href="#risks">03 Risks</a>
+      <a href="#step3">04 Media</a>
+      <a href="#step4">05 Unit Economics</a>
+      <a href="#forecast">06 Cash Flow</a>
+      <a href="#breakeven">07 Break-even</a>
+      <a href="#summary">08 Summary</a>
     </nav>
     <div class="bar-actions">
       <button class="ghost-btn js-print" type="button">⬇ PDF</button>
@@ -34,13 +36,21 @@
   <div class="wrap">
     <p class="eyebrow">แพลตฟอร์มดูดวง · ไพ่ทาโรต์ · Direct Carrier Billing</p>
     <h1>Marketing Investment<br>Simulator</h1>
-    <p class="hero-sub">จำลองงบการตลาด จำนวนลูกค้า รายได้ หน่วยเศรษฐศาสตร์ และคาดการณ์ 8 เดือน ก่อนตัดสินใจลงเงิน</p>
+    <p class="hero-sub">จำลองเงินลงทุน เงินสดที่ต้องรองรับ การได้ลูกค้า หน่วยเศรษฐศาสตร์ และจุดคืนทุน ก่อนตัดสินใจลงเงิน</p>
     <a class="cta" href="#step1">Start Simulation</a>
 
     <div class="hero-kpis" id="hero-kpis"></div>
-    <p class="hero-note">ทุกตัวเลขบนหน้านี้คำนวณสดจากสมมติฐานด้านล่าง ไม่มีค่าใดถูกเขียนตายไว้ · เปลี่ยนสมมติฐานแล้วผลเปลี่ยนทันที</p>
+    <p class="hero-note">ทุกตัวเลขคำนวณสดจากสมมติฐานด้านล่าง ไม่มีค่าใดถูกเขียนตายไว้ในหน้า · เปลี่ยนสมมติฐานแล้วผลเปลี่ยนทันที</p>
   </div>
 </section>
+
+<!-- ================= STICKY SUMMARY ================= -->
+<div class="sticky-summary" id="sticky-summary">
+  <div class="wrap ss">
+    <div class="ss-items" id="ss-items"></div>
+    <button class="ghost-btn ss-jump" id="ss-jump" type="button">ดูสรุปเต็ม ↓</button>
+  </div>
+</div>
 
 <!-- ================= SCENARIO ================= -->
 <div class="scenario-bar">
@@ -56,18 +66,19 @@
   </div>
 </div>
 
-<!-- ================= STEP 1 ================= -->
+<!-- ================= STEP 01 — INVESTMENT ================= -->
 <section class="step" id="step1">
   <div class="wrap">
     <div class="step-head">
       <span class="step-no">01</span>
       <div>
-        <h2>Investment Input</h2>
-        <p class="lead">เงินที่ต้องเตรียม แบ่งเป็นก้อนที่จ่ายเท่ากันทุกเดือน กับก้อนที่ปรับได้ตามผล</p>
+        <h2>Investment</h2>
+        <p class="lead">เงินออกทั้งหมดมาจากไหน เดือนละเท่าไร และต้องเตรียมเงินสดรองรับสูงสุดเท่าไร</p>
       </div>
     </div>
 
-    <div class="grid-3" id="step1-cards"></div>
+    <div class="fixed-hero" id="fixed-hero"></div>
+    <div class="grid-4" id="invest-cards"></div>
 
     <div class="panel">
       <div class="controls" id="controls-investment"></div>
@@ -75,15 +86,22 @@
   </div>
 </section>
 
-<!-- ================= STEP 2 ================= -->
+<!-- ================= STEP 02 — ASSUMPTIONS ================= -->
 <section class="step" id="step2">
   <div class="wrap">
     <div class="step-head">
       <span class="step-no">02</span>
       <div>
-        <h2>Business Model</h2>
-        <p class="lead">ลูกค้าจ่ายเท่าไร เก็บได้จริงเท่าไร เหลือถึงเราเท่าไร และอยู่กับเรานานแค่ไหน</p>
+        <h2>Business Assumptions</h2>
+        <p class="lead">ทุกสมมติฐานติดป้ายว่ามาจากไหน — ยืนยันแล้ว ประมาณการ หรือยังต้องวัด</p>
       </div>
+    </div>
+
+    <div class="conf-legend">
+      <span><i class="cf cf-confirmed"></i>CONFIRMED — ข้อมูลจริงของโครงการ</span>
+      <span><i class="cf cf-estimate"></i>ESTIMATE — ประมาณการจากกรอบตลาด</span>
+      <span><i class="cf cf-validate"></i>REQUIRES VALIDATION — ยังไม่มีข้อมูล ต้องวัดเอง</span>
+      <span><i class="cf cf-impact"></i>HIGH IMPACT — ขยับแล้วผลเปลี่ยนมาก</span>
     </div>
 
     <h3 class="sub">Package Mix</h3>
@@ -92,21 +110,51 @@
       <p class="mix-check" id="mix-check"></p>
     </div>
 
-    <h3 class="sub">Deductions &amp; Lifetime</h3>
+    <h3 class="sub">Deductions, Lifetime &amp; Organic</h3>
     <div class="panel">
       <div class="controls" id="controls-model"></div>
     </div>
   </div>
 </section>
 
-<!-- ================= STEP 3 ================= -->
-<section class="step" id="step3">
+<!-- ================= RISKS ================= -->
+<section class="step" id="risks">
   <div class="wrap">
     <div class="step-head">
       <span class="step-no">03</span>
       <div>
+        <h2>Biggest Model Risks</h2>
+        <p class="lead">ช็อกสมมติฐานทีละตัว แล้ววัดผลเป็นเงิน จัดอันดับด้วยผลกระทบจริง ไม่ใช่ความเห็น</p>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table id="risk-table"></table>
+    </div>
+    <p class="note-inline">อันดับเปลี่ยนตามสมมติฐานปัจจุบัน ไม่ได้ตรึงไว้ · กดแถวเพื่อลองใช้ค่าที่ถูกช็อกจริง</p>
+
+    <h3 class="sub">Stress Test</h3>
+    <p class="lead" style="margin-bottom:14px">ช็อกหลายตัวพร้อมกัน ดูว่าโมเดลทนได้แค่ไหน — 100 % คือค่าปัจจุบัน</p>
+    <div class="panel">
+      <div class="controls" id="controls-stress"></div>
+      <div class="stress-actions">
+        <button class="ghost-btn" data-stress-preset="mild" type="button">ช็อกเบา</button>
+        <button class="ghost-btn" data-stress-preset="severe" type="button">ช็อกหนัก</button>
+        <button class="ghost-btn" data-stress-preset="reset" type="button">กลับเป็นปกติ</button>
+      </div>
+    </div>
+    <div class="metrics" id="stress-result"></div>
+  </div>
+</section>
+
+<!-- ================= STEP 04 — MEDIA ================= -->
+<section class="step" id="step3">
+  <div class="wrap">
+    <div class="step-head">
+      <span class="step-no">04</span>
+      <div>
         <h2>Media Simulation</h2>
-        <p class="lead">เงินโฆษณาหนึ่งเดือนแปลงเป็นลูกค้ากี่คน ผ่านกี่ขั้น</p>
+        <p class="lead">เงินโฆษณาหนึ่งเดือนแปลงเป็นลูกค้ากี่คน ผ่านกี่ขั้น — ตัวเลขสื่อแยกจากเศรษฐศาสตร์ธุรกิจ</p>
       </div>
     </div>
 
@@ -115,19 +163,21 @@
     </div>
 
     <div class="funnel" id="funnel"></div>
-    <div class="metrics" id="media-metrics"></div>
     <p class="note-inline" id="media-note"></p>
+
+    <h3 class="sub">Paid vs Organic</h3>
+    <div class="metrics" id="acq-split"></div>
   </div>
 </section>
 
-<!-- ================= STEP 4 ================= -->
+<!-- ================= STEP 05 — UNIT ECONOMICS ================= -->
 <section class="step" id="step4">
   <div class="wrap">
     <div class="step-head">
-      <span class="step-no">04</span>
+      <span class="step-no">05</span>
       <div>
         <h2>Unit Economics</h2>
-        <p class="lead">ต่อลูกค้า 1 คน — แยก Gross ออกจาก Net ให้ชัด ก่อนเอาไปคิดเพดานค่าโฆษณา</p>
+        <p class="lead">ต่อลูกค้า 1 คน — Gross, Net, Contribution แยกกันชัด ก่อนเอาไปคิดเพดานค่าได้ลูกค้า</p>
       </div>
     </div>
 
@@ -141,29 +191,27 @@
 
     <div class="callout">
       <b>Paid CPA ≠ Blended CAC</b>
-      <p><strong>Paid CPA</strong> = ค่าโฆษณา ÷ ลูกค้าที่ได้จากโฆษณา — ใช้ตัดสินว่าจะเพิ่มหรือลดงบชุดไหน<br>
-      <strong>Blended CAC</strong> = (ค่าโฆษณา + ค่าคอนเทนต์) ÷ ลูกค้าทั้งหมดรวม organic — ใช้ตัดสินว่าธุรกิจทั้งก้อนคุ้มหรือไม่<br>
-      ยิ่ง organic โต Blended CAC ยิ่งต่ำกว่า Paid CPA และนั่นคือเหตุผลที่ลงทุนกับคอนเทนต์</p>
+      <p id="cac-note"></p>
     </div>
   </div>
 </section>
 
-<!-- ================= FORECAST ================= -->
+<!-- ================= STEP 06 — CASH FLOW ================= -->
 <section class="step" id="forecast">
   <div class="wrap">
     <div class="step-head">
-      <span class="step-no">05</span>
+      <span class="step-no">06</span>
       <div>
-        <h2>8-Month Forecast</h2>
-        <p class="lead">กระแสเงินสดรายเดือน จนถึงจุดที่รายได้สุทธิคลุมต้นทุนทั้งหมด</p>
+        <h2>Cash-Flow Forecast</h2>
+        <p class="lead">เงินเข้า เงินออก และเงินสดสะสมรายเดือน — จุดต่ำสุดของเส้นสะสมคือเงินที่ต้องเตรียม</p>
       </div>
     </div>
 
     <div class="chart-card">
       <div class="chart-legend">
-        <span><i class="sw sw-cost"></i>ต้นทุนรวม</span>
-        <span><i class="sw sw-rev"></i>รายได้สุทธิ</span>
-        <span><i class="sw sw-cum"></i>เงินสดสะสม</span>
+        <span><i class="sw sw-cost"></i>Cash Out</span>
+        <span><i class="sw sw-rev"></i>Cash In</span>
+        <span><i class="sw sw-cum"></i>Cumulative Cash Flow</span>
       </div>
       <div id="chart"></div>
     </div>
@@ -171,7 +219,21 @@
     <div class="table-wrap">
       <table id="forecast-table"></table>
     </div>
-    <p class="note-inline">แถวที่ไฮไลต์คือเดือนแรกที่รายได้สุทธิคลุมต้นทุนรวมของเดือนนั้น</p>
+    <p class="note-inline" id="forecast-note"></p>
+  </div>
+</section>
+
+<!-- ================= BREAK-EVEN ================= -->
+<section class="step" id="breakeven">
+  <div class="wrap">
+    <div class="step-head">
+      <span class="step-no">07</span>
+      <div>
+        <h2>Break-even &amp; Payback</h2>
+        <p class="lead">คนละเรื่องกัน — เดือนที่เลี้ยงตัวเองได้ กับเดือนที่ได้เงินลงทุนคืน</p>
+      </div>
+    </div>
+    <div class="be-grid" id="be-grid"></div>
   </div>
 </section>
 
@@ -179,6 +241,17 @@
 <section class="step" id="summary">
   <div class="wrap">
     <div class="investment-summary" id="investment-summary" tabindex="-1"></div>
+
+    <h3 class="sub">What Could Change This Result?</h3>
+    <div class="table-wrap">
+      <table id="change-table"></table>
+    </div>
+
+    <h3 class="sub">Scenario Comparison</h3>
+    <div class="table-wrap">
+      <table id="scenario-table"></table>
+    </div>
+
     <button class="cta cta-pdf js-print" type="button">⬇ Export Investment Summary (PDF)</button>
   </div>
 </section>
@@ -187,7 +260,7 @@
 <section class="step methodology no-print" id="methodology">
   <div class="wrap">
     <div class="step-head">
-      <span class="step-no">06</span>
+      <span class="step-no">09</span>
       <div>
         <h2>Methodology</h2>
         <p class="lead">สูตรและที่มาของทุกตัวเลข เปิดดูได้ทั้งหมด</p>
@@ -201,20 +274,7 @@
 
     <details>
       <summary>ตัวเลขไหนมาจากข้อมูลจริง ตัวเลขไหนเป็นสมมติฐาน</summary>
-      <div class="det-body">
-        <table class="plain">
-          <thead><tr><th>รายการ</th><th>ที่มา</th><th>ความเชื่อมั่น</th></tr></thead>
-          <tbody>
-            <tr><td>ต้นทุนคงที่ 67,000 / เดือน</td><td>งบประมาณจริงของโครงการ</td><td><span class="pill good">ยืนยันแล้ว</span></td></tr>
-            <tr><td>ส่วนแบ่งเครือข่าย · ส่วนแบ่งพาร์ตเนอร์</td><td>โครงสร้างข้อตกลง</td><td><span class="pill good">ยืนยันแล้ว</span></td></tr>
-            <tr><td>ราคาแพ็กเกจ</td><td>แผนผลิตภัณฑ์</td><td><span class="pill warn">ยังปรับได้</span></td></tr>
-            <tr><td>Collection Rate</td><td>ประมาณการจากลักษณะการตัดเงินผ่านบิลมือถือ</td><td><span class="pill warn">ต้องวัดจริง</span></td></tr>
-            <tr><td>CPM · CTR · CVR</td><td>กรอบอ้างอิงตลาด ยังไม่ใช่ข้อมูลจากบัญชีโฆษณาเรา</td><td><span class="pill warn">ต้องวัดจริง</span></td></tr>
-            <tr><td>อายุลูกค้าเฉลี่ย</td><td>ยังไม่มีข้อมูล ตั้งเป็นค่าสมมติ</td><td><span class="pill bad">กระทบผลมากที่สุด</span></td></tr>
-            <tr><td>ลูกค้าจาก Organic</td><td>ประมาณการจากแผนคอนเทนต์</td><td><span class="pill bad">กระทบผลมากที่สุด</span></td></tr>
-          </tbody>
-        </table>
-      </div>
+      <div class="det-body"><div class="table-wrap"><table id="conf-table"></table></div></div>
     </details>
 
     <details>
@@ -223,9 +283,9 @@
         <ul>
           <li>อายุลูกค้าแปลงเป็นอัตราหลุดต่อเดือนแบบคงที่ (1 ÷ อายุเป็นเดือน) ของจริงคนมักหลุดหนักในเดือนแรกแล้วค่อยนิ่ง</li>
           <li>รายชื่อที่สะสมก่อนเปิดขายถูกแปลงเป็นลูกค้าครั้งเดียวในเดือนที่เปิดขาย ของจริงจะทยอยเข้ามา</li>
-          <li>ลูกค้าจาก Organic ไต่เป็นเส้นตรง ไม่ได้จำลองการทบต้นของอันดับใน Search</li>
+          <li>ลูกค้าจาก Organic ไต่เป็นเส้นตรงถึงระดับสูงสุดภายใน 12 เดือนหลังเปิดขาย ไม่ได้จำลองการทบต้นของอันดับใน Search</li>
           <li>ไม่ได้คิดภาษี ค่าธรรมเนียมชำระเงินอื่น และต้นทุนบริการลูกค้า</li>
-          <li>เป็นแบบจำลองระดับเดือน ไม่ใช่ระดับแคมเปญ ใช้ตัดสินกรอบการลงทุน ไม่ใช่ตัดสินรายชุดโฆษณา</li>
+          <li>เป็นแบบจำลองระดับเดือน ใช้ตัดสินกรอบการลงทุน ไม่ใช่ตัดสินรายชุดโฆษณา</li>
         </ul>
       </div>
     </details>
@@ -243,8 +303,12 @@
   <span class="fab-value" id="fab-value" aria-live="polite">—</span>
   <span class="fab-delta" id="fab-delta"></span>
   <span class="fab-row">
-    <span class="fab-row-label">Break-even</span>
-    <span class="fab-row-value" id="fab-be" aria-live="polite">—</span>
+    <span class="fab-row-label">Operating BE</span>
+    <span class="fab-row-value" id="fab-be">—</span>
+  </span>
+  <span class="fab-row">
+    <span class="fab-row-label">Payback</span>
+    <span class="fab-row-value" id="fab-pb">—</span>
   </span>
   <span class="fab-hint">แตะเพื่อดูสรุปการลงทุน</span>
 </button>

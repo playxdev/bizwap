@@ -338,6 +338,105 @@ pre{
 footer{background:var(--panel); border-top:1px solid var(--line)}
 footer .wrap{padding-block:28px 40px; font-size:13.5px; color:var(--ink-faint)}
 
+/* ---------- confidence badges ---------- */
+.badge{
+  display:inline-block; padding:2px 8px; border-radius:999px; margin-right:5px;
+  font-size:10px; font-weight:700; letter-spacing:.07em; white-space:nowrap;
+  font-family:"Google Sans Code",monospace;
+}
+.b-confirmed{background:var(--green-soft); color:var(--green)}
+.b-estimate{background:var(--blue-soft); color:var(--blue)}
+.b-validate{background:var(--red-soft); color:var(--red)}
+.b-impact{background:var(--amber-soft); color:var(--amber)}
+.ctrl-badges{margin-bottom:8px; min-height:18px}
+.ctrl-badges:empty{display:none; min-height:0}
+.ctrl-sens{
+  display:block; margin-top:8px; padding:8px 10px; border-radius:8px;
+  background:var(--panel3); border-left:2px solid var(--amber);
+  font-size:12.5px; color:var(--ink-soft); line-height:1.5;
+}
+.ctrl-sens b.pos{color:var(--green)}
+.ctrl-sens b.neg{color:var(--red)}
+.conf-legend{
+  display:flex; flex-wrap:wrap; gap:8px 22px; margin-bottom:20px;
+  font-size:13px; color:var(--ink-soft);
+}
+.cf{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:6px}
+.cf-confirmed{background:var(--green)}
+.cf-estimate{background:var(--blue)}
+.cf-validate{background:var(--red)}
+.cf-impact{background:var(--amber)}
+.conf-line{margin:12px 0 0; font-size:13.5px; color:var(--ink-soft)}
+.pkg-name .badge{margin-left:8px}
+
+/* ---------- sticky investor summary ---------- */
+.sticky-summary{
+  position:sticky; top:calc(60px + env(safe-area-inset-top,0px)); z-index:28;
+  background:var(--panel); border-bottom:1px solid var(--line2);
+  transform:translateY(-100%); opacity:0; pointer-events:none;
+  transition:transform .22s ease, opacity .22s ease; max-height:0; overflow:hidden;
+}
+.sticky-summary.is-on{transform:none; opacity:1; pointer-events:auto; max-height:120px}
+.ss{display:flex; align-items:center; gap:14px; padding-block:10px}
+.ss-items{display:flex; gap:22px; overflow-x:auto; scrollbar-width:none; flex:1}
+.ss-items::-webkit-scrollbar{display:none}
+.ss-item{display:flex; flex-direction:column; white-space:nowrap}
+.ss-item small{font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-faint); font-weight:700}
+.ss-item b{font-family:"Google Sans Code",monospace; font-variant-numeric:tabular-nums; font-size:15.5px; font-weight:600}
+.ss-item b.pos{color:var(--green)}
+.ss-item b.neg{color:var(--red)}
+.ss-jump{flex:none}
+
+/* ---------- fixed cost hero ---------- */
+.fixed-hero{
+  display:grid; grid-template-columns:1.6fr 1fr; gap:24px; align-items:center;
+  background:var(--panel); border:2px solid var(--line2); border-left:6px solid var(--orange);
+  border-radius:var(--radius); padding:24px 26px; margin-bottom:18px;
+}
+.fh-main small{display:block; font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); font-weight:700}
+.fh-main strong{
+  display:block; font-family:"Google Sans Code",monospace; font-variant-numeric:tabular-nums;
+  font-size:clamp(30px,4.4vw,42px); font-weight:600; color:var(--orange); line-height:1.1; margin:6px 0 8px;
+}
+.fh-main strong em{font-style:normal; font-size:.44em; color:var(--ink-soft); font-weight:500}
+.fh-main span{display:block; font-size:14px; color:var(--ink-soft); line-height:1.55; margin-bottom:10px}
+.fh-bar{height:12px; border-radius:999px; background:var(--blue); overflow:hidden}
+.fh-bar i{display:block; height:100%; background:var(--orange)}
+.fh-legend{display:flex; gap:16px; margin-top:10px; font-size:13px; color:var(--ink-soft); flex-wrap:wrap}
+.sw-fixed{background:var(--orange)}
+.sw-mkt{background:var(--blue)}
+
+.grid-4{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line);
+  border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; margin-bottom:20px}
+
+/* ---------- break-even pair ---------- */
+.be-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px}
+.be-card{background:var(--panel); border:1px solid var(--line); border-top:4px solid var(--line2); border-radius:var(--radius); padding:24px}
+.be-card.ok{border-top-color:var(--green)}
+.be-card.miss{border-top-color:var(--amber)}
+.be-tag{font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); font-weight:700}
+.be-card strong{
+  display:block; font-family:"Google Sans Code",monospace; font-variant-numeric:tabular-nums;
+  font-size:clamp(26px,3.6vw,34px); font-weight:600; margin:8px 0 10px; line-height:1.1;
+}
+.be-card.ok strong{color:var(--green)}
+.be-card.miss strong{color:var(--amber)}
+.be-card p{margin:0 0 8px; font-size:14.5px; color:var(--ink-soft); line-height:1.55}
+.be-sub b.pos{color:var(--green)}
+.be-sub b.neg{color:var(--red)}
+
+/* ---------- stress ---------- */
+.stress-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; padding-top:16px; border-top:1px solid var(--line)}
+
+/* ---------- table extras ---------- */
+td.strong-col,th.strong-col{background:var(--panel3)}
+tr.is-pb td{background:var(--blue-soft); font-weight:600}
+tr.is-current td{background:var(--orange-soft); font-weight:600}
+tr[data-shock],tr[data-scenario-row]{cursor:pointer}
+tr[data-shock]:hover td,tr[data-scenario-row]:hover td{background:var(--panel2)}
+.is-cell.is-hl{background:var(--orange-soft)}
+.is-cell.is-hl strong{color:var(--orange)}
+
 /* ---------- floating contribution balloon ---------- */
 .fab{
   position:fixed; z-index:40;
@@ -435,6 +534,9 @@ dialog.modal::backdrop{background:rgba(4,9,18,.66)}
 /* ---------- responsive ---------- */
 @media (max-width:1000px){
   .hero-kpis{grid-template-columns:repeat(2,1fr)}
+  .grid-4{grid-template-columns:repeat(2,1fr)}
+  .fixed-hero{grid-template-columns:1fr}
+  .be-grid{grid-template-columns:1fr}
   .grid-3,.is-grid{grid-template-columns:repeat(2,1fr)}
   .steps-nav{display:none}
 }
@@ -444,7 +546,9 @@ dialog.modal::backdrop{background:rgba(4,9,18,.66)}
   .bar-actions{margin-left:auto}
   .hero{padding:48px 0 40px}
   .step > .wrap{padding-block:40px}
-  .hero-kpis,.grid-3,.is-grid{grid-template-columns:1fr}
+  .hero-kpis,.grid-3,.grid-4,.is-grid{grid-template-columns:1fr}
+  .sticky-summary{display:none}
+  .fixed-hero{padding:18px}
   .waterfall{grid-template-columns:1fr}
   .panel{padding:18px}
   .cta{width:100%; text-align:center}
@@ -472,7 +576,7 @@ dialog.modal::backdrop{background:rgba(4,9,18,.66)}
   @page{margin:13mm}
   html,body{background:#fff}
   body{font-size:10.5pt; line-height:1.5}
-  .topbar,.scenario-bar,.no-print,.ghost-btn,.cta,.why,.ctrl-help,.ctrl-typical,.fab,footer{display:none !important}
+  .topbar,.scenario-bar,.sticky-summary,.no-print,.ghost-btn,.cta,.why,.ctrl-help,.ctrl-typical,.ctrl-sens,.stress-actions,.fab,footer{display:none !important}
   input[type=range],select{display:none !important}
   .ctrl-top{margin:0}
   .panel{padding:10pt; break-inside:avoid}
