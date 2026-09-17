@@ -8,7 +8,9 @@ biz sim for wap content
 ## โครงสร้าง
 
 ```
-index.html        หน้าเอกสาร
+index.html        หน้าเอกสารแผนการตลาด
+sim/sim.html      Investment Decision Simulator
+sim-single.html   sim ทั้งชุดรวมเป็นไฟล์เดียว สร้างด้วย sim/build-single.py
 css/style.css     สไตล์ทั้งหมด light/dark theme
 js/app.js         theme toggle, modal, เครื่องคำนวณ
 bin/              ไฟล์อ้างอิงระหว่างทำงาน

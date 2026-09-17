@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""รวม v2 ทั้งชุดเป็นไฟล์เดียว สำหรับสำรองไว้หรือส่งต่อ
+"""รวม sim ทั้งชุดเป็นไฟล์เดียว สำหรับสำรองไว้หรือส่งต่อ
 
-    python3 v2/build-single.py            -> เขียน indexv2.html ที่รากโปรเจกต์
-    python3 v2/build-single.py out.html   -> เลือกปลายทางเอง
+    python3 sim/build-single.py           -> เขียน sim-single.html ที่รากโปรเจกต์
+    python3 sim/build-single.py out.html  -> เลือกปลายทางเอง
 
 ไฟล์ที่ได้ไม่พึ่งอะไรเลยนอกจาก Google Fonts เปิดจากดิสก์ได้ตรง ๆ
 """
@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 SRC = Path(__file__).resolve().parent
-OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else SRC.parent / "indexv2.html"
+OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else SRC.parent / "sim-single.html"
 
 
 def read(rel):
@@ -19,7 +19,7 @@ def read(rel):
 
 
 def main():
-    html = read("index.html")
+    html = read("sim.html")
     css = read("css/app.css")
     # model ต้องมาก่อน ui เสมอ — ui อ่าน window.SimModel ตอนรัน
     js = read("js/model.js") + "\n\n" + read("js/ui.js")
@@ -40,8 +40,8 @@ def main():
         html,
     )
 
-    stamp = ("<!-- single-file build · สร้างจาก v2/ ด้วย v2/build-single.py\n"
-             "     แก้ที่ v2/ แล้วสร้างใหม่ อย่าแก้ไฟล์นี้ตรง ๆ -->\n")
+    stamp = ("<!-- single-file build · สร้างจาก sim/ ด้วย sim/build-single.py\n"
+             "     แก้ที่ sim/ แล้วสร้างใหม่ อย่าแก้ไฟล์นี้ตรง ๆ -->\n")
     html = stamp + html
 
     OUT.write_text(html, encoding="utf-8")

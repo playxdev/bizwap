@@ -1,11 +1,11 @@
-# v2 — Marketing Investment Simulator
+# sim — Investment Decision Simulator
 
 จำลองงบการตลาด จำนวนลูกค้า รายได้ หน่วยเศรษฐศาสตร์ และคาดการณ์รายเดือน ก่อนตัดสินใจลงเงิน
 
 ## โครงสร้าง
 
 ```
-index.html      โครงหน้าและ step ทั้งหมด
+sim.html        โครงหน้าและ step ทั้งหมด
 css/app.css     ทั้ง theme, dashboard และ print report
 js/model.js     ตรรกะคำนวณล้วน ไม่แตะ DOM เลย
 js/ui.js        อ่านผลจาก model แล้ววาดหน้า ไม่มีสูตรธุรกิจอยู่ในนี้
