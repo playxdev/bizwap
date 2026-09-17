@@ -369,6 +369,9 @@ footer .container{padding-block:36px 52px; font-size:15.5px; color:var(--ink-fai
 .pdf-btn:hover{color:var(--ink); border-color:var(--orange-line)}
 .pdf-btn:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
 
+/* ---------- print-only elements ---------- */
+.print-only{display:none}
+
 /* ---------- print / export to PDF ---------- */
 @media print{
   /* force the light palette — dark backgrounds waste toner and print grey */
@@ -426,4 +429,89 @@ footer .container{padding-block:36px 52px; font-size:15.5px; color:var(--ink-fai
   .investor .quote{font-size:15pt}
   a{color:inherit; text-decoration:none}
   a[href^="#"]::after{content:""}
+}
+
+/* ---------- report cover + layout for print ---------- */
+@media print{
+  .print-only{display:block}
+  .hero{display:none !important}
+
+  /* cover */
+  .print-cover{
+    break-after:page; height:246mm; display:flex; flex-direction:column;
+    padding-top:6mm;
+  }
+  .pc-rule{height:6pt; background:var(--orange); width:64mm; margin-bottom:16mm}
+  .pc-eyebrow{
+    font-size:9pt; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--orange); font-weight:700;
+  }
+  .pc-title{
+    font-size:44pt; line-height:1.04; font-weight:700; letter-spacing:-.02em;
+    margin:8mm 0 0; color:var(--ink);
+  }
+  .pc-sub{
+    font-size:13pt; color:var(--ink-soft); margin:6mm 0 0; max-width:130mm; line-height:1.5;
+  }
+  .pc-kpi{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:0;
+    margin-top:auto; border-top:1.5pt solid var(--ink); border-bottom:1pt solid var(--line-strong);
+  }
+  .pc-kpi > div{padding:6mm 6mm 6mm 0; border-right:1px solid var(--line)}
+  .pc-kpi > div:last-child{border-right:none; padding-right:0}
+  .pc-kpi small{
+    display:block; font-size:8.5pt; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--ink-faint); font-weight:700;
+  }
+  .pc-kpi strong{
+    display:block; font-family:"Google Sans Code",monospace; font-variant-numeric:tabular-nums;
+    font-size:22pt; font-weight:500; color:var(--orange); margin:2mm 0 1.5mm; line-height:1;
+  }
+  .pc-kpi span{display:block; font-size:9pt; color:var(--ink-soft); line-height:1.4}
+
+  .pc-cols{display:grid; grid-template-columns:1.45fr 1fr; gap:12mm; margin-top:10mm}
+  .pc-toc h2{font-size:11pt; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); margin:0 0 4mm}
+  .pc-toc ol{list-style:none; counter-reset:toc; margin:0; padding:0}
+  .pc-toc li{
+    counter-increment:toc; padding:3mm 0; border-bottom:1px solid var(--line);
+    display:grid; grid-template-columns:10mm 1fr;
+  }
+  .pc-toc li::before{
+    content:counter(toc,decimal-leading-zero);
+    font-family:"Google Sans Code",monospace; color:var(--orange); font-weight:600; font-size:10pt;
+  }
+  .pc-toc li span{display:block; font-size:12pt; font-weight:600}
+  .pc-toc li em{display:block; grid-column:2; font-style:normal; font-size:9.5pt; color:var(--ink-soft); margin-top:1mm}
+  .pc-meta{align-self:start}
+  .pc-meta > div{padding:3mm 0; border-bottom:1px solid var(--line)}
+  .pc-meta span{
+    display:block; font-size:8.5pt; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--ink-faint); font-weight:700; margin-bottom:1mm;
+  }
+  .pc-meta b{font-size:10.5pt; font-weight:600}
+  .pc-foot{
+    margin-top:8mm; padding-top:4mm; border-top:1px solid var(--line);
+    font-size:8.5pt; color:var(--ink-faint); line-height:1.5;
+  }
+
+  /* section headers get a numbered rule, each starts on its own page */
+  section{break-before:page; border-top:none}
+  section:first-of-type{break-before:auto}
+  .sec-head{
+    position:relative; border-top:1.5pt solid var(--ink); padding-top:5mm;
+    margin-bottom:7mm; break-after:avoid;
+  }
+  .print-num{
+    font-family:"Google Sans Code",monospace; font-size:9.5pt; font-weight:700;
+    color:var(--orange); letter-spacing:.1em; margin-bottom:2mm;
+  }
+  .step-tag{display:none}
+  h2{font-size:20pt; letter-spacing:-.01em}
+  .lead{font-size:10.5pt; color:var(--ink-soft)}
+
+  /* financial tables read better right-aligned on paper */
+  td.n, th.n{text-align:right}
+  td.n.r, th.n.r{text-align:right}
+  thead{display:table-header-group}
+  tr.total td{border-top:1.2pt solid var(--ink)}
 }
