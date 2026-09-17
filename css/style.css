@@ -369,6 +369,16 @@ footer .container{padding-block:36px 52px; font-size:15.5px; color:var(--ink-fai
 .pdf-btn:hover{color:var(--ink); border-color:var(--orange-line)}
 .pdf-btn:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
 
+.pdf-cta{
+  margin-top:24px; border:none; border-radius:12px; cursor:pointer; font:inherit;
+  font-size:17px; font-weight:700; padding:15px 30px; background:var(--orange); color:#fff;
+}
+:root[data-theme="dark"] .pdf-cta{color:#1A1005}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pdf-cta{color:#1A1005}}
+.pdf-cta:hover{filter:brightness(1.08)}
+.pdf-cta:focus-visible{outline:3px solid var(--blue); outline-offset:3px}
+@media (max-width:620px){.pdf-cta{width:100%}}
+
 /* ---------- print-only elements ---------- */
 .print-only{display:none}
 
@@ -387,7 +397,7 @@ footer .container{padding-block:36px 52px; font-size:15.5px; color:var(--ink-fai
   @page{margin:14mm}
   html,body{background:#fff}
   body{font-size:11pt; line-height:1.55}
-  nav, footer, .no-print, .pdf-btn, .theme-btn, .more-btn, .rm-arrow{display:none !important}
+  nav, footer, .no-print, .pdf-btn, .pdf-cta, .theme-btn, .more-btn, .rm-arrow{display:none !important}
 
   /* modal detail becomes inline appendix so the PDF carries the full plan */
   .more[hidden]{display:block !important; margin-top:12px; padding-top:12px; border-top:1px solid var(--line)}

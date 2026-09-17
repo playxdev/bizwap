@@ -282,6 +282,7 @@
 
 /* export to PDF — the browser's own print dialog, "Save as PDF" */
 (function(){
-  var btn = document.getElementById("pdf-btn");
-  if (btn) btn.addEventListener("click", function(){ window.print(); });
+  document.addEventListener("click", function(e){
+    if (e.target.closest(".js-print")) window.print();
+  });
 })();
