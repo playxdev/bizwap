@@ -40,27 +40,32 @@
     ],
     model: [
       { k: "collectionRate", label: "Collection Rate", min: 0, max: 100, step: 1, fmt: function (v) { return n(v, 0) + " %"; },
-        help: "เรียกเก็บผ่านบิลมือถือสำเร็จกี่ % บางวันยอดเงินในซิมไม่พอ", impact: true },
+        help: "เรียกเก็บผ่านบิลมือถือสำเร็จกี่ % บางวันยอดเงินในซิมไม่พอ", impact: true,
+        typical: "บริการหักรายวันผ่านบิลมือถือ มักอยู่ราว 70–90 %" },
       { k: "aisShare", label: "ส่วนแบ่งเครือข่าย (AIS)", min: 0, max: 60, step: 1, fmt: function (v) { return n(v, 0) + " %"; },
         help: "ค่าช่องทางตัดเงินผ่านบิลมือถือ" },
       { k: "itShare", label: "ส่วนแบ่งพาร์ตเนอร์ (IT)", min: 0, max: 60, step: 1, fmt: function (v) { return n(v, 0) + " %"; },
         help: "หักจากยอดไหน เลือกได้ในช่องถัดไป" },
       { k: "lifetimeDays", label: "อายุลูกค้าเฉลี่ย", min: 7, max: 365, step: 1, fmt: function (v) { return n(v) + " วัน"; },
-        help: "อยู่กี่วันก่อนเลิกจ่าย ตัวแปรที่กระทบเพดานค่าโฆษณามากที่สุด", impact: true },
+        help: "อยู่กี่วันก่อนเลิกจ่าย ตัวแปรที่กระทบเพดานค่าโฆษณามากที่สุด", impact: true,
+        typical: "ยังไม่มีข้อมูลจริงของบริการนี้ — ต้องวัดหลังเปิดขายเป็นอันดับแรก" },
       { k: "organicAtEnd", label: "ลูกค้า Organic / เดือน ณ เดือนสุดท้าย", min: 0, max: 2000, step: 10, fmt: function (v) { return n(v) + " คน"; },
         help: "ลูกค้าที่มาเองจาก Search และ AI ไม่ได้จ่ายค่าโฆษณา", impact: true }
     ],
     media: [
       { k: "cpm", label: "CPM", min: 10, max: 400, step: 5, fmt: baht,
-        help: "ค่าโฆษณาต่อการแสดงผล 1,000 ครั้ง" },
+        help: "ค่าโฆษณาต่อการแสดงผล 1,000 ครั้ง", typical: "ตลาดไทย Facebook/IG ปกติ 60–150 ฿" },
       { k: "ctr", label: "CTR", min: 0.1, max: 8, step: 0.1, fmt: function (v) { return n(v, 1) + " %"; },
-        help: "คนเห็นโฆษณา 100 คน กดกี่คน" },
+        help: "คนเห็นโฆษณา 100 คน กดกี่คน", typical: "ปกติ 0.5–2 % · ชิ้นงานที่เก่งมาก 3–4 % · เพดาน 8 % ตั้งเผื่อไว้แล้ว" },
       { k: "cvr", label: "CVR · คลิก → ลูกค้า", min: 0.1, max: 25, step: 0.1, fmt: function (v) { return n(v, 1) + " %"; },
-        help: "หลังเปิดขาย คนกดเข้าเว็บ 100 คน จ่ายเงินกี่คน", impact: true },
+        help: "หลังเปิดขาย คนกดเข้าเว็บ 100 คน จ่ายเงินกี่คน", impact: true,
+        typical: "เว็บทั่วไป 1–5 % · ดีมาก 10 % · ตั้งเพดาน 25 % เพราะ DCB กดยืนยันครั้งเดียวจบ ไม่ต้องกรอกบัตร" },
       { k: "leadRate", label: "คลิก → รายชื่อ", min: 0, max: 40, step: 0.5, fmt: function (v) { return n(v, 1) + " %"; },
-        help: "ช่วงยังขายไม่ได้ คนกดเข้ามาแล้ว Add LINE หรือทิ้งอีเมลกี่ %" },
+        help: "ช่วงยังขายไม่ได้ คนกดเข้ามาแล้ว Add LINE หรือทิ้งอีเมลกี่ %",
+        typical: "ปกติ 10–25 % สูงกว่าการจ่ายเงินเพราะไม่ต้องควักกระเป๋า" },
       { k: "leadToCustomer", label: "รายชื่อสะสม → ลูกค้า", min: 0, max: 60, step: 1, fmt: function (v) { return n(v, 0) + " %"; },
-        help: "ตอนเปิดขาย รายชื่อที่สะสมไว้แปลงเป็นลูกค้ากี่ %" }
+        help: "ตอนเปิดขาย รายชื่อที่สะสมไว้แปลงเป็นลูกค้ากี่ %",
+        typical: "แคมเปญที่ดีแปลงรายชื่อได้ 5–20 %" }
     ]
   };
 
@@ -184,6 +189,7 @@
       '<input type="range" id="c-' + c.k + '" data-key="' + c.k + '" min="' + c.min + '" max="' + c.max +
         '" step="' + c.step + '" value="' + v + '">' +
       '<span class="ctrl-help">' + c.help + '</span>' +
+      (c.typical ? '<span class="ctrl-typical">ช่วงที่พบจริง · ' + c.typical + '</span>' : '') +
     '</div>';
   }
 

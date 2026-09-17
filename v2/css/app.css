@@ -168,7 +168,11 @@ h3.sub{font-size:15px; letter-spacing:.09em; text-transform:uppercase; color:var
   font-size:16px; font-weight:600; color:var(--orange); white-space:nowrap;
 }
 .ctrl-help{font-size:13px; color:var(--ink-faint); line-height:1.45; margin-top:6px}
-.ctrl.compact .ctrl-help{display:none}
+.ctrl-typical{
+  font-size:12.5px; color:var(--ink-soft); line-height:1.45; margin-top:5px;
+  padding-left:9px; border-left:2px solid var(--line2);
+}
+.ctrl.compact .ctrl-help,.ctrl.compact .ctrl-typical{display:none}
 .impact{
   display:inline-block; margin-left:6px; padding:2px 8px; border-radius:999px;
   background:var(--amber-soft); color:var(--amber); font-size:10px; font-weight:700; letter-spacing:.08em;
@@ -468,7 +472,7 @@ dialog.modal::backdrop{background:rgba(4,9,18,.66)}
   @page{margin:13mm}
   html,body{background:#fff}
   body{font-size:10.5pt; line-height:1.5}
-  .topbar,.scenario-bar,.no-print,.ghost-btn,.cta,.why,.ctrl-help,.fab,footer{display:none !important}
+  .topbar,.scenario-bar,.no-print,.ghost-btn,.cta,.why,.ctrl-help,.ctrl-typical,.fab,footer{display:none !important}
   input[type=range],select{display:none !important}
   .ctrl-top{margin:0}
   .panel{padding:10pt; break-inside:avoid}
