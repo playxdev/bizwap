@@ -468,6 +468,14 @@
       d.className = "fab-delta";
     }
     prevContribution = v;
+
+    var be = f.summary.breakEvenMonth;
+    var beEl = el("fab-be");
+    beEl.textContent = be ? "เดือน " + be : "ยังไม่ถึง";
+    beEl.className = "fab-row-value " + (be ? "reached" : "missed");
+    beEl.title = be
+      ? "เดือนแรกที่รายได้สุทธิคลุมต้นทุนรวมของเดือนนั้น"
+      : "ภายใน " + n(state.months) + " เดือนที่จำลอง ยังไม่มีเดือนไหนที่รายได้สุทธิคลุมต้นทุนรวม";
   }
 
   function renderSummary(f) {

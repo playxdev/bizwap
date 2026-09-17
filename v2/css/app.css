@@ -366,7 +366,18 @@ footer .wrap{padding-block:28px 40px; font-size:13.5px; color:var(--ink-faint)}
   font-size:13px; font-weight:600; min-height:1.2em; opacity:0; transition:opacity .2s ease;
 }
 .fab-delta.show{opacity:1}
-.fab-hint{font-size:11.5px; color:var(--ink-faint); margin-top:4px}
+.fab-row{
+  display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+  margin-top:8px; padding-top:8px; border-top:1px solid var(--line2);
+}
+.fab-row-label{font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); font-weight:700}
+.fab-row-value{
+  font-family:"Google Sans Code",monospace; font-variant-numeric:tabular-nums;
+  font-size:15px; font-weight:700; white-space:nowrap;
+}
+.fab-row-value.reached{color:var(--green)}
+.fab-row-value.missed{color:var(--amber)}
+.fab-hint{font-size:11.5px; color:var(--ink-faint); margin-top:6px}
 
 .fab.is-pos{border-color:var(--green); background:var(--green-soft)}
 .fab.is-pos .fab-value{color:var(--green)}
