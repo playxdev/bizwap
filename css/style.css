@@ -530,13 +530,19 @@ footer .container{padding-block:36px 52px; font-size:15.5px; color:var(--ink-fai
 
 /* ---------- ปุ่มคู่ท้ายกล่องสรุปนักลงทุน ---------- */
 .cta-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:24px}
-.cta-row .pdf-cta{margin-top:0}
+.cta-row .pdf-cta,.cta-row .sim-cta{margin-top:0}
+/* ปุ่มนี้เคยใช้คลาส .pdf-cta ร่วมด้วย เลยโดนกฎโหมดมืดของ .pdf-cta
+   บังคับสีตัวอักษรเป็นเกือบดำ อ่านไม่ออก ตอนนี้แยกคลาสออกมาเลย */
 .sim-cta{
   display:inline-block; text-decoration:none; text-align:center;
-  background:transparent; color:var(--blue);
-  border:2px solid var(--blue); padding:13px 28px;
+  border:none; border-radius:12px; padding:15px 30px;
+  font:inherit; font-size:17px; font-weight:700;
+  background:var(--blue); color:#fff;
 }
-.sim-cta:hover{background:var(--blue-soft); filter:none}
+:root[data-theme="dark"] .sim-cta{color:#06182E}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sim-cta{color:#06182E}}
+.sim-cta:hover{filter:brightness(1.08)}
+.sim-cta:focus-visible{outline:3px solid var(--orange); outline-offset:3px}
 .cta-note{margin:12px 0 0; font-size:14.5px; color:var(--ink-soft)}
 @media (max-width:620px){
   .cta-row{flex-direction:column}
