@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Data-Driven Marketing Plan</title>
+<style>
+:root{
+  --bg:#f6f8fc;--panel:#ffffff;--panel2:#eef4ff;--text:#10213d;--muted:#64748b;
+  --line:#d9e2f0;--blue:#1769e0;--blue2:#0b4db8;--orange:#f97316;
+  --orange-bg:#fff2e8;--green:#16834b;--yellow:#a56a00;--red:#c62828;
+}
+[data-theme="dark"]{
+  --bg:#08111f;--panel:#0f1b2d;--panel2:#15243b;--text:#f4f8ff;--muted:#9eacc2;
+  --line:#263852;--blue:#5d9cff;--blue2:#8bb8ff;--orange:#ff8a3d;
+  --orange-bg:#382115;--green:#5bd58d;--yellow:#f4c95d;--red:#ff7777;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Google Sans",Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);transition:background .2s,color .2s}
+.container{max-width:1180px;margin:auto;padding:0 24px}
+nav{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{height:64px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-weight:700;letter-spacing:.3px}.logo span{color:var(--orange)}
+.nav-right{display:flex;align-items:center}.nav a{color:var(--muted);text-decoration:none;margin-left:20px;font-size:14px}.nav a:hover{color:var(--blue)}
+.theme-btn{margin-left:20px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:9px 12px;cursor:pointer;font-family:inherit}
+.hero{padding:82px 0 64px;text-align:center}
+.badge{display:inline-block;padding:7px 12px;border:1px solid #b9d2fb;border-radius:999px;color:var(--blue);background:var(--panel2);font-size:13px;font-weight:600}
+h1{font-size:clamp(38px,6vw,68px);line-height:1.02;margin:20px auto 18px;max-width:900px}
+.hero p{color:var(--muted);font-size:18px;line-height:1.7;max-width:760px;margin:auto}
+.section{padding:70px 0}.section h2{font-size:32px;margin:0 0 10px}.lead{color:var(--muted);margin-bottom:30px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px}
+.card h3{margin:0 0 10px}.card p{color:var(--muted);line-height:1.65;margin:0}
+.number{font-size:34px;font-weight:700;margin:8px 0}.blue{color:var(--blue)}.orange{color:var(--orange)}.green{color:var(--green)}
+.timeline{display:grid;grid-template-columns:1fr 42px 1fr 42px 1fr 42px 1fr 42px 1fr;gap:0;align-items:stretch}
+.phase{padding:20px;border:1px solid var(--line);background:var(--panel);border-radius:16px;min-height:210px}
+.phase .month{font-size:12px;color:var(--orange);font-weight:700}.phase h3{font-size:18px;margin:10px 0}.phase ul{padding-left:18px;color:var(--muted);line-height:1.7;font-size:14px}
+.phase-arrow{display:flex;align-items:center;justify-content:center;color:var(--blue);font-size:28px;font-weight:700}
+.sim{display:grid;grid-template-columns:340px 1fr;gap:22px}
+.controls,.results{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:24px}
+label{display:flex;justify-content:space-between;font-size:14px;color:var(--text);margin:18px 0 8px}
+input[type=number]{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:16px;font-family:inherit}
+input[type=range]{width:100%;accent-color:var(--orange)}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric{padding:17px;background:var(--panel2);border-radius:14px}.metric small{color:var(--muted);display:block}.metric strong{display:block;font-size:25px;margin-top:5px;color:var(--blue)}
+.decision{margin-top:18px;padding:20px;border-radius:14px;border:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:15px}
+.decision b{font-size:23px;color:var(--text)}.decision p{color:var(--muted);margin:5px 0 0}
+.tag{padding:8px 12px;border-radius:999px;font-size:12px;font-weight:800}.scale{background:#e5f7ed;color:var(--green)}.opt{background:#fff3d7;color:var(--yellow)}.pause,.reduce{background:#ffe6e6;color:var(--red)}
+[data-theme="dark"] .scale{background:#143927}[data-theme="dark"] .opt{background:#403511}[data-theme="dark"] .pause,[data-theme="dark"] .reduce{background:#421f25}
+.explain{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}
+.explain-card{padding:18px;border-left:4px solid var(--orange);background:var(--orange-bg);border-radius:10px}
+.explain-card h4{margin:0 0 7px;color:var(--orange)}.explain-card p{margin:0;color:var(--muted);font-size:14px;line-height:1.65}
+.formula{margin-top:22px;color:var(--muted);font-size:14px;line-height:1.9}.formula strong{color:var(--text)}
+.funnel{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.funnel div{padding:24px 14px;text-align:center;background:var(--panel);border:1px solid var(--line);border-radius:12px}.funnel strong{display:block;margin-bottom:7px}.funnel span{color:var(--muted);font-size:13px}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:16px}.rule{border:1px solid var(--line);border-radius:15px;padding:18px;background:var(--panel)}.rule b{display:block;margin-bottom:7px}.rule span{color:var(--muted);font-size:14px}
+.investor{background:linear-gradient(135deg,var(--panel2),var(--panel));border:1px solid #a9c9f8;border-radius:24px;padding:34px}
+.quote{font-size:24px;line-height:1.55;margin:0 0 20px}.investor p{color:var(--muted);line-height:1.7}
+footer{padding:45px 0;color:var(--muted);border-top:1px solid var(--line);font-size:13px}
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr 1fr}.timeline{grid-template-columns:1fr;gap:0}.phase-arrow{height:38px}.phase-arrow::after{content:"↓"}.phase-arrow{font-size:0}
+  .sim{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(3,1fr)}.explain{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .nav a{display:none}.grid,.rules,.funnel{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}
+  .hero{padding-top:55px}.section{padding:50px 0}.theme-btn{margin-left:8px}.quote{font-size:20px}
+}
+
+.cost-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.cost-card{padding:20px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.cost-card small{display:block;color:var(--muted);font-size:13px}
+.cost-card strong{display:block;font-size:28px;margin-top:6px;color:var(--blue)}
+.cost-card.orange strong{color:var(--orange)}
+.cost-card.green strong{color:var(--green)}
+.cost-note{color:var(--muted);font-size:13px;line-height:1.6;margin-top:8px}
+.break-even{margin-top:18px;padding:20px;border:1px solid #b9d2fb;border-radius:14px;background:var(--panel2)}
+.break-even-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.break-even-item{padding:14px;border-radius:10px;background:var(--panel);border:1px solid var(--line)}
+.break-even-item small{display:block;color:var(--muted)}
+.break-even-item strong{display:block;color:var(--blue);font-size:22px;margin-top:4px}
+@media(max-width:900px){.cost-summary,.break-even-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav><div class="container nav"><div class="logo">MARKETING<span>LAB</span></div><div class="nav-right"><div><a href="#plan">Plan</a><a href="#timeline">Timeline</a><a href="#simulator">Simulator</a><a href="#investor">Investor</a></div><button class="theme-btn" id="themeBtn" type="button" aria-label="Toggle light and dark mode">☾ Dark</button></div></div></nav>
+
+<header class="hero container">
+  <span class="badge">MEDIA STRATEGY &amp; PERFORMANCE</span>
+  <h1>เอกสารอธิบายการใช้ Media</h1>
+  <p>แนวทางการวางแผนงบประมาณ การสร้าง Awareness และการวัดผลทางการตลาด</p>
+  <div style="margin:22px auto 0;color:var(--blue);font-weight:600;font-size:16px">
+    SEO → AEO → GEO → Paid Media → Measure → Optimize → Scale
+  </div>
+  <p style="font-size:15px;margin-top:16px;max-width:820px">
+    เอกสารฉบับนี้อธิบายแนวทางการใช้ช่องทาง Media โดยเน้นการลงทุนตามผลลัพธ์จริง
+    ไม่กำหนดงบโฆษณาเป็นค่าใช้จ่ายคงที่ แต่เริ่มจากการทดลอง เก็บข้อมูล วิเคราะห์ผล
+    และปรับงบประมาณตาม Performance ของแต่ละช่องทาง
+  </p>
+</header>
+
+<section class="section" id="plan"><div class="container">
+<h2>Marketing Model</h2><p class="lead">เปลี่ยน Marketing Budget จาก “ค่าใช้จ่ายคงที่” เป็น “งบลงทุนที่ปรับตาม Performance”</p>
+<div class="grid">
+<div class="card"><div class="number blue">01</div><h3>Build Awareness</h3><p>สร้าง Platform, SEO, Content, Backlink และระบบ Tracking เพื่อสร้างฐาน Organic Traffic และ Data</p></div>
+<div class="card"><div class="number blue">02</div><h3>Test Small</h3><p>เริ่ม Ads ด้วยงบ 2,000–5,000 บาท ทดลอง Audience, Creative และ Message หลายรูปแบบ</p></div>
+<div class="card"><div class="number green">03</div><h3>Scale by Data</h3><p>เพิ่ม ลด หรือหยุดงบตาม CPA, Conversion, ROAS และคุณภาพของลูกค้าที่ได้จริง</p></div>
+</div>
+<div class="grid" style="margin-top:18px">
+<div class="card"><div class="number orange">SEO</div><h3>Search Engine Optimization</h3><p>ทำให้เว็บไซต์ค้นหาเจอง่ายใน Google ด้วย Technical SEO, Content, Keyword, Internal Link และ Backlink เพื่อสร้าง Organic Traffic ระยะยาว</p></div>
+<div class="card"><div class="number orange">AEO</div><h3>Answer Engine Optimization</h3><p>จัดโครงสร้างข้อมูลและเนื้อหาให้ตอบคำถามได้ชัดเจน เพื่อเพิ่มโอกาสถูกนำไปแสดงในระบบ Answer Engine และ AI Search</p></div>
+<div class="card"><div class="number orange">GEO</div><h3>Generative Engine Optimization</h3><p>ทำให้ Brand, Entity และเนื้อหามีข้อมูลอ้างอิงที่ชัดเจน เพื่อเพิ่มโอกาสถูกค้นพบและถูกกล่าวถึงใน Generative AI</p></div>
+</div>
+</div></section>
+
+<section class="section" id="timeline"><div class="container">
+<h2>Marketing Timeline</h2><p class="lead">ตัวอย่าง Roadmap 6 เดือนแรก</p>
+<div class="timeline">
+<div class="phase"><div class="month">MONTH 1</div><h3>Foundation</h3><ul><li>Platform</li><li>Technical SEO</li><li>SEO Structure</li><li>Analytics</li></ul></div>
+<div class="phase-arrow" aria-hidden="true">→</div>
+<div class="phase"><div class="month">MONTH 2</div><h3>Organic + AI Search</h3><ul><li>SEO Content</li><li>AEO Content</li><li>GEO / Entity</li><li>Backlink</li></ul></div>
+<div class="phase-arrow" aria-hidden="true">→</div>
+<div class="phase"><div class="month">MONTH 2–3</div><h3>Ads Test</h3><ul><li>Facebook / Instagram</li><li>Budget 2K–5K</li><li>Audience Test</li><li>Creative Test</li></ul></div>
+<div class="phase-arrow" aria-hidden="true">→</div>
+<div class="phase"><div class="month">MONTH 3–4</div><h3>Optimize</h3><ul><li>วิเคราะห์ KPI</li><li>ลด Campaign ที่ไม่คุ้ม</li><li>ปรับ Funnel</li><li>Retargeting</li></ul></div>
+<div class="phase-arrow" aria-hidden="true">→</div>
+<div class="phase"><div class="month">MONTH 4–6+</div><h3>Scale</h3><ul><li>เพิ่ม Budget</li><li>TikTok / Video</li><li>เพิ่ม Platform</li><li>Automation</li></ul></div>
+</div>
+</div></section>
+
+<section class="section"><div class="container">
+<h2>SEO + AEO + GEO</h2>
+<p class="lead">สามชั้นของ Organic Discovery ที่ทำงานร่วมกัน ก่อนและระหว่างการยิง Paid Ads</p>
+<div class="grid">
+<div class="card"><div class="number blue">SEO</div><h3>คนค้นหา → เจอเว็บไซต์</h3><p>โฟกัส Search Engine เช่น Google และสร้างฐาน Organic Traffic จากคำค้นที่เกี่ยวข้องกับบริการ</p></div>
+<div class="card"><div class="number blue">AEO</div><h3>คนถาม → ได้คำตอบ</h3><p>สร้างเนื้อหาแบบตอบคำถาม เช่น FAQ, How-to, Structured Content และข้อมูลที่อ่านเข้าใจได้โดย Search / Answer Engine</p></div>
+<div class="card"><div class="number blue">GEO</div><h3>AI สร้างคำตอบ → Brand ถูกค้นพบ</h3><p>จัดทำข้อมูล Brand และหัวข้อสำคัญให้มีความชัดเจน สอดคล้อง และมีแหล่งอ้างอิง เพื่อรองรับ Generative Search</p></div>
+</div>
+</div></section>
+
+<section class="section" id="simulator"><div class="container">
+<h2>Marketing Investment Simulator</h2><p class="lead">ทดลองงบประมาณจากข้อมูลจริง เพื่อดูต้นทุน ผลลัพธ์ และความคุ้มค่าของการลงทุน</p>
+
+<div class="cost-summary">
+  <div class="cost-card"><small>Fixed Cost / เดือน</small><strong id="fixedTotal">66,500 ฿</strong><div class="cost-note">Fixed — ไม่ปรับลดตามงบ Ads</div></div>
+  <div class="cost-card orange"><small>Marketing Investment</small><strong id="marketingSpend">1,000 ฿</strong><div class="cost-note">งบ Ads / Media ที่ปรับตาม Performance</div></div>
+  <div class="cost-card green"><small>Total Monthly Investment</small><strong id="totalInvestment">67,500 ฿</strong><div class="cost-note">Fixed Cost + Marketing Investment</div></div>
+</div>
+
+<div class="sim">
+<div class="controls">
+<h3 style="margin-top:0">Fixed Cost</h3>
+<div class="cost-note">ต้นทุนคงที่ ฿66,500 / เดือน — ไม่ปรับลดตามงบ Ads</div>
+<div class="cost-card" style="margin-top:14px">
+  <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span>Project Manager</span><strong style="font-size:16px;color:var(--text)">26,000 ฿</strong></div>
+  <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span>Senior Developer</span><strong style="font-size:16px;color:var(--text)">26,000 ฿</strong></div>
+  <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span>Base Infrastructure</span><strong style="font-size:16px;color:var(--text)">5,000 ฿</strong></div>
+  <div style="display:flex;justify-content:space-between;padding:8px 0"><span>SEO / Coding Tools</span><strong style="font-size:16px;color:var(--text)">9,500 ฿</strong></div>
+</div>
+
+<h3 style="margin:28px 0 0">Variable Marketing Cost</h3>
+<label>Ad Budget <span id="budgetVal">1,000 ฿</span></label>
+<input id="budget" type="range" min="0" max="100000" step="500" value="1000">
+<div class="cost-note">เริ่มจากงบขนาดเล็ก 2,000–5,000 บาท แล้วปรับตามผลลัพธ์</div>
+<label>Ad Budget <span id="budgetVal">1,000 ฿</span></label>
+<input id="budget" type="range" min="500" max="100000" step="500" value="1000">
+<label>Impressions</label><input id="impressions" type="number" value="20000" min="0">
+<div class="explain-card"><h4>Impressions คืออะไร?</h4><p>จำนวนครั้งที่โฆษณาถูกแสดงบนหน้าจอ อาจเป็นคนเดิมเห็นหลายครั้งได้ จึงไม่เท่ากับจำนวนคน</p></div>
+<label>Clicks</label><input id="clicks" type="number" value="400" min="0">
+<div class="explain-card"><h4>Clicks คืออะไร?</h4><p>จำนวนครั้งที่ผู้ชมกดโฆษณาเพื่อไปยังเว็บไซต์หรือปลายทางที่กำหนด ใช้ดูว่าคนสนใจโฆษณามากแค่ไหน</p></div>
+<label>Conversions</label><input id="conversions" type="number" value="20" min="0">
+<div class="explain-card"><h4>Conversions คืออะไร?</h4><p>จำนวนคนที่ทำ “เป้าหมาย” ที่เรากำหนดสำเร็จ เช่น สมัครสมาชิก ซื้อสินค้า ส่งแบบฟอร์ม หรือเริ่มใช้บริการ</p></div>
+<label>ราคาสมาชิก / เดือน (฿)</label><input id="monthlyPrice" type="number" value="49" min="0">
+<label>อายุสมาชิกเฉลี่ย (เดือน)</label><input id="avgMonths" type="number" value="3" min="0">
+<label>Target CPA (฿)</label><input id="targetCPA" type="number" value="100" min="1">
+</div>
+<div class="results">
+<h3>Campaign Performance</h3>
+<div class="metrics">
+<div class="metric"><small>CTR</small><strong id="ctr">0%</strong></div>
+<div class="metric"><small>CPM</small><strong id="cpm">0 ฿</strong></div>
+<div class="metric"><small>CPC</small><strong id="cpc">0 ฿</strong></div>
+<div class="metric"><small>CVR</small><strong id="cvr">0%</strong></div>
+<div class="metric"><small>CPA / CAC</small><strong id="cpa">0 ฿</strong></div>
+<div class="metric"><small>ROAS</small><strong id="roas">0x</strong></div>
+</div>
+<h3 style="margin-top:22px">Business Economics</h3>
+<div class="metrics">
+<div class="metric"><small>Target CPA</small><strong id="targetDisplay">0 ฿</strong></div>
+<div class="metric"><small>LTV</small><strong id="ltv">0 ฿</strong></div>
+<div class="metric"><small>LTV:CAC</small><strong id="ltvCac">—</strong></div>
+<div class="metric"><small>Payback</small><strong id="payback">—</strong></div>
+</div>
+<div class="break-even">
+<strong>Break-even Analysis</strong>
+<div class="cost-note">คำนวณจากต้นทุนรวมต่อเดือนและ LTV ของลูกค้า</div>
+<div class="break-even-grid">
+<div class="break-even-item"><small>Total Monthly Investment</small><strong id="beInvestment">67,500 ฿</strong></div>
+<div class="break-even-item"><small>Customers Needed / Month</small><strong id="beCustomers">—</strong></div>
+<div class="break-even-item"><small>Break-even LTV Revenue</small><strong id="beRevenue">—</strong></div>
+</div>
+</div>
+
+<div class="decision"><div><b id="decision">OPTIMIZE</b><p id="decisionText">กำลังประเมิน Campaign...</p></div><span id="decisionTag" class="tag opt">OPTIMIZE</span></div>
+<div class="formula">
+<strong>คำนวณจากผลจริงของ Campaign</strong><br>
+CTR = Clicks ÷ Impressions × 100<br>
+CPC = Ad Spend ÷ Clicks<br>
+Conversion Rate = Conversions ÷ Clicks × 100<br>
+CPA = Ad Spend ÷ Conversions<br>
+ROAS = Revenue ÷ Ad Spend
+</div>
+</div>
+</div>
+</div></section>
+
+<section class="section"><div class="container">
+<h2>Fixed Cost vs Variable Marketing Cost</h2><p class="lead">แยกต้นทุนประจำออกจากงบ Media เพื่อให้นักลงทุนเห็นภาพการลงทุนจริง</p>
+<div class="grid">
+<div class="card"><div class="number blue">฿66,500</div><h3>Fixed Cost / Month</h3><p>Project Manager, Senior Developer, Base Infrastructure และ SEO / Coding Tools เป็นค่าใช้จ่ายประจำของการดำเนินงาน</p></div>
+<div class="card"><div class="number orange">Variable</div><h3>Marketing Budget</h3><p>Ads และ Media เริ่มจากงบขนาดเล็ก แล้วเพิ่ม ลด หรือเปลี่ยน Platform ตาม Performance</p></div>
+<div class="card"><div class="number green">Data</div><h3>Investment Decision</h3><p>ใช้ CPA, ROAS, LTV:CAC และ Break-even เป็นข้อมูลประกอบการจัดสรรงบ</p></div>
+</div>
+</div></section>
+
+<section class="section"><div class="container">
+<h2>Marketing Funnel</h2><p class="lead">Impression เป็นเพียงจุดเริ่มต้น ต้องติดตามจนถึง Revenue</p>
+<div class="funnel">
+<div><strong>Awareness</strong><span>Impression<br>Reach</span></div>
+<div><strong>Interest</strong><span>Click<br>Engagement</span></div>
+<div><strong>Traffic</strong><span>Landing Page<br>Session</span></div>
+<div><strong>Conversion</strong><span>Register<br>Purchase</span></div>
+<div><strong>Revenue</strong><span>Customer Value<br>ROAS</span></div>
+</div>
+</div></section>
+
+<section class="section"><div class="container">
+<h2>Budget Decision Rules</h2><p class="lead">งบจะถูกปรับตามข้อมูล ไม่ใช่ตามตัวเลข Fixed Budget</p>
+<div class="rules">
+<div class="rule"><b style="color:var(--green)">SCALE</b><span>CPA อยู่ต่ำกว่า Target และมี Conversion เพียงพอ → พิจารณาเพิ่มงบอย่างค่อยเป็นค่อยไป</span></div>
+<div class="rule"><b style="color:var(--yellow)">OPTIMIZE</b><span>CPA ใกล้ Target → คงงบและปรับ Audience / Creative / Funnel</span></div>
+<div class="rule"><b style="color:var(--red)">REDUCE</b><span>CPA สูงกว่า Target อย่างมีนัยสำคัญ → ลดงบและแก้ Campaign</span></div>
+<div class="rule"><b style="color:var(--red)">PAUSE</b><span>ใช้เงินแล้วไม่มี Conversion หรือข้อมูลไม่เพียงพอ → หยุดเพื่อวิเคราะห์ก่อน</span></div>
+</div>
+</div></section>
+
+<section class="section" id="investor"><div class="container">
+<div class="investor">
+<h2>Investor Summary</h2>
+<p class="quote">“เราไม่ได้กำหนดว่า Marketing ต้องใช้ 50,000 บาทต่อเดือน แต่เรากำหนดกระบวนการที่ทำให้ทุกบาทสามารถถูกวัดผลและนำข้อมูลกลับมาปรับการลงทุนได้”</p>
+<p>ช่วงแรกเน้น SEO และ Organic Growth เพื่อสร้างฐานข้อมูลและ Awareness จากนั้นใช้ Paid Ads เป็นเครื่องมือทดลองตลาดด้วยงบขนาดเล็ก เมื่อพบ Audience และ Campaign ที่มีประสิทธิภาพ จึงค่อยเพิ่มงบหรือขยายไปยัง Platform อื่น เช่น TikTok, Video และ Retargeting</p>
+</div>
+</div></section>
+
+<footer><div class="container">Data-Driven Marketing Plan · Single File HTML · No Framework Required</div></footer>
+
+<script>
+const $ = id => document.getElementById(id);
+const money = n => new Intl.NumberFormat('th-TH',{maximumFractionDigits:2}).format(n);
+
+function calc(){
+  const budget=Math.max(0,+$('budget').value||0);
+  const imp=Math.max(0,+$('impressions').value||0);
+  const clicks=Math.max(0,+$('clicks').value||0);
+  const conv=Math.max(0,+$('conversions').value||0);
+  const monthlyPrice=Math.max(0,+$('monthlyPrice').value||0);
+  const avgMonths=Math.max(0,+$('avgMonths').value||0);
+  const target=Math.max(0,+$('targetCPA').value||0);
+
+  const fixed=66500;
+  const total=fixed+budget;
+
+  const ctr=imp?clicks/imp*100:0;
+  const cpm=imp?budget/imp*1000:0;
+  const cpc=clicks?budget/clicks:0;
+  const cvr=clicks?conv/clicks*100:0;
+  const cpa=conv?budget/conv:0;
+  const ltv=monthlyPrice*avgMonths;
+  const revenue=conv*ltv;
+  const roas=budget?revenue/budget:0;
+  const ltvCac=cpa?ltv/cpa:0;
+  const payback=monthlyPrice?cpa/monthlyPrice:0;
+
+  $('budgetVal').textContent=money(budget)+' ฿';
+  $('fixedTotal').textContent=money(fixed)+' ฿';
+  $('marketingSpend').textContent=money(budget)+' ฿';
+  $('totalInvestment').textContent=money(total)+' ฿';
+
+  $('ctr').textContent=ctr.toFixed(2)+'%';
+  $('cpm').textContent=money(cpm)+' ฿';
+  $('cpc').textContent=money(cpc)+' ฿';
+  $('cvr').textContent=cvr.toFixed(2)+'%';
+  $('cpa').textContent=conv?money(cpa)+' ฿':'—';
+  $('roas').textContent=roas.toFixed(2)+'x';
+  $('targetDisplay').textContent=money(target)+' ฿';
+  $('ltv').textContent=money(ltv)+' ฿';
+  $('ltvCac').textContent=ltvCac?ltvCac.toFixed(2)+' : 1':'—';
+  $('payback').textContent=payback?payback.toFixed(1)+' เดือน':'—';
+
+  const beCustomers=ltv>0?Math.ceil(total/ltv):0;
+  const beRevenue=beCustomers*ltv;
+  $('beInvestment').textContent=money(total)+' ฿';
+  $('beCustomers').textContent=beCustomers?money(beCustomers)+' ราย':'—';
+  $('beRevenue').textContent=beCustomers?money(beRevenue)+' ฿':'—';
+
+  let state='LEARNING', text='ข้อมูลยังอยู่ในช่วงเริ่มต้น ควรเก็บ Conversion เพิ่มก่อนตัดสินใจเพิ่มหรือลดงบ';
+  if(conv>=20){
+    if(target>0 && cpa<=target){state='SCALE';text='CPA อยู่ในเป้าหมายและมีข้อมูลเพียงพอ สามารถพิจารณาเพิ่มงบอย่างค่อยเป็นค่อยไป';}
+    else if(target>0 && cpa>target*1.5){state='REDUCE';text='CPA สูงกว่าเป้าหมายอย่างมีนัยสำคัญ ควรลดงบและ Optimize Campaign';}
+    else {state='OPTIMIZE';text='CPA อยู่ใกล้เป้าหมาย ควรคงงบและทดลองปรับ Audience / Creative / Funnel';}
+  } else if(conv>=5) {
+    state='OPTIMIZE'; text='มีข้อมูลเบื้องต้น ควรปรับ Audience, Creative หรือ Landing Page ก่อน Scale';
+  } else if(conv===0 && clicks>0) {
+    state='LEARNING'; text='ยังไม่เกิด Conversion — ตรวจสอบ Offer และ Landing Page พร้อมเก็บข้อมูลเพิ่ม';
+  }
+
+  $('decision').textContent=state;
+  $('decisionText').textContent=text;
+  const tag=$('decisionTag');
+  tag.textContent=state;
+  tag.className='tag '+(state==='SCALE'?'scale':state==='OPTIMIZE'?'opt':'reduce');
+}
+
+document.querySelectorAll('input').forEach(x=>x.addEventListener('input',calc));
+calc();
+
+const themeBtn = document.getElementById('themeBtn');
+const root = document.documentElement;
+const savedTheme = 'light';
+function applyTheme(theme){
+  root.setAttribute('data-theme',theme);
+  themeBtn.textContent = theme === 'dark' ? '☀ Light' : '☾ Dark';
+  themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+}
+applyTheme(savedTheme);
+themeBtn.addEventListener('click',()=>applyTheme(root.getAttribute('data-theme')==='dark'?'light':'dark'));
+
+</script>
+</body>
+</html>

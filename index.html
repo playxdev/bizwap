@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>เอกสารอธิบายการใช้ Media</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Google+Sans+Code:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav>
+  <div class="container nav">
+    <div class="logo">MEDIA<span>PLAN</span></div>
+    <div class="nav-links">
+      <a href="#roadmap">ภาพรวม</a>
+      <a href="#step1">ต้นทุน</a>
+      <a href="#step2">Organic</a>
+      <a href="#step4">เครื่องคำนวณ</a>
+      <a href="#step7">ข้อสมมติ</a>
+      <a href="#glossary">ศัพท์</a>
+    </div>
+    <button class="theme-btn" id="theme-toggle" type="button"><span id="theme-icon">☾</span><span id="theme-label">โหมดมืด</span></button>
+  </div>
+</nav>
+
+<header class="hero container">
+  <span class="badge">แพลตฟอร์มดูดวง · ไพ่ทาโรต์</span>
+  <h1>เอกสารอธิบายการใช้ Media</h1>
+  <p class="deck">แนวทางการวางแผนงบประมาณ การสร้าง Awareness และการวัดผลทางการตลาด</p>
+  <div class="flowline">
+    <b>SEO</b><i>→</i><b>AEO</b><i>→</i><b>GEO</b><i>→</i><b>ทดสอบงบเล็ก</b><i>→</i><b>วัดผล</b><i>→</i><b>ปรับ</b><i>→</i><b>ขยาย</b>
+  </div>
+  <p class="note">ต้นทุนคงที่ของทีมและระบบคือ 66,500 บาท/เดือน ตั้งเป็นก้อนตายตัวได้ถูกต้องแล้ว ส่วนงบโฆษณาและงบคอนเทนต์เป็นต้นทุนผันแปร เริ่มจากทดลองด้วยเงินหลักพัน เก็บตัวเลขจริง แล้วค่อยเพิ่ม ลด หรือหยุดตามผล</p>
+  <div class="meta">
+    <span><b>จัดทำ</b> 16 ก.ย. 2569</span>
+    <span><b>ขอบเขต</b> 8 เดือนแรก</span>
+    <span><b>ช่องทาง</b> SEO · Facebook · TikTok</span>
+  </div>
+</header>
+
+<!-- ============ ROADMAP ============ -->
+<section class="roadmap-sec">
+  <div class="container">
+    <div class="sec-head" id="roadmap">
+      <h2>ภาพรวม 8 เดือน</h2>
+      <p class="lead">ระบบใช้เวลาพัฒนา 8 เดือนด้วยทีม 2 คน แผนการตลาดเดินคู่ไปตลอด คอนเทนต์ขึ้นเดือน 2 โฆษณาเริ่มเดือน 4 เปิดขายเดือน 7</p>
+    </div>
+
+    <div class="roadmap">
+      <div class="rm" data-kicker="MONTH 1" data-title="เตรียมและตุนคอนเทนต์">
+        <div class="month">MONTH 1</div>
+        <h3>เตรียมและตุนคอนเทนต์</h3>
+        <ul><li>วิจัยคีย์เวิร์ด</li><li>ติดตั้ง Tracking</li><li>เขียนคอนเทนต์ตุนไว้ 30–40 ชิ้น</li><li>ตั้งเว็บคอนเทนต์</li></ul>
+        <div class="budget">คอนเทนต์ 3K–5K · ยังไม่ปล่อย ยังไม่ยิง</div>
+        <button class="more-btn" type="button">รายละเอียด →</button>
+        <div class="more" hidden>
+          <h4>ทำไมเขียนก่อนปล่อย</h4>
+          <p>การเขียนคอนเทนต์ไม่ต้องรอเว็บ ตุนไว้ล่วงหน้าไม่มีต้นทุนเพิ่ม พอเว็บพร้อมต้นเดือน 2 จะได้ทยอยปล่อยได้ทันที ไม่ต้องเริ่มนับหนึ่งตอนนั้น</p>
+          <h4>งานรายสัปดาห์</h4>
+          <ul>
+            <li><strong>สัปดาห์ 1</strong> — ติดตั้ง GA4, Search Console, Facebook Pixel และ Conversions API, TikTok Pixel</li>
+            <li><strong>สัปดาห์ 1</strong> — วิจัยคีย์เวิร์ด: ดูดวงวันนี้ · ไพ่ทาโรต์ความหมาย · ดูดวงความรัก · ดวงรายเดือน</li>
+            <li><strong>สัปดาห์ 2–4</strong> — เขียนคอนเทนต์ด้วย AI Agent 30–40 ชิ้น เขียนแบบถาม-ตอบตั้งแต่ต้น</li>
+            <li><strong>สัปดาห์ 3–4</strong> — ตั้งเว็บคอนเทนต์ใต้โดเมนเดียวกัน + SEO เทคนิค (ความเร็ว, mobile, Schema, sitemap)</li>
+            <li><strong>สัปดาห์ 4</strong> — ตั้งเพจ Facebook / TikTok / LINE OA</li>
+          </ul>
+          <h4>หมายเหตุ</h4>
+          <p>เว็บคอนเทนต์คือบล็อกใต้โดเมนเดียวกัน ไม่ใช่ตัวแพลตฟอร์ม ใช้เวลา dev 2–3 วัน ไม่แย่งเวลาการพัฒนาระบบหลัก</p>
+        </div>
+      </div>
+      <div class="rm-arrow" aria-hidden="true"><span>→</span></div>
+      <div class="rm" data-kicker="MONTH 2–3" data-title="ปล่อยคอนเทนต์ · SEO AEO GEO">
+        <div class="month">MONTH 2–3</div>
+        <h3>ปล่อยคอนเทนต์</h3>
+        <ul><li>ทยอยปล่อยวันละ 2–3 ชิ้น</li><li>AEO + GEO</li><li>Backlink ชุดแรก</li><li>Landing Page เก็บรายชื่อ</li></ul>
+        <div class="budget">คอนเทนต์ 3K–5K / เดือน · ยังไม่ยิง</div>
+        <button class="more-btn" type="button">รายละเอียด →</button>
+        <div class="more" hidden>
+          <h4>งานรายสัปดาห์</h4>
+          <ul>
+            <li><strong>สัปดาห์ 5</strong> — เว็บคอนเทนต์ออนไลน์ เริ่มทยอยปล่อยที่ตุนไว้ <strong>วันละ 2–3 ชิ้น</strong> ห้ามปล่อยทีเดียวทั้งหมด Google มองว่าผิดปกติ</li>
+            <li><strong>สัปดาห์ 5</strong> — วาง llms.txt + หน้าสรุปแบบมีโครงสร้าง ให้ AI ดึงไปอ้างอิงง่าย</li>
+            <li><strong>สัปดาห์ 6–12</strong> — คอนเทนต์ใหม่อีก 40–60 ชิ้น เน้นคีย์เวิร์ดหางยาวและเทศกาล</li>
+            <li><strong>สัปดาห์ 7–10</strong> — Backlink ชุดแรก + บทความร่วมกับเว็บสายมูอื่น</li>
+            <li><strong>สัปดาห์ 11</strong> — Landing Page สำหรับเก็บรายชื่อ + ตั้ง Conversion Event</li>
+            <li><strong>สัปดาห์ 12</strong> — ตรวจ Pixel ยิง Event ถูกต้อง และเช็กขนาด Retargeting Audience</li>
+          </ul>
+          <h4>ตัวชี้วัดปลายเดือน 3</h4>
+          <ul><li>คอนเทนต์ออนไลน์ 70–100 ชิ้น เริ่มถูก index</li><li>ทราฟฟิก organic 500–1,500 ครั้ง/เดือน</li><li>Pixel และ LINE OA พร้อมรับคน</li></ul>
+        </div>
+      </div>
+      <div class="rm-arrow" aria-hidden="true"><span>→</span></div>
+      <div class="rm" data-kicker="MONTH 4–5" data-title="ทดสอบโฆษณา · เก็บรายชื่อ">
+        <div class="month">MONTH 4–5</div>
+        <h3>ทดสอบโฆษณา เก็บรายชื่อ</h3>
+        <ul><li>Facebook / Instagram</li><li>3 ชุด × 3 ชิ้นงาน</li><li>เป้าหมาย: รายชื่อ ไม่ใช่ยอดขาย</li><li>สร้าง Retargeting Pool</li></ul>
+        <div class="budget">โฆษณา 2K–5K / เดือน</div>
+        <button class="more-btn" type="button">รายละเอียด →</button>
+        <div class="more" hidden>
+          <h4>ทำไมยังวัดยอดขายไม่ได้</h4>
+          <p>ระบบยังพัฒนาไม่เสร็จ ยังไม่มีอะไรให้ซื้อ ช่วงนี้จึงวัด <strong>CPL — ค่าใช้จ่ายต่อการได้รายชื่อ 1 คน</strong> (คนกด Add LINE OA หรือทิ้งอีเมล) ไม่ใช่ CPA อย่าเอาตัวเลขช่วงนี้ไปเทียบกับเพดาน CPA ในเครื่องคำนวณ</p>
+          <h4>สิ่งที่ต้องได้กลับมา</h4>
+          <ul>
+            <li>รู้ว่ากลุ่มเป้าหมายไหนราคาถูกที่สุด</li>
+            <li>รู้ว่าภาพและข้อความแบบไหนคนกด</li>
+            <li>CPM · CTR · CPC จริงของบัญชีเรา แทนที่กรอบอ้างอิงตลาด</li>
+            <li>รายชื่อใน LINE OA ที่จะยิงซ้ำตอนเปิดขาย ซึ่งถูกกว่าหาคนใหม่ 3–5 เท่า</li>
+          </ul>
+          <h4>งานรายสัปดาห์</h4>
+          <ul>
+            <li><strong>สัปดาห์ 13</strong> — เริ่มยิง 3 ชุด × 3 ชิ้นงาน วันละ 100–150 บาท ห้ามแตะ 3 วันแรก</li>
+            <li><strong>สัปดาห์ 14</strong> — ทบทวนครั้งแรก ปิดชุดแย่สุด เพิ่มงบชุดดีสุด 20 %</li>
+            <li><strong>สัปดาห์ 15–18</strong> — สลับชิ้นงานทุกครั้งที่ Frequency เกิน 3 · ทดสอบ TikTok งบเล็ก</li>
+            <li><strong>สัปดาห์ 19–20</strong> — สรุปว่ากลุ่มไหนและชิ้นงานไหนชนะ เก็บไว้ใช้ตอนเปิดขาย</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rm-arrow" aria-hidden="true"><span>→</span></div>
+      <div class="rm" data-kicker="MONTH 6–7" data-title="Organic ออกดอก · เปิดขาย">
+        <div class="month">MONTH 6–7</div>
+        <h3>Organic ออกดอก · เปิดขาย</h3>
+        <ul><li>คอนเทนต์รวม 130–170 ชิ้น</li><li>วิดีโอ TikTok</li><li>เดือน 7 เปิดตัดเงิน AIS</li><li>เริ่มวัด CPA จริง</li></ul>
+        <div class="budget">โฆษณา 5K–15K</div>
+        <button class="more-btn" type="button">รายละเอียด →</button>
+        <div class="more" hidden>
+          <h4>เดือน 6 — SEO เริ่มออกดอก</h4>
+          <p>คอนเทนต์ที่ปล่อยตั้งแต่เดือน 2 จะเริ่มติดอันดับจริงในช่วงนี้ (ปกติใช้เวลา 3–6 เดือน) ตอนเปิดขายจึงมีทราฟฟิกฟรีรออยู่แล้ว ไม่ต้องซื้อทุกคน</p>
+          <ul>
+            <li>คอนเทนต์อีก 60–70 ชิ้น</li>
+            <li>วิดีโอ TikTok สัปดาห์ละ 4–8 คลิป</li>
+            <li>แยก report ทราฟฟิกจาก AI (chatgpt.com, perplexity.ai) ใน GA4</li>
+            <li>ปรับชิ้นงานโฆษณาจากข้อมูลจริงที่เก็บได้เดือน 4–5</li>
+          </ul>
+          <h4>เงื่อนไขก่อนเปิดขาย</h4>
+          <ul>
+            <li>ทราฟฟิก organic 2,000 ครั้ง/เดือนขึ้นไป</li>
+            <li>คีย์เวิร์ดติดหน้า 1–3 อย่างน้อย 10 คำ</li>
+            <li>ถูก AI อ้างอิงอย่างน้อย 3 คำถาม</li>
+            <li>Retargeting Pool 3,000 คนขึ้นไป</li>
+          </ul>
+          <h4>เดือน 7 — ลำดับการยิงตอนเปิดขาย</h4>
+          <ul>
+            <li><strong>ยิงเข้ารายชื่อเดิมก่อน</strong> — คนใน LINE OA และ Retargeting Pool ที่สะสมมา 3 เดือน ต้นทุนต่อยอดขายถูกที่สุด</li>
+            <li>ตามด้วยกลุ่มเป้าหมายที่พิสูจน์แล้วว่าถูกที่สุดจากเดือน 4–5</li>
+            <li>ค่อยขยายไปหาคนใหม่</li>
+          </ul>
+          <h4>ตัวเลขที่ต้องเก็บให้ได้ในเดือน 7</h4>
+          <ul>
+            <li>CPA จริง เทียบกับเพดาน LTV ÷ 3</li>
+            <li>สัดส่วนคนเลือกแพ็กเกจรายครั้ง / รายวัน / รายเดือน</li>
+            <li>Collection Rate จริงของ AIS</li>
+            <li><strong>อายุสมาชิกเฉลี่ย</strong> — ตัวแปรที่เอกสารนี้ยังเดาอยู่ และกระทบเพดาน CPA มากที่สุด</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rm-arrow" aria-hidden="true"><span>→</span></div>
+      <div class="rm" data-kicker="MONTH 8+" data-title="ขยายตามผล">
+        <div class="month">MONTH 8+</div>
+        <h3>ขยาย</h3>
+        <ul><li>หลายแพลตฟอร์ม</li><li>แบ่งงบ 70/20/10</li><li>Affiliate สายมู</li><li>Automation</li></ul>
+        <div class="budget">โฆษณา ตาม ROAS</div>
+        <button class="more-btn" type="button">รายละเอียด →</button>
+        <div class="more" hidden>
+          <h4>ต้องผ่านครบทุกข้อก่อนเพิ่มงบ</h4>
+          <ul>
+            <li>CPA จริง ไม่เกิน CPA เป้าหมาย (LTV ÷ 3)</li>
+            <li>มีชุดโฆษณาที่ทำกำไรต่อเนื่องอย่างน้อย 7 วัน</li>
+            <li>อัตราคงอยู่ของผู้ใช้เดือนที่ 2 ตั้งแต่ 40 % ขึ้นไป</li>
+          </ul>
+          <h4>งานในช่วงนี้</h4>
+          <ul>
+            <li>หลายแพลตฟอร์มพร้อมกัน: Facebook + TikTok + Google Ads + LINE Ads</li>
+            <li>แบ่งงบ 70 / 20 / 10 — ชุดที่พิสูจน์แล้ว / ทดสอบใหม่ / แพลตฟอร์มใหม่</li>
+            <li>Influencer และ Affiliate สายมู จ่ายตามผล</li>
+            <li>Email / LINE Automation ยืดอายุสมาชิก — เพิ่ม LTV คือเพิ่มเพดาน CPA</li>
+          </ul>
+          <h4>เพดานงบที่ใช้ได้</h4>
+          <p>Conversions ที่ต้องการต่อเดือน × CPA จริง — ไม่ใช่ตัวเลขที่ตั้งไว้ล่วงหน้า</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STEP I ============ -->
+<section>(PM)
+  <div class="container">
+    <div class="sec-head" id="step1">
+      <span class="step-tag">STEP I</span>
+      <h2>แยกต้นทุนคงที่ ออกจากต้นทุนผันแปร</h2>
+      <p class="lead">นี่คือจุดที่เข้าใจคลาดเคลื่อน และเป็นที่มาของตัวเลข 50,000 ต่อเดือน</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><small>ต้นทุนคงที่ / เดือน</small><strong>66,500 ฿</strong><div class="note">ทีมและระบบ จ่ายเท่ากันทุกเดือน</div></div>
+      <div class="stat orange"><small>งบการตลาด / เดือน</small><strong>3K–20K ฿</strong><div class="note">ผันแปร ปรับขึ้นลงได้ตามผล</div></div>
+      <div class="stat good"><small>รวมที่ต้องเตรียม / เดือน</small><strong>69.5K–86.5K ฿</strong><div class="note">ช่วงเดือนที่ 1–5</div></div>
+    </div>
+
+    <div class="callout">
+      <p style="margin-bottom:8px"><strong>ต้นทุนคงที่ 66.5K บาท/เดือน</strong> — PM, Senior Developer, Cloud, เครื่องมือ จ่ายเท่ากันทุกเดือนไม่ว่าจะยิงโฆษณาหรือไม่ ตัวนี้ตั้งเป็นก้อนตายตัวได้ถูกต้องแล้ว</p>
+      <p style="margin-bottom:0"><strong>ค่าโฆษณา และ SEO / คอนเทนต์</strong> — คนละประเภท ทั้งคู่เปิดปิดได้ ปรับขึ้นลงได้ทุกเดือนตามตัวเลขที่วัดได้ การตั้งค่าโฆษณาเป็นก้อนตายตัว 50K คือการเอาต้นทุนผันแปรไปใส่ช่องต้นทุนคงที่</p>
+    </div>
+
+    <h3>รายละเอียดต้นทุนคงที่</h3>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>รายการ</th><th>รายละเอียด</th><th class="n">บาท / เดือน</th></tr></thead>
+        <tbody>
+          <tr><td>Project Manager</td><td>ควบคุมระยะเวลา ถ่ายทอดลอจิกงาน ประสานงาน</td><td class="n">26,000</td></tr>
+          <tr><td>Infrastructure</td><td>Cloud Server, VPS, FrontEnd, BackEnd, Staging/Production</td><td class="n">5,000</td></tr>
+          <tr><td>SEO, Coding Tools</td><td>เครื่องมือ Dev ที่ใช้ในการทำงาน</td><td class="n">9,500</td></tr>
+          <tr class="total"><td>รวมต้นทุนคงที่</td><td></td><td class="n">66,500</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>สองแนวทางของงบการตลาด</h3>
+    <p>ยิง 50,000 ในเดือนแรก ทั้งที่ยังไม่รู้ว่าลูกค้าคือใคร คอนเทนต์ไหนคนคลิก และเว็บแปลงยอดได้กี่ % คือการ<strong>ซื้อข้อมูลแพงเกินจำเป็น</strong> — ข้อมูลชุดเดียวกันซื้อได้ด้วย 2,000–5,000 บาท</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th></th><th>แนวทางเดิม · งบตายตัว</th><th>แนวทางที่เสนอ · ผูกกับผลลัพธ์</th></tr></thead>
+        <tbody>
+          <tr><td>งบเดือน 1–2</td><td class="n">50K</td><td class="n">3K–5K <span style="color:var(--ink-faint)">(คอนเทนต์)</span></td></tr>
+          <tr><td>งบเดือน 3</td><td class="n">50K</td><td class="n">3K–5K <span style="color:var(--ink-faint)">(คอนเทนต์)</span></td></tr>
+          <tr><td>งบเดือน 4–5</td><td class="n">50K</td><td class="n">5K–10K <span style="color:var(--ink-faint)">(คอนเทนต์ + ทดสอบ)</span></td></tr>
+          <tr><td>ฐานการตัดสินใจ</td><td>ปฏิทิน</td><td>CPA / ROAS จริง</td></tr>
+          <tr><td>ความเสี่ยงสูงสุด</td><td><span class="pill bad">เผางบก่อนรู้จักลูกค้า</span></td><td><span class="pill good">จำกัดขาดทุนที่หลักพัน</span></td></tr>
+          <tr><td>สิ่งที่เหลือเมื่อหยุดจ่าย</td><td>ไม่เหลืออะไร ทราฟฟิกเป็นศูนย์ทันที</td><td>คลังคอนเทนต์ + อันดับ SEO + สูตรยิงที่พิสูจน์แล้ว</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>งบการตลาด 8 เดือน เทียบกัน</h3>
+    <p class="hint" style="margin-bottom:10px">เฉพาะงบการตลาด ยังไม่รวมต้นทุนคงที่ 66.5K บาท/เดือน ซึ่งเท่ากันทั้งสองแนวทาง</p>
+    <div class="chart">
+      <svg viewBox="0 0 680 300" role="img" aria-label="กราฟแท่งเทียบงบการตลาดรายเดือน 8 เดือน ระหว่างงบตายตัว 50,000 บาททุกเดือน กับแผนที่เสนอซึ่งเริ่มที่ 4,000 บาทแล้วค่อยเพิ่มตามผลลัพธ์">
+        <line class="grid-line" x1="62" y1="250" x2="668" y2="250"></line>
+        <line class="grid-line" x1="62" y1="192.5" x2="668" y2="192.5"></line>
+        <line class="grid-line" x1="62" y1="135" x2="668" y2="135"></line>
+        <line class="grid-line" x1="62" y1="77.5" x2="668" y2="77.5"></line>
+        <line class="grid-line" x1="62" y1="20" x2="668" y2="20"></line>
+        <text class="axis-text" x="54" y="254" text-anchor="end">0</text>
+        <text class="axis-text" x="54" y="196.5" text-anchor="end">12.5K</text>
+        <text class="axis-text" x="54" y="139" text-anchor="end">25K</text>
+        <text class="axis-text" x="54" y="81.5" text-anchor="end">37.5K</text>
+        <text class="axis-text" x="54" y="24" text-anchor="end">50K</text>
+
+        <rect class="bar-fixed" x="70.0" y="20" width="26" height="230"></rect>
+        <rect class="bar-prop"  x="100.0" y="231.6" width="26" height="18.4"></rect>
+        <rect class="bar-fixed" x="144.8" y="20" width="26" height="230"></rect>
+        <rect class="bar-prop"  x="174.8" y="231.6" width="26" height="18.4"></rect>
+        <rect class="bar-fixed" x="219.5" y="20" width="26" height="230"></rect>
+        <rect class="bar-prop"  x="249.5" y="231.6" width="26" height="18.4"></rect>
+        <rect class="bar-fixed" x="294.2" y="20" width="26" height="230"></rect>
+        <rect class="bar-prop"  x="324.2" y="220.1" width="26" height="29.9"></rect>
+        <rect class="bar-fixed" x="369.0" y="20" width="26" height="230"></rect>
+        <rect class="bar-prop"  x="399.0" y="220.1" width="26" height="29.9"></rect>
+        <rect class="bar-fixed" x="443.8" y="20" width="26" height="230"></rect>
+        <rect class="bar-prop"  x="473.8" y="190.2" width="26" height="59.8"></rect>
+        <rect class="bar-fixed" x="518.5" y="20" width="26" height="230"></rect>
+        <rect class="bar-prop"  x="548.5" y="190.2" width="26" height="59.8"></rect>
+        <rect class="bar-fixed" x="593.2" y="20" width="26" height="230"></rect>
+        <rect class="bar-prop"  x="623.2" y="144.2" width="26" height="105.8"></rect>
+
+        <text class="axis-text" x="99.0" y="272" text-anchor="middle">เดือน 1</text>
+        <text class="axis-text" x="173.8" y="272" text-anchor="middle">เดือน 2</text>
+        <text class="axis-text" x="248.5" y="272" text-anchor="middle">เดือน 3</text>
+        <text class="axis-text" x="323.2" y="272" text-anchor="middle">เดือน 4</text>
+        <text class="axis-text" x="398.0" y="272" text-anchor="middle">เดือน 5</text>
+        <text class="axis-text" x="472.8" y="272" text-anchor="middle">เดือน 6</text>
+        <text class="axis-text" x="547.5" y="272" text-anchor="middle">เดือน 7</text>
+        <text class="axis-text" x="622.2" y="272" text-anchor="middle">เดือน 8</text>
+        <text class="axis-text" x="622.2" y="288" text-anchor="middle">ตาม ROAS</text>
+      </svg>
+    </div>
+    <div class="legend">
+      <span><i class="swatch" style="background:var(--line-strong)"></i>งบตายตัว 50K — รวม 8 เดือน 400K บาท</span>
+      <span><i class="swatch" style="background:var(--blue)"></i>แผนที่เสนอ — รวม 8 เดือน ประมาณ 74K บาท</span>
+    </div>
+    <p style="margin-top:16px">ส่วนต่าง 326K ไม่ได้หายไป — เก็บไว้ใช้ตอนรู้แล้วว่า 1 บาทที่ใส่ คืนมาเท่าไร ยิ่งโปรเจกต์ยาว 8 เดือน การตั้งงบตายตัวยิ่งเสียหายหนัก เพราะจ่ายเต็มทุกเดือนตั้งแต่ยังไม่มีอะไรขาย</p>
+  </div>
+</section>
+
+<!-- ============ STEP II ============ -->
+<section>
+  <div class="container">
+    <div class="sec-head" id="step2">
+      <span class="step-tag">STEP II</span>
+      <h2>สร้างฐาน Organic · เดือน 1–3</h2>
+      <p class="lead">คอนเทนต์ชุดเดียวกัน ต้องยึดให้ได้ทั้งสามสนาม ยังไม่ยิงโฆษณาในขั้นนี้</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="kicker orange">SEO</div>
+        <h3>คนค้นหา → เจอเว็บเรา</h3>
+        <p>Keyword, Deep Content, Backlink ความเร็วเว็บ สร้าง Organic Traffic ที่ยังทำงานต่อแม้หยุดจ่ายเงิน</p>
+      </div>
+      <div class="card">
+        <div class="kicker orange">AEO</div>
+        <h3>คนถาม → ได้คำตอบเป็นเรา</h3>
+        <p>เขียนแบบถาม-ตอบ ย่อหน้าสรุป 40–60 คำต่อคำถาม ใส่ Schema FAQ Page เพื่อถูกหยิบขึ้นกล่องคำตอบและ AI Overviews</p>
+      </div>
+      <div class="card">
+        <div class="kicker orange">GEO</div>
+        <h3>AI ตอบ → อ้างชื่อเรา</h3>
+        <p>ข้อมูลมีโครงสร้าง ระบุตัวเลขและที่มาชัด ถูกพูดถึงในเว็บอื่น ทำไฟล์ llms.txt ให้ ChatGPT และ Perplexity ดึงไปใช้</p>
+      </div>
+    </div>
+
+    <p>คำถามอย่าง “ไพ่ The Tower หมายถึงอะไร” ทุกวันนี้ถูกถามกับ ChatGPT และตอบจบในนั้น ไม่มีใครคลิกเข้าเว็บ — ถ้าทำแต่ SEO อย่างเดียว ทราฟฟิกส่วนนี้หายไปเฉย ๆ</p>
+
+    <div class="scroll">
+      <table class="ftable">
+        <thead><tr><th>สนาม</th><th>คนเห็นเราที่ไหน</th><th>ต้องทำอะไร</th><th>วัดผลด้วย</th></tr></thead>
+        <tbody>
+          <tr><td class="key">SEO</td><td>หน้าผลค้นหา Google</td><td>Keyword, Deep Content, Backlink ความเร็วเว็บ</td><td>อันดับ · Organic Traffic</td></tr>
+          <tr><td class="key">AEO</td><td>คำตอบ·AI Overviews</td><td>เขียนถาม-ตอบ สรุป 40–60 คำ Schema FAQ Page / HowTo</td><td>จำนวนคำถามที่ได้กล่องคำตอบ</td></tr>
+          <tr><td class="key">GEO</td><td>ChatGPT·Gemini·Claude</td><td>ข้อมูลมีโครงสร้าง ระบุที่มา ถูกพูดถึงในเว็บอื่น llms.txt</td><td>จำนวนครั้งที่ถูกอ้างอิง · ทราฟฟิกจาก AI</td></tr>
+        </tbody>
+        <tfoot>
+          <tr><td>ต้นทุน</td><td colspan="3">คอนเทนต์ชุดเดียวกัน ต่างกันแค่วิธีจัดโครงสร้าง — ทำสามสนามพร้อมกันแทบไม่เพิ่มงบ แต่ทำย้อนหลังต้องรื้อเขียนใหม่ทั้งคลัง</td></tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="callout">
+      <p><strong>ทำไมต้องทำขั้นนี้ก่อนยิงโฆษณา</strong></p>
+      <ul style="margin-bottom:0">
+        <li><strong>CPC ถูกลง</strong> — FB คิดถูกลงเมื่อหน้าปลายทางมี engagement จริง ยิงไปหน้าเปล่าคือจ่ายแพงกว่า</li>
+        <li><strong>ต้องมี Retargeting Pool ก่อน</strong> — กลุ่มที่เคยเข้าเว็บ ต้นทุนต่อยอดขายถูกกว่าคนใหม่ 3–5 เท่า</li>
+        <li><strong>รู้ก่อนจ่าย</strong> — Search Console บอกฟรีว่าคนค้นคำไหน เอาไปทำโฆษณาได้เลย ไม่ต้องเดา</li>
+      </ul>
+    </div>
+
+    <div class="gate">
+      <b>เงื่อนไขก่อนเริ่มยิงโฆษณาเดือน 4</b>
+      <ul>
+        <li>ทราฟฟิก organic 500–2,000 ครั้งต่อเดือน</li>
+        <li>คีย์เวิร์ดติดหน้า 1–3 อย่างน้อย 5 คำ</li>
+        <li>ได้กล่องคำตอบหรือถูก AI อ้างอิงอย่างน้อย 3 คำถาม</li>
+        <li>Retargeting Pool ตั้งแต่ 1,000 คนขึ้นไป</li>
+        <li>Pixel ยิง Event ถูกต้องครบทุกจุด</li>
+      </ul>
+    </div>
+
+    <h3>เกณฑ์ปรับงบ SEO / คอนเทนต์</h3>
+    <p class="hint" style="margin-bottom:12px">งบก้อนนี้ซื้อ “จำนวนชิ้นงานต่อเดือน” ปรับตามคิวคีย์เวิร์ดที่ยังไม่ได้ทำ ไม่ใช่ปรับตามปฏิทิน</p>
+    <div class="scroll">
+      <table class="ftable">
+        <thead><tr><th>สถานการณ์</th><th>เหตุผล</th><th class="r">ACTION</th></tr></thead>
+        <tbody>
+          <tr><td>Keyword มีเหลือ อันดับกำลังไต่</td><td>ยิ่งลงคอนเทนต์เร็ว ยิ่งกินคีย์เวิร์ดก่อนคู่แข่ง</td><td class="where r">เพิ่มเป็น 5K–8K</td></tr>
+          <tr><td>คลังคอนเทนต์ครบ อันดับนิ่งแล้ว</td><td>เหลือแค่ค่าอัปเดตของเดิมให้สด</td><td class="where r">ลดเหลือ 1K–2K</td></tr>
+          <tr><td>ต้องผลิตวิดีโอ TikTok เพิ่ม</td><td>วิดีโอเป็นงานผลิต ต้นทุนต่อชิ้นสูงกว่างานเขียน</td><td class="where r">เพิ่มตามจำนวนคลิป</td></tr>
+          <tr><td>คอนเทนต์ลงครบแต่ยังไม่ถูก index</td><td>ปัญหาอยู่ที่โครงสร้างเว็บ เพิ่มคอนเทนต์ไม่ช่วย</td><td class="where r">คงงบ แก้เทคนิคก่อน</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STEP III ============ -->
+<section>
+  <div class="container">
+    <div class="sec-head" id="step3">
+      <span class="step-tag">STEP III</span>
+      <h2>ทดสอบตลาดด้วยงบเล็ก · เดือน 4–5</h2>
+      <p class="lead">ระบบยังขายไม่ได้ ขั้นนี้จึงยิงเพื่อ<strong>เก็บรายชื่อและหาว่ากลุ่มไหนถูกที่สุด</strong> วัดด้วย CPL ไม่ใช่ CPA</p>
+    </div>
+
+    <div class="grid">
+      <div class="card"><div class="kicker">2K–5K</div><h3>งบต่อเดือน</h3><p>วันละ 100–150 บาท จำกัดความเสียหายสูงสุดไว้ที่หลักพัน ไม่ใช่หลักหมื่น</p></div>
+      <div class="card"><div class="kicker">3 × 3</div><h3>ชุดโฆษณา × ชิ้นงาน</h3><p>3–4 กลุ่มเป้าหมาย คูณกับ 3–4 ชิ้นงาน เพื่อรู้ว่ากลุ่มไหนและภาพแบบไหนชนะ</p></div>
+      <div class="card"><div class="kicker orange">CPL</div><h3>วัดค่าได้รายชื่อ</h3><p>ระบบยังขายไม่ได้ จึงวัดค่าใช้จ่ายต่อการได้รายชื่อ 1 คน ไม่ใช่ CPA อย่าเอาไปเทียบเพดาน CPA</p></div>
+    </div>
+
+    <h3>เส้นทางของเงินหนึ่งบาท</h3>
+    <div class="funnel">
+      <div><strong>งบที่ใช้</strong><span>เงินที่จ่ายจริง</span></div>
+      <div><strong>Impressions</strong><span>โฆษณาถูกแสดงกี่ครั้ง</span></div>
+      <div><strong>Clicks</strong><span>มีคนกดเข้าเว็บกี่คน</span></div>
+      <div><strong>รายชื่อ</strong><span>เดือน 4–5 · Add LINE / ทิ้งอีเมล</span></div>
+      <div><strong>ยอดขาย</strong><span>เดือน 7 เป็นต้นไป</span></div>
+    </div>
+
+    <h3>เกณฑ์อ้างอิง — ตลาดไทย หมวดดูดวง/ไลฟ์สไตล์</h3>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>ตัวชี้วัด</th><th class="n r">Facebook / IG</th><th class="n r">TikTok</th><th>สัญญาณเตือน</th></tr></thead>
+        <tbody>
+          <tr><td>CPM</td><td class="n r">60–150 บาท</td><td class="n r">30–90 บาท</td><td>เกิน 200 บาท = กลุ่มแคบไปหรือแข่งสูงเกิน</td></tr>
+          <tr><td>CTR</td><td class="n r">1.0–2.0 %</td><td class="n r">1.5–3.0 %</td><td>ต่ำกว่า 0.7 % = ชิ้นงานโฆษณาไม่ดึงดูด</td></tr>
+          <tr><td>CVR</td><td class="n r">3–8 %</td><td class="n r">2–5 %</td><td>ต่ำกว่า 1.5 % = หน้า Landing มีปัญหา</td></tr>
+          <tr><td>CPA</td><td class="n r">80–200 บาท</td><td class="n r">60–150 บาท</td><td>เกิน LTV ÷ 3 = ขาดทุนระยะยาว</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="hint">กรอบตั้งสมมติฐานเท่านั้น แทนที่ด้วยตัวเลขจริงจากบัญชีโฆษณาทันทีที่ยิงครบ 7 วัน</p>
+  </div>
+</section>
+
+<!-- ============ STEP IV ============ -->
+<section>
+  <div class="container">
+    <div class="sec-head" id="step4">
+      <span class="step-tag">STEP IV</span>
+      <h2>วัดผล — เครื่องคำนวณ</h2>
+      <p class="lead">กรอกตัวเลขที่แพลตฟอร์มรายงาน แล้วอ่านคำแนะนำจากตารางใน STEP V</p>
+    </div>
+
+    <div class="scroll">
+      <table class="ftable">
+        <thead><tr><th>ตัวย่อ</th><th>ชื่อเต็ม</th><th>สูตร</th></tr></thead>
+        <tbody>
+          <tr><td class="key">CPM</td><td>ต้นทุนต่อการแสดงผลพันครั้ง</td><td class="eq">(งบที่ใช้ ÷ Impressions) × 1000</td></tr>
+          <tr><td class="key">CTR</td><td>อัตราการคลิก</td><td class="eq">(Clicks ÷ Impressions) × 100</td></tr>
+          <tr><td class="key">CPC</td><td>ต้นทุนต่อคลิก</td><td class="eq">งบที่ใช้ ÷ Clicks</td></tr>
+          <tr><td class="key">CVR</td><td>อัตราแปลงเป็นลูกค้า</td><td class="eq">(Conversions ÷ Clicks) × 100</td></tr>
+          <tr><td class="key">CPA</td><td>ต้นทุนต่อลูกค้าหนึ่งราย</td><td class="eq">งบที่ใช้ ÷ Conversions</td></tr>
+          <tr><td class="key">ROAS</td><td>ผลตอบแทนต่อค่าโฆษณา</td><td class="eq">รายได้ ÷ งบที่ใช้</td></tr>
+        </tbody>
+        <tfoot>
+          <tr><td>เกณฑ์ตัดสิน</td><td colspan="2"><span class="eqi">CPA เป้าหมาย = LTV ÷ 3</span> &nbsp;·&nbsp; <span class="eqi">LTV = ราคาต่อเดือน × อายุสมาชิกเฉลี่ย</span></td></tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="calc">
+      <div class="calc-head">
+        <h3>คำนวณจากผลจริง</h3>
+        <span class="hint">ค่าตั้งต้นคือตัวอย่างการยิง 1,000 บาท</span>
+      </div>
+      <div class="calc-body">
+        <h3 class="first">ตัวเลขที่แพลตฟอร์มรายงาน</h3>
+        <div class="fields">
+          <div class="field">
+            <label for="f-spend">งบที่ใช้ (บาท)</label>
+            <span class="fhelp">เงินที่จ่ายไปจริงในช่วงที่ดูผล ไม่ใช่งบที่ตั้งไว้</span>
+            <input type="number" id="f-spend" value="1000" min="0" step="100">
+          </div>
+          <div class="field">
+            <label for="f-impr">Impressions</label>
+            <span class="fhelp">จำนวนครั้งที่โฆษณาถูกแสดงบนจอ คนเดียวเห็น 3 ครั้ง นับเป็น 3 จึงไม่เท่ากับจำนวนคน</span>
+            <input type="number" id="f-impr" value="12500" min="0" step="100">
+          </div>
+          <div class="field">
+            <label for="f-click">Clicks</label>
+            <span class="fhelp">จำนวนครั้งที่มีคนกดโฆษณาเข้ามาที่เว็บเรา ใช้ดูว่าโฆษณาน่าสนใจแค่ไหน</span>
+            <input type="number" id="f-click" value="150" min="0" step="10">
+          </div>
+          <div class="field">
+            <label for="f-conv">Conversions</label>
+            <span class="fhelp">คนที่ทำสิ่งที่เราต้องการสำเร็จจริง — สมัครสมาชิกหรือจ่ายเงินครั้งแรก ไม่ใช่แค่เข้าเว็บ</span>
+            <input type="number" id="f-conv" value="6" min="0" step="1">
+          </div>
+          <div class="field">
+            <label for="f-days">จำนวนวันที่ยิง</label>
+            <span class="fhelp">ตัดสินว่าพ้น Learning Phase แล้วหรือยัง (3 วัน) และถึงเวลาปิดชุดที่ไม่คุ้มหรือยัง (7 วัน)</span>
+            <input type="number" id="f-days" value="7" min="1" step="1">
+          </div>
+        </div>
+
+        <h3>แพ็กเกจและสัดส่วนผู้ใช้</h3>
+        <p class="hint" style="margin:-6px 0 16px">ลูกค้าซื้อได้ 3 แบบ ตัดผ่านบิล AIS · สัดส่วนผู้ใช้ทั้งสามแบบรวมกันต้องได้ 100 % <span id="mix-sum"></span></p>
+        <div class="sliders">
+          <div class="slider">
+            <div class="srow"><label for="f-p1">รายครั้ง · ราคา</label><span class="sval" id="v-p1"></span></div>
+            <input type="range" id="f-p1" min="0" max="50" step="1" value="3">
+            <span class="shelp">เปิดไพ่ / ดูดวงหนึ่งครั้ง</span>
+          </div>
+          <div class="slider">
+            <div class="srow"><label for="f-u1">รายครั้ง · ซื้อกี่ครั้ง/เดือน</label><span class="sval" id="v-u1"></span></div>
+            <input type="range" id="f-u1" min="0" max="60" step="1" value="6">
+            <span class="shelp">ความถี่เฉลี่ยต่อคนที่ซื้อแบบรายครั้ง</span>
+          </div>
+          <div class="slider">
+            <div class="srow"><label for="f-s1">รายครั้ง · สัดส่วนผู้ใช้</label><span class="sval" id="v-s1"></span></div>
+            <input type="range" id="f-s1" min="0" max="100" step="1" value="50">
+            <span class="shelp">กี่ % ของคนที่จ่ายเงิน ใช้แบบนี้</span>
+          </div>
+
+          <div class="slider">
+            <div class="srow"><label for="f-p2">รายวัน · ราคา</label><span class="sval" id="v-p2"></span></div>
+            <input type="range" id="f-p2" min="0" max="50" step="1" value="9">
+            <span class="shelp">เปิดใช้ทั้งหมดในวันนั้น</span>
+          </div>
+          <div class="slider">
+            <div class="srow"><label for="f-u2">รายวัน · ใช้งานกี่วัน/เดือน</label><span class="sval" id="v-u2"></span></div>
+            <input type="range" id="f-u2" min="0" max="30" step="1" value="20">
+            <span class="shelp">วันที่ถูกตัดเงินจริงต่อเดือน</span>
+          </div>
+          <div class="slider">
+            <div class="srow"><label for="f-s2">รายวัน · สัดส่วนผู้ใช้</label><span class="sval" id="v-s2"></span></div>
+            <input type="range" id="f-s2" min="0" max="100" step="1" value="35">
+            <span class="shelp">กี่ % ของคนที่จ่ายเงิน ใช้แบบนี้</span>
+          </div>
+
+          <div class="slider">
+            <div class="srow"><label for="f-p3">รายเดือน · ราคา</label><span class="sval" id="v-p3"></span></div>
+            <input type="range" id="f-p3" min="0" max="500" step="10" value="99">
+            <span class="shelp">สมาชิก PLATINUM ต่อเดือน</span>
+          </div>
+          <div class="slider">
+            <div class="srow"><label for="f-s3">รายเดือน · สัดส่วนผู้ใช้</label><span class="sval" id="v-s3"></span></div>
+            <input type="range" id="f-s3" min="0" max="100" step="1" value="15">
+            <span class="shelp">กี่ % ของคนที่จ่ายเงิน ใช้แบบนี้</span>
+          </div>
+        </div>
+
+        <h3>ตั้งค่าอื่น ๆ</h3>
+        <div class="presets">
+          <span class="plabel">ค่าตั้งต้น</span>
+          <button class="preset-btn" type="button" data-preset="ours">คืนค่าตั้งต้น</button>
+        </div>
+        <div class="sliders">
+          <div class="slider">
+            <div class="srow"><label for="f-dau">DAU</label><span class="sval" id="v-dau"></span></div>
+            <input type="range" id="f-dau" min="0" max="50000" step="100" value="2000">
+            <span class="shelp">คนที่เข้าใช้งานต่อวัน ไม่ใช่คนที่จ่ายเงิน</span>
+          </div>
+          <div class="slider">
+            <div class="srow"><label for="f-dauconv">อัตราสมัคร (Conversion)</label><span class="sval" id="v-dauconv"></span></div>
+            <input type="range" id="f-dauconv" min="0" max="30" step="0.5" value="8">
+            <span class="shelp">กี่ % ของ DAU สมัคร PLATINUM และถูกหักเงินสำเร็จ</span>
+          </div>
+          <div class="slider">
+            <div class="srow"><label for="f-collect">อัตราเก็บเงินสำเร็จ</label><span class="sval" id="v-collect"></span></div>
+            <input type="range" id="f-collect" min="0" max="100" step="1" value="82">
+            <span class="shelp">บางวันยอดเงินในซิมไม่พอ ก็เก็บไม่ได้</span>
+          </div>
+          <div class="slider">
+            <div class="srow"><label for="f-ais">ส่วนแบ่ง AIS</label><span class="sval" id="v-ais"></span></div>
+            <input type="range" id="f-ais" min="0" max="60" step="1" value="30">
+            <span class="shelp">ค่าช่องทางหักเงินผ่านบิลมือถือ</span>
+          </div>
+          <div class="slider">
+            <div class="srow"><label for="f-it">ส่วนแบ่งฝั่ง IT</label><span class="sval" id="v-it"></span></div>
+            <input type="range" id="f-it" min="0" max="60" step="1" value="35">
+            <span class="shelp">เลือก Gross หรือ Net ได้ในช่องถัดไป</span>
+          </div>
+          <div class="slider">
+            <div class="srow"><label for="f-life">อายุสมาชิกเฉลี่ย</label><span class="sval" id="v-life"></span></div>
+            <input type="range" id="f-life" min="7" max="365" step="1" value="60">
+            <span class="shelp">อยู่กี่วันก่อนเลิกจ่าย ตัวแปรที่กระทบเพดาน CPA มากที่สุด</span>
+          </div>
+          <div class="slider">
+            <div class="srow"><label for="f-team">ค่าทีม / เดือน</label><span class="sval" id="v-team"></span></div>
+            <input type="range" id="f-team" min="0" max="400000" step="1000" value="52000">
+            <span class="shelp">PM 26,000 + Senior Developer 26,000</span>
+          </div>
+          <div class="slider">
+            <div class="srow"><label for="f-server">ค่าเซิร์ฟเวอร์ + เครื่องมือ / เดือน</label><span class="sval" id="v-server"></span></div>
+            <input type="range" id="f-server" min="0" max="60000" step="500" value="14500">
+            <span class="shelp">Infrastructure 5,000 + Tools 9,500</span>
+          </div>
+          <div class="slider">
+            <div class="srow"><label for="f-itbase">IT Partner หักจากยอดไหน</label></div>
+            <select id="f-itbase">
+              <option value="after" selected>Net Revenue — ยอดหลังแบ่ง AIS แล้ว</option>
+              <option value="gross">Gross Revenue — ยอดเก็บได้เต็ม ก่อนแบ่ง AIS</option>
+            </select>
+            <span class="shelp">สัญญาส่วนใหญ่ใช้ Net คือหักหลังแบ่ง AIS แล้ว</span>
+          </div>
+        </div>
+
+        <div class="calc-actions">
+          <button class="calc-btn" id="calc-btn" type="button">คำนวณ</button>
+          <span class="calc-dirty" id="calc-dirty" hidden>ค่าเปลี่ยนแล้ว — กดคำนวณเพื่อดูผลใหม่</span>
+        </div>
+
+        <h3>ผลของแคมเปญ</h3>
+        <div class="metrics" id="metrics"></div>
+
+        <h3>เศรษฐศาสตร์ต่อสมาชิก 1 คน</h3>
+        <div class="metrics" id="econ"></div>
+
+        <h3>ภาพรวมธุรกิจต่อเดือน</h3>
+        <div class="metrics" id="biz"></div>
+
+        <div class="verdict" id="verdict" role="status" aria-live="polite"></div>
+
+        <h3>Revenue Waterfall · ต่อสมาชิก 1 คน ต่อเดือน</h3>
+        <div class="costlist" id="waterfall"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STEP V ============ -->
+<section>
+  <div class="container">
+    <div class="sec-head" id="step5">
+      <span class="step-tag">STEP V</span>
+      <h2>ตัดสินใจ — เพิ่ม คง ลด หรือปิด</h2>
+      <p class="lead">ตัวเลขไหนพัง แก้ตรงไหน และเมื่อไรควรถอย</p>
+    </div>
+
+    <h3 class="first">สูตรวินิจฉัย — ไล่บนลงล่าง หยุดข้อแรกที่ไม่ผ่าน</h3>
+    <div class="scroll">
+      <table class="ftable">
+        <thead><tr><th>อาการ</th><th>ปัญหาอยู่ที่</th><th>วิธีแก้</th></tr></thead>
+        <tbody>
+          <tr><td>CTR ต่ำกว่า 0.7 %</td><td class="where">ชิ้นงานโฆษณา</td><td>เปลี่ยนภาพ หัวข้อ หรือ hook 3 วินาทีแรก</td></tr>
+          <tr><td>CTR ปกติ แต่ CVR ต่ำกว่า 1.5 %</td><td class="where">หน้า Landing</td><td>ความเร็วโหลด ขั้นตอนสมัคร ความชัดของข้อเสนอ</td></tr>
+          <tr><td>CVR ปกติ แต่ CPA สูง</td><td class="where">กลุ่มเป้าหมาย</td><td>แคบกลุ่มลง หรือสร้าง Lookalike จากคนที่ซื้อแล้ว</td></tr>
+          <tr><td>ทุกอย่างปกติ แต่ ROAS ต่ำ</td><td class="where">ราคาขาย / LTV</td><td>เพิ่มแพ็กเกจ ขายพ่วง ยืดอายุสมาชิก</td></tr>
+          <tr><td>CPM พุ่งขึ้นเรื่อย ๆ และผลตก</td><td class="where">Ad Fatigue</td><td>คนเห็นซ้ำจนเบื่อ เปลี่ยนชิ้นงานใหม่ทั้งชุด</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>ตารางตัดสินใจ — ทบทวนทุก 3 วัน</h3>
+    <p class="hint" style="margin-bottom:12px">ใช้ได้เมื่อมีข้อมูลอย่างน้อย 50 คลิก หรือ 3 conversions</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>ผลที่ได้ (เทียบ CPA เป้าหมาย)</th><th>เหตุผล</th><th class="r">ACTION</th></tr></thead>
+        <tbody>
+          <tr><td>ต่ำกว่า 70 %</td><td>กำไรดี ขยายได้</td><td class="r"><span class="pill good">เพิ่มงบ 20–30 %</span></td></tr>
+          <tr><td>70–100 %</td><td>ผ่านเกณฑ์ ปล่อยให้ระบบเรียนรู้ต่อ</td><td class="r"><span class="pill good">คงงบเดิม</span></td></tr>
+          <tr><td>100–150 %</td><td>ยังกู้ได้ ปัญหาน่าจะอยู่ที่ creative</td><td class="r"><span class="pill warn">คงงบ + เปลี่ยนชิ้นงาน</span></td></tr>
+          <tr><td>เกิน 150 % · ครบ 3 วัน</td><td>เตือนครั้งแรก</td><td class="r"><span class="pill warn">ลดงบครึ่งหนึ่ง</span></td></tr>
+          <tr><td>เกิน 150 % · ครบ 7 วัน</td><td>ตัดขาดทุน ย้ายงบไปชุดที่ชนะ</td><td class="r"><span class="pill bad">ปิดชุดโฆษณา</span></td></tr>
+          <tr><td>ใช้งบครบ 2 เท่าของ CPA เป้า แต่ยังไม่มี conversion</td><td>ไม่มีสัญญาณว่าจะดีขึ้น</td><td class="r"><span class="pill bad">ปิดทันที</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>กฎเหล็กห้าข้อในการขยายงบ</h3>
+    <div class="rules">
+      <div class="rule"><b>เพิ่มครั้งละไม่เกิน 20–30 % เว้น 3 วัน</b><span>เพิ่มแรงเกิน ระบบกลับเข้า Learning Phase แล้ว CPA พุ่งชั่วคราว</span></div>
+      <div class="rule"><b>ห้ามตัดสินใจก่อนครบ 72 ชั่วโมง</b><span>ช่วง Learning Phase ตัวเลขยังไม่นิ่ง ตัดสินตอนนี้คือตัดสินจากข้อมูลผิด</span></div>
+      <div class="rule"><b>กระจายงบ 70 / 20 / 10</b><span>70 % ชุดที่พิสูจน์แล้ว · 20 % ทดสอบกลุ่มและชิ้นงานใหม่ · 10 % ทดสอบแพลตฟอร์มใหม่</span></div>
+      <div class="rule"><b>เพิ่มเฉพาะชุดที่ชนะ</b><span>ห้ามเพิ่มงบรวมทั้งแคมเปญ ชุดที่แพ้อยู่แล้วจะยิ่งเผางบเร็วขึ้น</span></div>
+      <div class="rule"><b>มีชิ้นงานสำรอง 3–5 ชิ้นเสมอ</b><span>Frequency เกิน 3 ครั้ง/คน/สัปดาห์ ให้สลับชิ้นงานทันทีก่อนผลตก</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STEP VI ============ -->
+<section>
+  <div class="container">
+    <div class="sec-head" id="step6">
+      <span class="step-tag">STEP VI</span>
+      <h2>ขยาย · เดือน 8 เป็นต้นไป</h2>
+      <p class="lead">ขยายได้ต่อเมื่อผ่านเงื่อนไข ไม่ใช่ขยายเพราะถึงเดือนแล้ว</p>
+    </div>
+
+    <div class="gate">
+      <b>ต้องผ่านครบทุกข้อก่อนเพิ่มงบ</b>
+      <ul>
+        <li>CPA จริง ไม่เกิน CPA เป้าหมาย (LTV ÷ 3)</li>
+        <li>มีชุดโฆษณาที่ทำกำไรต่อเนื่องอย่างน้อย 7 วัน</li>
+        <li>อัตราคงอยู่ของผู้ใช้เดือนที่ 2 ตั้งแต่ 40 % ขึ้นไป</li>
+      </ul>
+    </div>
+    <p>ไม่ผ่าน = <strong>คงงบเดิม</strong> แก้ชิ้นงาน หน้า Landing หรือตัวสินค้าก่อน ห้ามเพิ่มงบกลบปัญหา</p>
+
+    <p class="hint" style="margin-bottom:24px">งานรายเดือนของช่วงนี้ดูได้จากการ์ด MONTH 6–7 และ MONTH 8+ ใน “ภาพรวม 8 เดือน” ด้านบน</p>
+
+    <p class="hint" style="margin-bottom:24px">จุดคุ้มทุนและเพดาน CPA คำนวณสดได้ที่ <a href="#step4">เครื่องคำนวณ STEP IV</a></p>
+
+    <div class="gate">
+      <b>เพดานงบที่ใช้ได้</b>
+      <span style="font-family:'Google Sans Code',monospace">Conversions ที่ต้องการต่อเดือน × CPA จริง</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STEP VII ============ -->
+<section>
+  <div class="container">
+    <div class="sec-head" id="step7">
+      <span class="step-tag">STEP VII</span>
+      <h2>ข้อสมมติที่ใช้ทั้งเอกสาร</h2>
+      <p class="lead">ตัวเลขทั้งหมดตั้งอยู่บนสมมติฐานเหล่านี้ ค่าจริงต่างจากนี้เมื่อไร คำนวณใหม่ทั้งชุด</p>
+    </div>
+
+    <h3>ข้อสมมติที่ต้องยืนยัน</h3>
+    <p class="hint" style="margin-bottom:12px">ค่าจริงต่างจากนี้ = CPA เป้าหมายเปลี่ยนทั้งหมด ปรับในเครื่องคำนวณ STEP IV ได้ทันที</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>ข้อสมมติ</th><th>ค่าที่ใช้ในเอกสารนี้</th></tr></thead>
+        <tbody>
+          <tr><td>ราคาขาย</td><td class="n">รายครั้ง 3 ฿ · รายวัน 9 ฿ · รายเดือน 99 ฿ ผ่าน DCB</td></tr>
+          <tr><td>Collection Rate</td><td class="n">82 %</td></tr>
+          <tr><td>ส่วนแบ่ง AIS</td><td class="n">30 %</td></tr>
+          <tr><td>ส่วนแบ่ง IT Partner</td><td class="n">35 %</td></tr>
+          <tr><td>รายได้สุทธิถึงเรา</td><td class="n">ขึ้นกับสัดส่วนแพ็กเกจ — คำนวณใน STEP IV</td></tr>
+          <tr><td>อายุสมาชิกเฉลี่ย <span class="pill bad">ยังไม่มีข้อมูลจริง</span></td><td class="n">60 วัน (สมมติ)</td></tr>
+          <tr><td>Conversion จาก DAU</td><td class="n">8 %</td></tr>
+          <tr><td>นิยามของ Conversion</td><td>สมัคร PLATINUM และถูกหักเงินสำเร็จครั้งแรก</td></tr>
+          <tr><td>วันที่เว็บใหม่ออนไลน์</td><td>SEO เริ่มนับจากวันนั้น</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="investor">
+      <p class="quote">50,000 ต่อเดือน ไม่ใช่การตั้งงบ แต่เป็นผลลัพธ์ของสมการ</p>
+      <p>งบโฆษณาจะโตถึงระดับนั้นได้ก็ต่อเมื่อพิสูจน์แล้วว่าทุก 1 บาทที่ใส่ คืนมามากกว่า 1 บาท ระหว่างทางเราจ่ายเพื่อซื้อข้อมูล ไม่ใช่จ่ายเพื่อให้ครบยอด</p>
+      <p style="margin-bottom:0">แปดเดือนใช้งบการตลาดราว 74K แทนที่จะเป็น 400K และสิ่งที่ได้กลับมาเพิ่มคือคลังคอนเทนต์ที่ยังทำงานต่อเอง อันดับใน Google และ AI Search รายชื่อลูกค้าที่สะสมไว้ก่อนเปิดขาย และสูตรการยิงที่พิสูจน์ด้วยข้อมูลจริง</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GLOSSARY ============ -->
+<section>
+  <div class="container">
+    <div class="sec-head" id="glossary">
+      <span class="step-tag">ภาคผนวก</span>
+      <h2>Glossary</h2>
+      <p class="lead">ศัพท์เทคนิคทุกคำในเอกสารนี้ แปลเป็นภาษาคนปกติ</p>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <div class="kicker orange">CPA</div>
+        <h3>จ่ายเท่าไร ถึงได้ลูกค้าจริง 1 คน</h3>
+        <p>ยิงไป 1,000 บาท ได้คนสมัคร 6 คน = CPA 167 บาทต่อคน ถ้าลูกค้า 1 คนทำเงินให้เราแค่ 100 บาท เท่ากับขาดทุนทุกคนที่ได้มา</p>
+      </div>
+      <div class="card">
+        <div class="kicker orange">ROAS</div>
+        <h3>ใส่ 1 บาท ได้กลับมากี่บาท</h3>
+        <p>2.00 = ใส่ 1 ได้ 2 · 1.00 = เท่าทุน · 0.35 = ได้กลับ 35 สตางค์ ธุรกิจที่หักเงินต่อเนื่อง เดือนแรกมักต่ำกว่า 1 จึงต้องดูระยะเวลาคืนทุนควบคู่ ไม่ใช่ตัดสินจากเดือนเดียว</p>
+      </div>
+    </div>
+
+    <h3>ตัวชี้วัดที่ใช้ตัดสินใจเรื่องเงิน</h3>
+    <div class="scroll">
+      <table class="ftable">
+        <thead><tr><th>ศัพท์</th><th>แปลง่าย ๆ</th><th>ใช้ตัดสินอะไร</th></tr></thead>
+        <tbody>
+          <tr><td class="key">CPM</td><td>ค่าโฆษณาต่อการถูกมองเห็น 1,000 ครั้ง</td><td>แพลตฟอร์มไหนถูกกว่า และการแข่งขันสูงแค่ไหน</td></tr>
+          <tr><td class="key">CTR</td><td>คนเห็นโฆษณา 100 คน กดเข้ามากี่คน</td><td>ชิ้นงานโฆษณาน่าสนใจหรือไม่</td></tr>
+          <tr><td class="key">CPC</td><td>จ่ายเท่าไรต่อคนที่กดเข้าเว็บ 1 คน</td><td>ต้นทุนการลากคนเข้าเว็บ</td></tr>
+          <tr><td class="key">CVR</td><td>คนเข้าเว็บ 100 คน สมัครจริงกี่คน</td><td>หน้าเว็บและข้อเสนอปิดการขายได้หรือไม่</td></tr>
+          <tr><td class="key">CPA</td><td>จ่ายเท่าไร ถึงได้ลูกค้าจริง 1 คน</td><td><strong>ตัวหลัก</strong> — เพิ่มงบ คงงบ ลดงบ หรือปิด</td></tr>
+          <tr><td class="key">CPL</td><td>Cost Per Lead — จ่ายเท่าไร ถึงได้รายชื่อ 1 คน (Add LINE หรือทิ้งอีเมล) ยังไม่ใช่คนจ่ายเงิน</td><td>ใช้วัดผลช่วงที่ระบบยังขายไม่ได้ แทน CPA</td></tr>
+          <tr><td class="key">CAC</td><td>ต้นทุนได้ลูกค้าใหม่ 1 คน ความหมายเดียวกับ CPA</td><td>ใช้คู่กับ LTV</td></tr>
+          <tr><td class="key">ROAS</td><td>ใส่โฆษณา 1 บาท ได้รายได้กลับมากี่บาท</td><td>แคมเปญนี้ทำกำไรหรือขาดทุน</td></tr>
+          <tr><td class="key">LTV</td><td>ลูกค้า 1 คนทำเงินให้เราทั้งหมดเท่าไรตลอดที่อยู่กับเรา</td><td>เพดานที่เรายอมจ่ายเพื่อซื้อลูกค้า 1 คน</td></tr>
+          <tr><td class="key">LTV : CAC</td><td>รายได้จากลูกค้า 1 คน หารด้วยต้นทุนที่ซื้อเขามา</td><td>ต่ำกว่า 3:1 = ยังขยายไม่ได้อย่างปลอดภัย</td></tr>
+          <tr><td>ระยะเวลาคืนทุน</td><td>เก็บเงินกี่วัน ถึงคุ้มค่าโฆษณาที่จ่ายไปตอนได้เขามา</td><td>ต้องใช้เงินสดหมุนล่วงหน้าเท่าไร</td></tr>
+          <tr><td class="key">DCB</td><td>Direct Carrier Billing — หักเงินผ่านบิลมือถือ ไม่ต้องผูกบัตร ค่ายมือถือเก็บส่วนแบ่ง</td><td>ช่องทางเก็บเงินหลักของบริการนี้</td></tr>
+          <tr><td class="key">Collection Rate</td><td>เรียกเก็บผ่านสำเร็จกี่ % บางวันยอดเงินในซิมไม่พอ ก็เก็บไม่ได้</td><td>ตัวแปรที่คุมได้และกระทบรายได้สุทธิโดยตรง</td></tr>
+          <tr><td class="key">Revenue Share</td><td>ส่วนแบ่งที่ต้องจ่ายให้คนอื่น — AIS 30 % และ IT Partner 35 %</td><td>กำหนดว่าเหลือถึงเราเท่าไร</td></tr>
+          <tr><td>Contribution Margin</td><td>เงินที่เหลือถึงเราจริง คิดเป็น % ของราคาเรียกเก็บ — ที่นี่คือ 37.3 %</td><td>เพดานกำไรสูงสุดก่อนหักต้นทุนคงที่</td></tr>
+          <tr><td class="key">DAU</td><td>Daily Active Users — คนที่เข้าใช้งานต่อวัน ไม่ใช่คนที่จ่ายเงิน</td><td>ฐานที่ Conversion 8 % คำนวณจากมัน</td></tr>
+          <tr><td class="key">ARPU</td><td>รายได้เฉลี่ยต่อผู้ใช้หนึ่งคน ใช้เทียบข้ามช่วงเวลาได้</td><td>ดูว่าคุณภาพลูกค้าดีขึ้นหรือแย่ลง</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>ศัพท์การยิงโฆษณา</h3>
+    <div class="scroll">
+      <table class="ftable">
+        <thead><tr><th>ศัพท์</th><th>แปลง่าย ๆ</th></tr></thead>
+        <tbody>
+          <tr><td class="key">Impressions</td><td>จำนวนครั้งที่โฆษณาถูกแสดงบนจอ คนเดียวเห็น 3 ครั้ง นับเป็น 3</td></tr>
+          <tr><td class="key">Clicks</td><td>จำนวนครั้งที่มีคนกดโฆษณาเข้ามาที่เว็บเรา</td></tr>
+          <tr><td class="key">Conversions</td><td>คนที่ทำสิ่งที่เราต้องการจริง ๆ — สมัครสมาชิกหรือจ่ายเงิน ไม่ใช่แค่เข้าเว็บ</td></tr>
+          <tr><td class="key">Creative</td><td>ตัวชิ้นงานโฆษณา — ภาพ วิดีโอ ข้อความ</td></tr>
+          <tr><td class="key">Ad Set</td><td>ชุดโฆษณา 1 ชุด = 1 กลุ่มเป้าหมาย + งบของมันเอง ยิงหลายชุดเพื่อเทียบว่าชุดไหนดีกว่า</td></tr>
+          <tr><td class="key">Campaign</td><td>แคมเปญ ครอบหลายชุดโฆษณาไว้ด้วยกัน ตั้งเป้าหมายรวม เช่น เน้นยอดสมัคร</td></tr>
+          <tr><td class="key">Landing Page</td><td>หน้าเว็บที่คนกดโฆษณาแล้วไปโผล่ ทำมาเพื่อปิดการขายโดยเฉพาะ</td></tr>
+          <tr><td class="key">Retargeting</td><td>ยิงซ้ำเฉพาะคนที่เคยเข้าเว็บแล้วแต่ยังไม่สมัคร ถูกกว่าหาคนใหม่ 3–5 เท่า</td></tr>
+          <tr><td class="key">Lookalike Audience</td><td>ให้ Facebook หาคนที่ “หน้าตาเหมือน” ลูกค้าที่ซื้อเราแล้ว ยิ่งข้อมูลจริงเยอะ ยิ่งแม่น</td></tr>
+          <tr><td class="key">Pixel</td><td>โค้ดเล็ก ๆ ฝังในเว็บ คอยรายงานกลับว่าใครเข้ามาทำอะไร ไม่มีตัวนี้ = วัดผลโฆษณาไม่ได้เลย</td></tr>
+          <tr><td class="key">Conversions API</td><td>ส่งข้อมูลการซื้อจากเซิร์ฟเวอร์เราตรงเข้า Facebook ใช้สำรอง Pixel ที่ถูกเบราว์เซอร์บล็อก</td></tr>
+          <tr><td class="key">Learning Phase</td><td>ช่วง 3 วันแรกที่ระบบยังลองผิดลองถูก ตัวเลขยังไม่นิ่ง ห้ามตัดสินใจในช่วงนี้</td></tr>
+          <tr><td class="key">Frequency</td><td>คนหนึ่งคนเห็นโฆษณาเราซ้ำกี่ครั้ง เกิน 3 ครั้ง/สัปดาห์ = เริ่มเบื่อ</td></tr>
+          <tr><td class="key">Ad Fatigue</td><td>อาการโฆษณาชิ้นเดิมหมดอายุ ผลตกแต่ต้นทุนขึ้น ต้องเปลี่ยนชิ้นงานใหม่</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>ศัพท์ SEO และคอนเทนต์</h3>
+    <div class="scroll">
+      <table class="ftable">
+        <thead><tr><th>ศัพท์</th><th>แปลง่าย ๆ</th></tr></thead>
+        <tbody>
+          <tr><td class="key">SEO</td><td>Search Engine Optimization — ทำให้เว็บขึ้นอันดับต้น ๆ ใน Google โดยไม่ต้องจ่ายค่าคลิก</td></tr>
+          <tr><td class="key">AEO</td><td>Answer Engine Optimization — ทำคอนเทนต์ให้ถูกหยิบไปเป็น “คำตอบ” โดยตรง เขียนเป็นคำถาม-คำตอบ ตอบให้จบใน 2–3 บรรทัดแรก</td></tr>
+          <tr><td class="key">GEO</td><td>Generative Engine Optimization — ทำให้ AI อย่าง ChatGPT, Gemini, Perplexity หยิบข้อมูลเราไปตอบและอ้างชื่อเรา คนละเรื่องกับอันดับใน Google</td></tr>
+          <tr><td class="key">AI Overviews</td><td>คำตอบที่ Google เขียนเองด้วย AI วางไว้บนสุดเหนือผลค้นหาปกติ กินพื้นที่คลิกของอันดับ 1 ไปมาก</td></tr>
+          <tr><td class="key">Featured Snippet</td><td>กล่องคำตอบที่ Google ดึงข้อความจากเว็บหนึ่งขึ้นมาโชว์บนสุด เป้าหมายหลักของ AEO</td></tr>
+          <tr><td class="key">Zero-click</td><td>คนค้นแล้วได้คำตอบตรงหน้าค้นหาเลย ไม่คลิกเข้าเว็บใคร เหตุผลที่ต้องทำ AEO และ GEO</td></tr>
+          <tr><td class="key">llms.txt</td><td>ไฟล์สรุปเนื้อหาเว็บแบบอ่านง่ายสำหรับ AI วางไว้ที่รากเว็บ ช่วยให้ AI ดึงข้อมูลไปตอบได้ถูกต้อง</td></tr>
+          <tr><td class="key">E-E-A-T</td><td>เกณฑ์คุณภาพของ Google — ประสบการณ์ ความเชี่ยวชาญ ความน่าเชื่อถือ สายดูดวงต้องระบุชื่อและที่มาของหมอดูให้ชัด</td></tr>
+          <tr><td class="key">Organic Traffic</td><td>คนที่เข้าเว็บเองจากการค้นหา ไม่ได้มาจากโฆษณา = ทราฟฟิกฟรี</td></tr>
+          <tr><td class="key">Keyword</td><td>คำที่คนพิมพ์ค้นใน Google เช่น “ดูดวงวันนี้”</td></tr>
+          <tr><td class="key">Long-tail Keyword</td><td>คำค้นยาวและเจาะจง เช่น “ไพ่ทาโรต์ความรักคนโสด” คนค้นน้อยกว่าแต่แข่งง่ายกว่าและตรงกลุ่มกว่า</td></tr>
+          <tr><td class="key">Backlink</td><td>ลิงก์จากเว็บอื่นที่ชี้มาหาเรา Google ใช้เป็นสัญญาณว่าเว็บเราน่าเชื่อถือ</td></tr>
+          <tr><td class="key">Index</td><td>การที่ Google เก็บหน้าเว็บเราเข้าคลัง ยังไม่ถูก index = ค้นยังไงก็ไม่เจอ</td></tr>
+          <tr><td class="key">Evergreen</td><td>คอนเทนต์ที่มีคนค้นตลอดปี ไม่ตามกระแส เช่น ความหมายไพ่ทาโรต์</td></tr>
+          <tr><td class="key">GA4</td><td>Google Analytics 4 เครื่องมือฟรี ดูว่าคนเข้าเว็บมาจากไหน ทำอะไรบ้าง</td></tr>
+          <tr><td class="key">Search Console</td><td>เครื่องมือฟรีของ Google บอกว่าคนค้นคำไหนแล้วเจอเรา ใช้หาคีย์เวิร์ดโดยไม่ต้องเดา</td></tr>
+          <tr><td class="key">Schema</td><td>โค้ดบอก Google ว่าหน้านี้คือเนื้อหาประเภทอะไร ช่วยให้แสดงผลเด่นขึ้นในหน้าค้นหา</td></tr>
+          <tr><td class="key">Sitemap</td><td>ไฟล์รายการหน้าเว็บทั้งหมด ส่งให้ Google เพื่อให้เก็บข้อมูลครบและเร็วขึ้น</td></tr>
+          <tr><td class="key">Retention</td><td>อัตราที่ลูกค้ายังอยู่กับเราเดือนถัดไป ตัวนี้คือสิ่งที่กำหนด LTV</td></tr>
+          <tr><td class="key">LINE OA</td><td>LINE Official Account บัญชี LINE ของธุรกิจ ใช้ส่งข้อความหาลูกค้าที่แอดไว้</td></tr>
+          <tr><td class="key">Affiliate</td><td>ให้คนอื่นช่วยขาย จ่ายค่าคอมเมื่อขายได้จริงเท่านั้น ไม่ขายไม่จ่าย</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<dialog class="modal" id="info-modal">
+  <div class="modal-head">
+    <div>
+      <div class="modal-kicker" id="modal-kicker"></div>
+      <h3 id="modal-title"></h3>
+    </div>
+    <button class="modal-close" id="modal-close" type="button" aria-label="ปิด">✕</button>
+  </div>
+  <div class="modal-body" id="modal-body"></div>
+</dialog>
+
+<footer>
+  <div class="container">
+    เอกสารภายใน · เกณฑ์ตลาดเป็นกรอบตั้งสมมติฐาน แทนที่ด้วยข้อมูลจริงหลังยิงครบ 7 วัน
+  </div>
+</footer>
+<script src="js/app.js" defer></script>
+</body>
+</html>
