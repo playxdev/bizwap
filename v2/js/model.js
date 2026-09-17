@@ -83,11 +83,36 @@
     base:         { cpm: 100, ctr: 1.2, cvr: 4, leadRate: 8, leadToCustomer: 12,
                     collectionRate: 82, lifetimeDays: 60, organicAtEnd: 150 },
     aggressive:   { cpm: 80,  ctr: 1.8, cvr: 6, leadRate: 11, leadToCustomer: 18,
-                    collectionRate: 88, lifetimeDays: 90, organicAtEnd: 300 }
+                    collectionRate: 88, lifetimeDays: 90, organicAtEnd: 300 },
+    // ไม่ใช่การพยากรณ์ แต่คือชุดค่าที่ต้องทำให้ได้จริงถึงจะคืนทุน
+    // หาโดยไล่ปรับทีละคานจนเงินสดสะสมกลับเป็นบวกภายในช่วงที่จำลอง
+    viable:       { months: 24, cpm: 100, ctr: 1.6, cvr: 6, leadRate: 8, leadToCustomer: 12,
+                    collectionRate: 88, lifetimeDays: 120, organicAtEnd: 600, adsScale: 40000,
+                    packages: [
+                      { key: "perUse", label: "รายครั้ง", price: 5, freq: 6, share: 25 },
+                      { key: "daily", label: "รายวัน", price: 12, freq: 22, share: 40 },
+                      { key: "monthly", label: "รายเดือน", price: 159, freq: 1, share: 35 }
+                    ] }
   };
-  var SCENARIO_LABEL = { conservative: "Conservative", base: "Base Case", aggressive: "Aggressive" };
+  var SCENARIO_LABEL = {
+    conservative: "Conservative", base: "Base Case",
+    aggressive: "Aggressive", viable: "Viable Path"
+  };
+  var SCENARIO_NOTE = {
+    conservative: "สมมติฐานระมัดระวัง",
+    base: "สมมติฐานที่ตั้งไว้ตอนนี้",
+    aggressive: "สมมติฐานเชิงบวก",
+    viable: "ชุดค่าที่ต้องทำให้ได้จริงถึงจะคืนทุน — เป้าหมาย ไม่ใช่การพยากรณ์"
+  };
 
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+  /* คัดลอกค่าจาก scenario ทับ assumptions โดยไม่แชร์ reference ของ array */
+  function applyScenario(a, key) {
+    var out = clone(a), preset = SCENARIOS[key] || {};
+    Object.keys(preset).forEach(function (k) { out[k] = clone(preset[k]); });
+    return out;
+  }
   function pct(x) { return x / 100; }
   function safeDiv(a, b) { return b > 0 ? a / b : NaN; }
 
@@ -335,10 +360,8 @@
      ============================================================ */
   function compareScenarios(a) {
     return Object.keys(SCENARIOS).map(function (key) {
-      var s = clone(a);
-      Object.keys(SCENARIOS[key]).forEach(function (k) { s[k] = SCENARIOS[key][k]; });
-      var f = forecast(s);
-      return { key: key, label: SCENARIO_LABEL[key], summary: f.summary };
+      var f = forecast(applyScenario(a, key));
+      return { key: key, label: SCENARIO_LABEL[key], note: SCENARIO_NOTE[key], summary: f.summary };
     });
   }
 
@@ -389,6 +412,8 @@
     CONF_LABEL: CONF_LABEL,
     SCENARIOS: SCENARIOS,
     SCENARIO_LABEL: SCENARIO_LABEL,
+    SCENARIO_NOTE: SCENARIO_NOTE,
+    applyScenario: applyScenario,
     SHOCKS: SHOCKS,
     STRESS_KEYS: STRESS_KEYS,
     clone: clone,

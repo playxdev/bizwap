@@ -143,6 +143,13 @@ a{color:var(--blue)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sc-btn.is-active{color:#1B1005}}
 .sc-btn:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
 .sb-hint{font-size:13px; color:var(--ink-faint)}
+.sc-btn.sc-viable{color:var(--green)}
+.sc-btn.sc-viable.is-active{background:var(--green); color:#fff}
+:root[data-theme="dark"] .sc-btn.sc-viable.is-active{color:#04170F}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sc-btn.sc-viable.is-active{color:#04170F}}
+tr.is-target td{border-top:2px solid var(--green)}
+tr.is-target td:first-child b{color:var(--green)}
+.sc-note{display:block; font-size:11.5px; color:var(--ink-faint); font-weight:400; margin-top:2px; white-space:normal; max-width:26ch}
 .sb-reset{margin-left:auto}
 
 /* ---------- step section ---------- */

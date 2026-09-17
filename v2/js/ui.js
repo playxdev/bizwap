@@ -663,8 +663,8 @@
       "<th>Operating BE</th><th>Payback</th></tr></thead><tbody>";
     list.forEach(function (x) {
       var s = x.summary;
-      html += '<tr class="' + (x.key === scenario ? "is-current" : "") + '" data-scenario-row="' + x.key + '">' +
-        "<td><b>" + x.label + "</b></td>" +
+      html += '<tr class="' + (x.key === scenario ? "is-current " : "") + (x.key === "viable" ? "is-target" : "") + '" data-scenario-row="' + x.key + '">' +
+        "<td><b>" + x.label + "</b><br><small class='sc-note'>" + (x.note || "") + "</small></td>" +
         '<td class="num">' + n(s.totalInvestment) + "</td>" +
         '<td class="num">' + n(s.totalNewCustomers) + "</td>" +
         '<td class="num">' + n(s.totalNetRevenue) + "</td>" +
@@ -761,6 +761,9 @@
     mix.textContent = "สัดส่วนผู้ใช้รวม " + n(sum) + " % " + (Math.round(sum) === 100 ? "— ครบพอดี" : "— ควรรวมได้ 100 %");
     mix.className = "mix-check " + (Math.round(sum) === 100 ? "ok" : "bad");
 
+    var note = el("sb-note");
+    if (note) note.textContent = M.SCENARIO_NOTE[scenario] || "";
+
     renderHero(f);
     renderSticky(f);
     renderInvestment(f);
@@ -819,12 +822,12 @@
       var sc = e.target.closest("[data-scenario]") || e.target.closest("[data-scenario-row]");
       if (sc) {
         scenario = sc.dataset.scenario || sc.dataset.scenarioRow;
-        var preset = M.SCENARIOS[scenario];
-        Object.keys(preset).forEach(function (k) { state[k] = preset[k]; });
+        state = M.applyScenario(state, scenario);
+        buildControls();
         document.querySelectorAll("[data-scenario]").forEach(function (b) {
           b.classList.toggle("is-active", b.dataset.scenario === scenario);
         });
-        syncControls(); render();
+        render();
         return;
       }
 
