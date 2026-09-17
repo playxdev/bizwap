@@ -498,10 +498,10 @@ tr[data-shock]:hover td,tr[data-scenario-row]:hover td{background:var(--panel2)}
 
 @keyframes fabPulse{
   0%{transform:scale(1)}
-  35%{transform:scale(1.045)}
+  35%{transform:scale(1.03)}
   100%{transform:scale(1)}
 }
-.fab.bump{animation:fabPulse .42s ease-out}
+.fab.bump{animation:fabPulse .42s ease-out; transform-origin:bottom right}
 .fab.is-hidden{opacity:0; pointer-events:none; transform:translateY(14px)}
 
 /* the summary card flashes when the balloon sends you to it */
@@ -518,7 +518,26 @@ tr[data-shock]:hover td,tr[data-scenario-row]:hover td{background:var(--panel2)}
   }
   .fab::after{display:none}
   .fab-value{font-size:23px}
+  /* บนมือถือบอลลูนกว้างเกือบเต็มจอ ถ้าย่อ-ขยายจะล้นขอบ ใช้กะพริบพื้นแทน */
+  .fab.bump{animation:fabFlash .5s ease-out}
+  .fab-row-label{letter-spacing:.06em}
+  .fab-hint{display:none}
 }
+
+@keyframes fabFlash{
+  0%{box-shadow:0 0 0 3px var(--orange)}
+  100%{box-shadow:var(--shadow)}
+}
+
+/* ตารางความเสี่ยง: ให้คอลัมน์ยืดหยุ่น ไม่ต้องมีแถบเลื่อนแนวนอน */
+#risk-table{table-layout:auto}
+#risk-table td,#risk-table th{white-space:normal}
+#risk-table td:first-child,#risk-table th:first-child{width:36px; text-align:center}
+#risk-table td:nth-child(2){min-width:190px; line-height:1.5}
+#risk-table td:nth-child(2) b{display:inline-block; margin-bottom:4px}
+#risk-table td:nth-child(3){min-width:150px}
+#risk-table td.num,#risk-table th.num{white-space:nowrap}
+#risk-table .badge{margin-bottom:2px}
 
 /* ---------- modal ---------- */
 dialog.modal{

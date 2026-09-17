@@ -14,33 +14,33 @@
     fixedCost: 67000,          // ทีม + ระบบ ต่อเดือน
     contentSpend: 4000,        // คอนเทนต์ / SEO ต่อเดือน
     adsTest: 3500,             // งบโฆษณาต่อเดือน ช่วงทดสอบ
-    adsScale: 12000,           // งบโฆษณาต่อเดือน ช่วงขยาย
-    months: 8,
+    adsScale: 40000,           // งบโฆษณาต่อเดือน ช่วงขยาย
+    months: 24,
     adsStartMonth: 4,
     launchMonth: 7,            // เดือนแรกที่ระบบเก็บเงินได้
     scaleMonth: 7,
 
     // --- business model ---
     packages: [
-      { key: "perUse", label: "รายครั้ง", price: 3, freq: 6, share: 50 },
-      { key: "daily", label: "รายวัน", price: 9, freq: 20, share: 35 },
-      { key: "monthly", label: "รายเดือน", price: 99, freq: 1, share: 15 }
+      { key: "perUse", label: "รายครั้ง", price: 5, freq: 6, share: 25 },
+      { key: "daily", label: "รายวัน", price: 12, freq: 22, share: 40 },
+      { key: "monthly", label: "รายเดือน", price: 159, freq: 1, share: 35 }
     ],
-    collectionRate: 82,
+    collectionRate: 88,
     aisShare: 30,
     itShare: 35,
     itBase: "net",
-    lifetimeDays: 60,
+    lifetimeDays: 120,
 
     // --- media ---
     cpm: 100,
-    ctr: 1.2,
+    ctr: 1.6,
     leadRate: 8,
     leadToCustomer: 12,
-    cvr: 4,
+    cvr: 6,
 
     // --- organic ---
-    organicAtEnd: 150
+    organicAtEnd: 600
   };
 
   /* ---------- where each assumption comes from ----------
@@ -77,15 +77,31 @@
   };
 
   /* ---------- scenarios ---------- */
+  /* ทุก scenario ต้องกำหนดคีย์ชุดเดียวกันให้ครบ
+     ไม่งั้นการสลับไปมาจะทิ้งค่าของชุดก่อนหน้าไว้ปนกัน */
   var SCENARIOS = {
-    conservative: { cpm: 130, ctr: 0.9, cvr: 3, leadRate: 6, leadToCustomer: 8,
-                    collectionRate: 75, lifetimeDays: 45, organicAtEnd: 80 },
-    base:         { cpm: 100, ctr: 1.2, cvr: 4, leadRate: 8, leadToCustomer: 12,
-                    collectionRate: 82, lifetimeDays: 60, organicAtEnd: 150 },
-    aggressive:   { cpm: 80,  ctr: 1.8, cvr: 6, leadRate: 11, leadToCustomer: 18,
-                    collectionRate: 88, lifetimeDays: 90, organicAtEnd: 300 },
-    // ไม่ใช่การพยากรณ์ แต่คือชุดค่าที่ต้องทำให้ได้จริงถึงจะคืนทุน
-    // หาโดยไล่ปรับทีละคานจนเงินสดสะสมกลับเป็นบวกภายในช่วงที่จำลอง
+    conservative: { months: 24, cpm: 130, ctr: 0.9, cvr: 3, leadRate: 6, leadToCustomer: 8,
+                    collectionRate: 75, lifetimeDays: 45, organicAtEnd: 80, adsScale: 12000,
+                    packages: [
+                      { key: "perUse", label: "รายครั้ง", price: 3, freq: 6, share: 50 },
+                      { key: "daily", label: "รายวัน", price: 9, freq: 20, share: 35 },
+                      { key: "monthly", label: "รายเดือน", price: 99, freq: 1, share: 15 }
+                    ] },
+    base:         { months: 8,  cpm: 100, ctr: 1.2, cvr: 4, leadRate: 8, leadToCustomer: 12,
+                    collectionRate: 82, lifetimeDays: 60, organicAtEnd: 150, adsScale: 12000,
+                    packages: [
+                      { key: "perUse", label: "รายครั้ง", price: 3, freq: 6, share: 50 },
+                      { key: "daily", label: "รายวัน", price: 9, freq: 20, share: 35 },
+                      { key: "monthly", label: "รายเดือน", price: 99, freq: 1, share: 15 }
+                    ] },
+    aggressive:   { months: 24, cpm: 80,  ctr: 1.8, cvr: 6, leadRate: 11, leadToCustomer: 18,
+                    collectionRate: 88, lifetimeDays: 90, organicAtEnd: 300, adsScale: 20000,
+                    packages: [
+                      { key: "perUse", label: "รายครั้ง", price: 3, freq: 6, share: 50 },
+                      { key: "daily", label: "รายวัน", price: 9, freq: 20, share: 35 },
+                      { key: "monthly", label: "รายเดือน", price: 99, freq: 1, share: 15 }
+                    ] },
+    // ชุดค่าที่ต้องทำให้ได้จริงถึงจะคืนทุน — หาโดยไล่ปรับทีละคาน
     viable:       { months: 24, cpm: 100, ctr: 1.6, cvr: 6, leadRate: 8, leadToCustomer: 12,
                     collectionRate: 88, lifetimeDays: 120, organicAtEnd: 600, adsScale: 40000,
                     packages: [
@@ -100,9 +116,9 @@
   };
   var SCENARIO_NOTE = {
     conservative: "สมมติฐานระมัดระวัง",
-    base: "สมมติฐานที่ตั้งไว้ตอนนี้",
+    base: "สมมติฐานตั้งต้นเดิม — ไม่ถึงจุดคืนทุน",
     aggressive: "สมมติฐานเชิงบวก",
-    viable: "ชุดค่าที่ต้องทำให้ได้จริงถึงจะคืนทุน — เป้าหมาย ไม่ใช่การพยากรณ์"
+    viable: "ค่าตั้งต้นปัจจุบัน — ชุดค่าที่ต้องทำให้ได้จริงถึงจะคืนทุน ไม่ใช่การพยากรณ์"
   };
 
   function clone(o) { return JSON.parse(JSON.stringify(o)); }

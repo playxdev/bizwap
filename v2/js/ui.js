@@ -7,7 +7,7 @@
 
   var M = window.SimModel;
   var state = M.clone(M.DEFAULTS);
-  var scenario = "base";
+  var scenario = "viable";
   var stressMul = { cvr: 100, cpm: 100, lifetimeDays: 100, collectionRate: 100, organicAtEnd: 100 };
   var latest = null;
 
@@ -407,10 +407,10 @@
 
   function renderRisks(list) {
     var html = "<thead><tr><th>#</th><th>สมมติฐาน</th><th>ช็อกที่ทดสอบ</th><th class='num'>Δ Contribution</th>" +
-      "<th class='num'>Δ เงินสดที่ต้องเตรียม</th><th class='num'>Δ ลูกค้า</th><th>Operating BE</th></tr></thead><tbody>";
+      "<th class='num'>Δ Max Cash</th><th class='num'>Δ ลูกค้า</th><th>Operating BE</th></tr></thead><tbody>";
     list.forEach(function (x, i) {
       html += '<tr data-shock="' + x.key + '"><td>' + (i + 1) + "</td>" +
-        "<td>" + x.label + " " + confBadge(x.key) + "</td>" +
+        "<td><b>" + x.label + "</b><br>" + confBadge(x.key) + "</td>" +
         "<td>" + x.desc + " · " + n(x.from) + " → " + n(x.to) + "</td>" +
         '<td class="num ' + (x.deltaContribution < 0 ? "neg" : "pos") + '">' + signed(x.deltaContribution) + "</td>" +
         '<td class="num ' + (x.deltaMaxCash > 0 ? "neg" : "pos") + '">' + signed(x.deltaMaxCash) + "</td>" +
@@ -849,9 +849,9 @@
       if (e.target.closest("#reset-btn")) {
         state = M.clone(M.DEFAULTS);
         stressMul = M.clone(STRESS_PRESETS.reset);
-        scenario = "base";
+        scenario = "viable";
         document.querySelectorAll("[data-scenario]").forEach(function (b) {
-          b.classList.toggle("is-active", b.dataset.scenario === "base");
+          b.classList.toggle("is-active", b.dataset.scenario === "viable");
         });
         buildControls(); render();
         return;
