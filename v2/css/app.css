@@ -334,6 +334,71 @@ pre{
 footer{background:var(--panel); border-top:1px solid var(--line)}
 footer .wrap{padding-block:28px 40px; font-size:13.5px; color:var(--ink-faint)}
 
+/* ---------- floating contribution balloon ---------- */
+.fab{
+  position:fixed; z-index:40;
+  right:max(20px, env(safe-area-inset-right,0px));
+  bottom:calc(20px + env(safe-area-inset-bottom,0px));
+  display:grid; gap:1px; text-align:left; cursor:pointer;
+  padding:14px 20px 13px; min-width:224px;
+  border:2px solid var(--line2); border-radius:18px 18px 6px 18px;
+  background:var(--panel); color:var(--ink); box-shadow:var(--shadow);
+  font:inherit; transition:transform .18s ease, border-color .2s ease, background .2s ease;
+}
+.fab::after{           /* balloon tail */
+  content:""; position:absolute; right:-2px; bottom:-10px;
+  width:16px; height:12px; background:inherit;
+  border-right:2px solid; border-bottom:2px solid; border-color:inherit;
+  border-radius:0 0 4px 0; clip-path:polygon(100% 0, 100% 100%, 0 0);
+}
+.fab:hover{transform:translateY(-3px)}
+.fab:focus-visible{outline:3px solid var(--blue); outline-offset:3px}
+.fab-label{
+  font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-faint); font-weight:700;
+}
+.fab-value{
+  font-family:"Google Sans Code",monospace; font-variant-numeric:tabular-nums;
+  font-size:26px; font-weight:600; line-height:1.15; margin-top:4px;
+}
+.fab-delta{
+  font-family:"Google Sans Code",monospace; font-variant-numeric:tabular-nums;
+  font-size:13px; font-weight:600; min-height:1.2em; opacity:0; transition:opacity .2s ease;
+}
+.fab-delta.show{opacity:1}
+.fab-hint{font-size:11.5px; color:var(--ink-faint); margin-top:4px}
+
+.fab.is-pos{border-color:var(--green); background:var(--green-soft)}
+.fab.is-pos .fab-value{color:var(--green)}
+.fab.is-neg{border-color:var(--red); background:var(--red-soft)}
+.fab.is-neg .fab-value{color:var(--red)}
+.fab-delta.up{color:var(--green)}
+.fab-delta.down{color:var(--red)}
+
+@keyframes fabPulse{
+  0%{transform:scale(1)}
+  35%{transform:scale(1.045)}
+  100%{transform:scale(1)}
+}
+.fab.bump{animation:fabPulse .42s ease-out}
+.fab.is-hidden{opacity:0; pointer-events:none; transform:translateY(14px)}
+
+/* the summary card flashes when the balloon sends you to it */
+.investment-summary{transition:box-shadow .25s ease}
+.investment-summary.is-focus{box-shadow:0 0 0 5px var(--orange-soft), 0 0 0 7px var(--orange)}
+.investment-summary:focus{outline:none}
+
+@media (max-width:640px){
+  .fab{
+    left:max(16px, env(safe-area-inset-left,0px));
+    right:max(16px, env(safe-area-inset-right,0px));
+    bottom:calc(14px + env(safe-area-inset-bottom,0px));
+    min-width:0; padding:12px 16px;
+  }
+  .fab::after{display:none}
+  .fab-value{font-size:23px}
+}
+
 /* ---------- modal ---------- */
 dialog.modal{
   border:none; padding:0; max-width:640px; width:calc(100% - 32px);
@@ -392,7 +457,7 @@ dialog.modal::backdrop{background:rgba(4,9,18,.66)}
   @page{margin:13mm}
   html,body{background:#fff}
   body{font-size:10.5pt; line-height:1.5}
-  .topbar,.scenario-bar,.no-print,.ghost-btn,.cta,.why,.ctrl-help,footer{display:none !important}
+  .topbar,.scenario-bar,.no-print,.ghost-btn,.cta,.why,.ctrl-help,.fab,footer{display:none !important}
   input[type=range],select{display:none !important}
   .ctrl-top{margin:0}
   .panel{padding:10pt; break-inside:avoid}

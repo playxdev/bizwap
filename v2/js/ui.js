@@ -443,6 +443,33 @@
       parts.join("") + "</svg>";
   }
 
+  /* ---------- floating contribution balloon ---------- */
+  var prevContribution = null;
+
+  function renderFab(f) {
+    var box = el("fab");
+    if (!box) return;
+    var v = f.summary.cumulativeContribution;
+
+    el("fab-value").textContent = baht(v);
+    box.classList.toggle("is-pos", v >= 0);
+    box.classList.toggle("is-neg", v < 0);
+
+    var d = el("fab-delta");
+    if (prevContribution !== null && Math.abs(v - prevContribution) >= 1) {
+      var diff = v - prevContribution;
+      d.textContent = (diff > 0 ? "▲ +" : "▼ ") + n(diff) + " ฿";
+      d.className = "fab-delta show " + (diff > 0 ? "up" : "down");
+      box.classList.remove("bump");
+      void box.offsetWidth;          // restart the animation
+      box.classList.add("bump");
+    } else if (prevContribution === null) {
+      d.textContent = "";
+      d.className = "fab-delta";
+    }
+    prevContribution = v;
+  }
+
   function renderSummary(f) {
     var s = f.summary;
     var be = s.breakEvenMonth;
@@ -527,6 +554,7 @@
     renderUnitMetrics(f);
     renderForecast(f);
     renderSummary(f);
+    renderFab(f);
     renderFormulaList(f);
   }
 
@@ -582,6 +610,17 @@
       var why = e.target.closest("[data-explain]");
       if (why) { openExplain(why.dataset.explain); return; }
 
+      if (e.target.closest("#fab")) {
+        var card = el("investment-summary");
+        card.scrollIntoView({ behavior: "smooth", block: "center" });
+        card.focus({ preventScroll: true });
+        card.classList.remove("is-focus");
+        void card.offsetWidth;
+        card.classList.add("is-focus");
+        setTimeout(function () { card.classList.remove("is-focus"); }, 1600);
+        return;
+      }
+
       if (e.target.closest(".js-print")) window.print();
     });
 
@@ -621,6 +660,15 @@
       var next = isDark() ? "light" : "dark";
       root.setAttribute("data-theme", next); save(next); paint();
     });
+  })();
+
+  /* the balloon steps aside once the card it points to is visible */
+  (function watchSummary() {
+    var card = el("investment-summary"), box = el("fab");
+    if (!card || !box || !("IntersectionObserver" in window)) return;
+    new IntersectionObserver(function (entries) {
+      box.classList.toggle("is-hidden", entries[0].isIntersecting);
+    }, { threshold: 0.35 }).observe(card);
   })();
 
   buildControls();

@@ -178,7 +178,7 @@
 <!-- ================= SUMMARY ================= -->
 <section class="step" id="summary">
   <div class="wrap">
-    <div class="investment-summary" id="investment-summary"></div>
+    <div class="investment-summary" id="investment-summary" tabindex="-1"></div>
     <button class="cta cta-pdf js-print" type="button">⬇ Export Investment Summary (PDF)</button>
   </div>
 </section>
@@ -237,6 +237,13 @@
     <span>เอกสารภายใน · ตัวเลขทั้งหมดเป็นผลจากสมมติฐานที่ตั้งไว้ในหน้านี้ ไม่ใช่ผลประกอบการจริง</span>
   </div>
 </footer>
+
+<button class="fab no-print" id="fab" type="button" aria-label="ดู Investment Summary">
+  <span class="fab-label">Projected Contribution</span>
+  <span class="fab-value" id="fab-value" aria-live="polite">—</span>
+  <span class="fab-delta" id="fab-delta"></span>
+  <span class="fab-hint">แตะเพื่อดูสรุปการลงทุน</span>
+</button>
 
 <dialog class="modal" id="explain">
   <div class="modal-head">
