@@ -359,3 +359,71 @@ footer .container{padding-block:36px 52px; font-size:15.5px; color:var(--ink-fai
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} *{animation:none!important; transition:none!important}}
 @media (max-width:620px){.calc-btn{width:100%}}
+
+/* ---------- export PDF button ---------- */
+.pdf-btn{
+  border:1px solid var(--line-strong); background:var(--surface); color:var(--ink-soft);
+  border-radius:999px; padding:9px 16px; cursor:pointer; font:inherit; font-size:14.5px;
+  font-weight:600; white-space:nowrap; margin-right:8px;
+}
+.pdf-btn:hover{color:var(--ink); border-color:var(--orange-line)}
+.pdf-btn:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
+
+/* ---------- print / export to PDF ---------- */
+@media print{
+  /* force the light palette — dark backgrounds waste toner and print grey */
+  :root, :root[data-theme="dark"], :root:not([data-theme="light"]){
+    --ground:#FFFFFF; --surface:#FFFFFF; --surface-2:#F2F5FA; --surface-3:#F2F5FA;
+    --ink:#101820; --ink-soft:#3C4653; --ink-faint:#5C6773;
+    --line:#C9D2DD; --line-strong:#9AA6B4;
+    --orange:#B84E06; --orange-soft:#FBEADB; --orange-line:#D9955A;
+    --blue:#0E4787; --blue-soft:#E8EFF9; --blue-line:#9BBBE2;
+    --good:#0F5C3E; --good-bg:#E4F2EB; --bad:#8E2814; --bad-bg:#FAE7E2;
+    --warn:#75440A; --warn-bg:#FAEEDA; --shadow:none;
+  }
+  @page{margin:14mm}
+  html,body{background:#fff}
+  body{font-size:11pt; line-height:1.55}
+  nav, footer, .no-print, .pdf-btn, .theme-btn, .more-btn, .rm-arrow{display:none !important}
+
+  /* modal detail becomes inline appendix so the PDF carries the full plan */
+  .more[hidden]{display:block !important; margin-top:12px; padding-top:12px; border-top:1px solid var(--line)}
+  .more h4{font-size:11pt; margin:10px 0 5px; color:var(--blue)}
+  .more ul{padding-left:16px; margin:0 0 8px}
+  .more li{margin-bottom:2px}
+
+  .hero{padding:0 0 16pt; text-align:left}
+  .hero h1{font-size:26pt; max-width:none; margin:10pt 0 6pt}
+  .hero .deck{font-size:12pt; max-width:none; margin:0}
+  .hero .note{font-size:10.5pt; margin:10pt 0 0; max-width:none}
+  .meta{justify-content:flex-start; margin-top:10pt; font-size:9.5pt}
+  .flowline{justify-content:flex-start; margin-top:10pt; font-size:10pt}
+  .badge{font-size:9pt; padding:3px 9px}
+
+  section{border-top:1px solid var(--line-strong); break-inside:auto}
+  section > .container{padding-block:14pt}
+  .container{max-width:none; padding-inline:0}
+  h2{font-size:17pt}
+  h3{font-size:12.5pt; margin:14pt 0 6pt}
+  .lead{font-size:11pt; margin:4pt 0 10pt}
+  .step-tag{font-size:9pt; padding:2px 10px}
+
+  .roadmap{grid-template-columns:1fr; gap:8pt}
+  .rm{min-height:0; padding:12pt; break-inside:avoid}
+  .rm h3{font-size:12pt}
+  .rm ul{font-size:10pt}
+
+  .stats{grid-template-columns:repeat(3,1fr); gap:8pt}
+  .stat{padding:10pt; break-inside:avoid}
+  .stat strong{font-size:18pt}
+
+  .scroll{overflow:visible; border:1px solid var(--line-strong)}
+  table{min-width:0; font-size:9.5pt}
+  th,td{padding:5pt 7pt}
+  .card,.rm,.stat,.callout,.gate,.investor,table,.chart,.funnel > div{break-inside:avoid}
+  .sec-head{break-after:avoid}
+  .investor{background:none; border:1px solid var(--line-strong); padding:14pt}
+  .investor .quote{font-size:15pt}
+  a{color:inherit; text-decoration:none}
+  a[href^="#"]::after{content:""}
+}
