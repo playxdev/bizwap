@@ -17,7 +17,7 @@
     <nav class="steps-nav" aria-label="ขั้นตอน">
       <a href="#step1">01 Investment</a>
       <a href="#step2">02 Assumptions</a>
-      <a href="#risks">03 Risks</a>
+      <a href="#risks">03 Risk</a>
       <a href="#step3">04 Media</a>
       <a href="#step4">05 Unit Economics</a>
       <a href="#forecast">06 Cash Flow</a>
@@ -124,18 +124,20 @@
     <div class="step-head">
       <span class="step-no">03</span>
       <div>
-        <h2>Biggest Model Risks</h2>
-        <p class="lead">ช็อกสมมติฐานทีละตัว แล้ววัดผลเป็นเงิน จัดอันดับด้วยผลกระทบจริง ไม่ใช่ความเห็น</p>
+        <h2>Risk &amp; Sensitivity</h2>
+        <p class="lead">อะไรพังโมเดลนี้ได้บ้าง และพังแรงแค่ไหน — วัดเป็นเงิน ไม่ใช่ความเห็น</p>
       </div>
     </div>
 
+    <h3 class="sub">ก · ช็อกทีละตัว — ตัวไหนอันตรายที่สุด</h3>
+    <p class="lead" style="margin-bottom:14px">ขยับสมมติฐานทีละตัวให้แย่ลง แล้ววัดว่า Contribution กับเงินสดที่ต้องเตรียมเปลี่ยนไปเท่าไร เรียงจากหนักไปเบา</p>
     <div class="table-wrap">
       <table id="risk-table"></table>
     </div>
     <p class="note-inline">อันดับเปลี่ยนตามสมมติฐานปัจจุบัน ไม่ได้ตรึงไว้ · กดแถวเพื่อลองใช้ค่าที่ถูกช็อกจริง</p>
 
-    <h3 class="sub">Stress Test</h3>
-    <p class="lead" style="margin-bottom:14px">ช็อกหลายตัวพร้อมกัน ดูว่าโมเดลทนได้แค่ไหน — 100 % คือค่าปัจจุบัน</p>
+    <h3 class="sub">ข · ช็อกพร้อมกัน — โมเดลทนได้แค่ไหน</h3>
+    <p class="lead" style="margin-bottom:14px">ของจริงไม่ได้พังทีละตัว ตารางข้างบนบอกว่าตัวไหนแรงสุด ส่วนตรงนี้คือถ้าหลายตัวแย่ลงพร้อมกัน — 100 % คือค่าปัจจุบัน</p>
     <div class="panel">
       <div class="controls" id="controls-stress"></div>
       <div class="stress-actions">
