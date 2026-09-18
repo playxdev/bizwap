@@ -18,10 +18,11 @@ js/ui.js        อ่านผลจาก model แล้ววาดหน้
 | | |
 |---|---|
 | Gross vs Net Revenue | Gross คือยอดเรียกเก็บ · Net คือยอดหลังหักการเก็บเงินไม่ผ่านและส่วนแบ่งทุกฝ่าย |
-| Gross vs Net LTV | คิดงบโฆษณาจาก Net เท่านั้น |
+| Gross vs Net LTV | คิดงบ ADS จาก Net เท่านั้น |
 | Paid CPA vs Blended CAC | Paid CPA ใช้ตัดสินระดับชุดโฆษณา · Blended CAC ใช้ตัดสินธุรกิจทั้งก้อน |
-| ROAS vs Contribution | ROAS ไม่หักค่าคอนเทนต์และต้นทุนคงที่ จึงไม่ใช่กำไร |
+| ROAS vs Contribution | ROAS ไม่หัก Content และต้นทุนคงที่ จึงไม่ใช่กำไร |
 | Contribution vs Cash Flow | Contribution ไม่หักต้นทุนคงที่ · Cash Flow หัก |
+| Operating Break-even vs Payback | เดือนที่เลี้ยงตัวเองได้ ≠ เดือนที่ได้เงินลงทุนคืน |
 
 ## Scenario
 

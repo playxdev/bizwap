@@ -49,7 +49,7 @@
   var FIXED_ITEMS = [
     { label: "Project Manager", scope: "ควบคุมระยะเวลา ถ่ายทอดลอจิกงาน และประสานงานเครือข่าย AIS", amount: 26000 },
     { label: "Senior Developer", scope: "Consultant วาง Architecture, คุมเรื่อง Security และตรวจ Code Review แกนหลัก", amount: 26000 },
-    { label: "Base Infrastructure", scope: "Cloud Server, VPS, FrontEnd, BackEnd, Staging/Production of Content", amount: 5000 },
+    { label: "Infrastructure", scope: "Cloud Server, VPS, FrontEnd/BackEnd, Staging/Production", amount: 5000 },
     { label: "SEO, Coding Tools", scope: "เครื่องมือ Dev ที่ใช้ในการทำงาน", amount: 10000 }
   ];
   function fixedItemsTotal() {

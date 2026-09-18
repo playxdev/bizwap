@@ -898,11 +898,11 @@ dialog.modal::backdrop{background:rgba(4,9,18,.66)}
       <span class="step-no">03</span>
       <div>
         <h2>Risk &amp; Sensitivity</h2>
-        <p class="lead">อะไรพังโมเดลนี้ได้บ้าง และพังแรงแค่ไหน — วัดเป็นเงิน ไม่ใช่ความเห็น</p>
+        <p class="lead">อะไรทำให้ผลไม่ตรงเป้าหมายได้บ้าง และแรงแค่ไหน — วัดเป็นเงิน ไม่ใช่ความเห็น</p>
       </div>
     </div>
 
-    <h3 class="sub">ก · ช็อกทีละตัว — ตัวไหนอันตรายที่สุด</h3>
+    <h3 class="sub">ก · ช็อกทีละตัว — ตัวไหนกระทบแรงที่สุด</h3>
     <p class="lead" style="margin-bottom:14px">ขยับสมมติฐานทีละตัวให้แย่ลง แล้ววัดว่า Contribution กับเงินสดที่ต้องเตรียมเปลี่ยนไปเท่าไร เรียงจากหนักไปเบา</p>
     <div class="table-wrap">
       <table id="risk-table"></table>
@@ -910,7 +910,7 @@ dialog.modal::backdrop{background:rgba(4,9,18,.66)}
     <p class="note-inline">อันดับเปลี่ยนตามสมมติฐานปัจจุบัน ไม่ได้ตรึงไว้ · กดแถวเพื่อลองใช้ค่าที่ถูกช็อกจริง</p>
 
     <h3 class="sub">ข · ช็อกพร้อมกัน — โมเดลทนได้แค่ไหน</h3>
-    <p class="lead" style="margin-bottom:14px">ของจริงไม่ได้พังทีละตัว ตารางข้างบนบอกว่าตัวไหนแรงสุด ส่วนตรงนี้คือถ้าหลายตัวแย่ลงพร้อมกัน — 100 % คือค่าปัจจุบัน</p>
+    <p class="lead" style="margin-bottom:14px">ของจริงไม่ได้เพี้ยนทีละตัว ตารางข้างบนบอกว่าตัวไหนแรงสุด ส่วนตรงนี้คือถ้าหลายตัวแย่ลงพร้อมกัน — 100 % คือค่าปัจจุบัน</p>
     <div class="panel">
       <div class="controls" id="controls-stress"></div>
       <div class="stress-actions">
@@ -1170,7 +1170,7 @@ dialog.modal::backdrop{background:rgba(4,9,18,.66)}
   var FIXED_ITEMS = [
     { label: "Project Manager", scope: "ควบคุมระยะเวลา ถ่ายทอดลอจิกงาน และประสานงานเครือข่าย AIS", amount: 26000 },
     { label: "Senior Developer", scope: "Consultant วาง Architecture, คุมเรื่อง Security และตรวจ Code Review แกนหลัก", amount: 26000 },
-    { label: "Base Infrastructure", scope: "Cloud Server, VPS, FrontEnd, BackEnd, Staging/Production of Content", amount: 5000 },
+    { label: "Infrastructure", scope: "Cloud Server, VPS, FrontEnd/BackEnd, Staging/Production", amount: 5000 },
     { label: "SEO, Coding Tools", scope: "เครื่องมือ Dev ที่ใช้ในการทำงาน", amount: 10000 }
   ];
   function fixedItemsTotal() {
